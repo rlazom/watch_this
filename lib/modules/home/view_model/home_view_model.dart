@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+// import 'package:watch_this/common/components/movie/views/movie_details_page.dart';
 import 'package:watch_this/models/movie.dart';
 import '../../../common/enums.dart';
 import '../../../common/providers/loader_state.dart';
 import '../../../common/providers/user_provider.dart';
+import '../../../common/routes.dart';
 import '../../../repository/movies/movie_repository.dart';
 import '../../../services/shared_preferences_service.dart';
 
@@ -61,5 +63,9 @@ class HomeViewModel extends LoaderViewModel {
         source: forceReload ? SourceType.REMOTE : null);
 
     return tList;
+  }
+
+  navigateToDetails(Movie movie) {
+    navigator.toRoute(MovieDetailsPage.route, arguments: movie);
   }
 }

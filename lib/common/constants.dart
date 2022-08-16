@@ -21,10 +21,11 @@ class KUrl {
   KUrlMovie get movieModule => const KUrlMovie._();
   KUrlPerson get personModule => const KUrlPerson._();
 
-  static String image(String imageUrl) => 'https://image.tmdb.org/t/p/w200/$imageUrl';
+  String image(String imageUrl) => 'https://image.tmdb.org/t/p/w200$imageUrl';
 }
 class KUrlMovie {
   const KUrlMovie._();
+  String details({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId';
   String keywords({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId/keywords';
   String similar({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId/similar';
   String recommendations({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId/recommendations';

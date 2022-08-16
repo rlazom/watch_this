@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:watch_this/models/movie.dart';
 import 'package:watch_this/modules/home/view_model/home_view_model.dart';
 
 import '../../../common/widgets/loading_blur_wdt.dart';
@@ -34,34 +35,28 @@ class HomePage extends StatelessWidget {
                 ),
               );
             }
-            return Container(
-              color: Colors.blue,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      color: Colors.black26,
-                      child: Text('TRENDING'),
-                    ),
-                    Column(
-                      children: viewModel.trendingList
-                          .map((e) => Text(e.title))
-                          .toList(),
-                    ),
-                    // Container(
-                    //   color: Colors.black26,
-                    //   child: Text('POPULAR'),
-                    // ),
-                    // Column(
-                    //   children: viewModel.popularList
-                    //       .map((e) => Text(e.title))
-                    //       .toList(),
-                    // ),
-                  ],
+            if (viewModel.failed) {
+              return Center(
+                child: Container(
+                  color: Colors.red,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(viewModel.error?.toString() ?? 'ERROR'),
+                  ),
                 ),
-              ),
+              );
+            }
+
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: viewModel.trendingList.length,
+              itemBuilder: (BuildContext context, int index) {
+                Movie movie = viewModel.trendingList.elementAt(index);
+                return ListTile(
+                  title: Text(movie.title),
+                  onTap: () => viewModel.navigateToDetails(movie),
+                );
+              },
             );
           },
         ),

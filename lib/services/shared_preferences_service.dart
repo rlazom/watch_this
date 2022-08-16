@@ -7,6 +7,7 @@ enum SharePrefsAttribute {
   itsFirstTime,
   userLocale,
   checkedMediaData,
+  extendedMovie,
   trendingMovies,
   trendingMoviesDate,
   popularMovies,
@@ -71,6 +72,15 @@ class SharedPreferencesService {
     Set<String> list = getCheckedMediaData().toSet();
     list.add(localFilePath);
     _prefs.setString(SharePrefsAttribute.checkedMediaData.toShortString(), json.encode(list.toList()));
+  }
+
+  /// EXTENDED MOVIE
+  String? getExtendedMovieData(int movieId) {
+    return _prefs.getString('${SharePrefsAttribute.extendedMovie.toShortString()}_$movieId');
+  }
+
+  void setExtendedMovieData(String value, int movieId) {
+    _prefs.setString('${SharePrefsAttribute.extendedMovie.toShortString()}_$movieId', value);
   }
 
   /// TRENDING MOVIES

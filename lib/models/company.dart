@@ -1,22 +1,22 @@
 class Company {
   final int id;
   final String name;
-  final String description;
+  final String? description;
   final String logoPath;
   final String originCountry;
   final int? parentCompany;
-  final String homepage;
-  final String headquarters;
+  final String? homepage;
+  final String? headquarters;
 
   Company({
     required this.id,
     required this.name,
-    required this.description,
+    this.description,
     required this.logoPath,
     required this.originCountry,
     this.parentCompany,
-    required this.homepage,
-    required this.headquarters,
+    this.homepage,
+    this.headquarters,
   });
 
   Map<String, dynamic> toJson() => {

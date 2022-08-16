@@ -13,22 +13,28 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
 
   MovieDataSourceLocal() : super();
 
-  Future<List<Movie>?> getTrendingMoviesData() async {
-    print('aki_0');
-    List<Movie>? result;
-    var response = _shared.getTrendingMoviesData();
-    print('aki_1');
+  Future<Movie?> getExtendedMovieData(int movieId) async {
+    // print('MovieDataSourceLocal - getExtendedMovieData()');
+    Movie? result;
+    var response = _shared.getExtendedMovieData(movieId);
 
     if (response != null) {
-      print('aki_2');
+      result = Movie.fromJson(json.decode(response));
+    }
+    // print('RETURN MovieDataSourceLocal - getExtendedMovieData() - response == null [${response == null}]');
+    return result;
+  }
+
+  Future<List<Movie>?> getTrendingMoviesData() async {
+    // print('MovieDataSourceLocal - getTrendingMoviesData()');
+    List<Movie>? result;
+    var response = _shared.getTrendingMoviesData();
+
+    if (response != null) {
       String trendingMoviesDateStr = _shared.getTrendingMoviesDataDate()!;
       DateTime trendingMoviesDate = trendingMoviesDateStr.fromTimeStamp;
-      print('aki_3');
 
       if(trendingMoviesDate.difference(DateTime.now()).inDays.abs() < 7) {
-
-        print('aki_4');
-
         List list = json.decode(response) as List;
         result = List.from(list.map((e) => Movie.fromJson(e)).toList());
       }

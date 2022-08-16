@@ -13,9 +13,20 @@ class MovieRepository extends RMasterRepository {
           extendedPath: 'movies',
         );
 
+  Future<Movie> getExtendedMovieData({required int movieId, SourceType? source}) async {
+    // print('MovieRepository - getExtendedMovieData(movieId: "$movieId")');
+
+    Map<SourceType, Function> allSources = {
+      SourceType.LOCAL: local.getExtendedMovieData,
+      SourceType.REMOTE: remote.getExtendedMovieData,
+    };
+
+    return await getAllItemsData(allSources: allSources, source: source, param: movieId, singleResult: true);
+  }
+
   Future<List<Movie>> getTrendingMoviesData({SourceType? source}) async {
     Map<SourceType, Function> allSources = {
-      // SourceType.LOCAL: local.getTrendingMoviesData,
+      SourceType.LOCAL: local.getTrendingMoviesData,
       SourceType.REMOTE: remote.getTrendingMoviesData,
     };
 

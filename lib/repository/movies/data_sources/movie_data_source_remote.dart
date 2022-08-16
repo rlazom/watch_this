@@ -10,7 +10,29 @@ import '../../r_master/data_sources/r_master_data_source_remote.dart';
 class MovieDataSourceRemote extends RMasterDataSourceRemote {
   MovieDataSourceRemote() : super();
 
+  Future<Movie> getExtendedMovieData(int movieId) async {
+    // print('MovieDataSourceRemote - getExtendedMovieData()');
+    String url = R.urls.movieModule.details(movieId: movieId);
+
+    dynamic data;
+    try {
+      // print('TRY BEFORE fetchData(url: "$url")');
+      data = await fetchData(url: url);
+      // print('AFTER fetchData()');
+    } catch (error) {
+      print('MovieDataSourceRemote.getExtendedMovieData() - ["$error"');
+      rethrow;
+    }
+
+    Movie movie = Movie.fromJson(data);
+    shared.setExtendedMovieData(json.encode(movie), movieId);
+
+    // print('RETURN MovieDataSourceRemote - getExtendedMovieData()');
+    return movie;
+  }
+
   Future<List<Movie>> getTrendingMoviesData() async {
+    // print('MovieDataSourceRemote - getTrendingMoviesData()');
     String url = R.urls.trending;
 
     dynamic data;

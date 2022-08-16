@@ -1,15 +1,18 @@
 import 'package:intl/intl.dart';
+import 'dart:io' show File;
 import 'package:watch_this/models/company.dart';
 
 import 'production_country.dart';
 import 'movie_genre.dart';
+
+final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 
 class Movie {
   final int id;
   final String? imdbId;
   final double? imdbRate;
   final bool adult;
-  final bool? belongsToCollection;
+  final Map? belongsToCollection;
   final double? budget;
   final double? revenue;
   final List<MovieGenre>? genres;
@@ -28,6 +31,8 @@ class Movie {
   final int voteCount;
   final String backdropPath;
   final String posterPath;
+  Future<File?>? fPoster;
+  Future<File?>? fBackdrop;
 
   Movie({
     required this.id,
@@ -73,7 +78,7 @@ class Movie {
         'popularity': popularity,
         'production_companies': productionCompanies,
         'production_countries': productionCountries,
-        'release_date': releaseDate,
+        'release_date': dateFormat.format(releaseDate),
         'status': status,
         'vote_average': voteAverage,
         'vote_count': voteCount,
@@ -82,12 +87,16 @@ class Movie {
       };
 
   factory Movie.fromJson(Map<String, dynamic> jsonMap) {
-    print('factory Movie.fromJson(id: ${jsonMap['id']} - title: ${jsonMap['title']})');
-    print('..(jsonMap: $jsonMap');
+    // print('factory Movie.fromJson(id: ${jsonMap['id']} - title: ${jsonMap['title']})');
+    // print('factory Movie.fromJson(jsonMap: $jsonMap');
 
     // List genresList = jsonMap['genres'] ?? jsonMap['genre_ids'];
-    List<MovieGenre>? tGenres = jsonMap['genres'] == null ? null : (jsonMap['genres'] as List).map((e) => MovieGenre.fromJson(e)).toList();
-    // List<MovieGenre>? tGenres = [];
+    // List<MovieGenre>? tGenres;
+    List<MovieGenre>? tGenres = jsonMap['genres'] == null
+        ? null
+        : (jsonMap['genres'] as List)
+            .map((e) => MovieGenre.fromJson(e))
+            .toList();
 
     List<Company>? tCompanies = jsonMap['production_companies'] == null
         ? null
@@ -101,8 +110,10 @@ class Movie {
                 .map((e) => ProductionCountry.fromJson(e))
                 .toList();
 
-    final DateFormat fromFormatter = DateFormat('yyyy-MM-dd');
-    DateTime releaseDateDt = fromFormatter.parse(jsonMap['release_date']);
+    DateTime releaseDateDt = dateFormat.parse(jsonMap['release_date']);
+
+    double? tBudget = jsonMap['budget'] == null ? null : double.parse(jsonMap['budget'].toString());
+    double? tRevenue = jsonMap['revenue'] == null ? null : double.parse(jsonMap['revenue'].toString());
 
     // print('RETURN - factory Movie.fromJson');
     return Movie(
@@ -111,8 +122,8 @@ class Movie {
         imdbRate: jsonMap['imdb_rate'],
         adult: jsonMap['adult'],
         belongsToCollection: jsonMap['belongs_to_collection'],
-        budget: jsonMap['budget'],
-        revenue: jsonMap['revenue'],
+        budget: tBudget,
+        revenue: tRevenue,
         genres: tGenres,
         homepage: jsonMap['homepage'],
         originalLanguage: jsonMap['original_language'],

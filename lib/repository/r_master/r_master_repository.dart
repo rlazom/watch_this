@@ -54,12 +54,19 @@ class RMasterRepository {
 
   Future<File?> getItemFile(
       {required String fileUrl,
-      required Map<SourceType, Function> allSources,
+      // required Map<SourceType, Function> allSources,
+      Map<SourceType, Function>? allSources,
       bool matchSizeWithOrigin = true}) async {
     String fileLocalRouteStr =
         await getLocalCacheFilesRoute(fileUrl, extendedPath: extendedPath);
 
-    Map<SourceType, Function> sources = allSources;
+    Map<SourceType, Function> sources = {
+      SourceType.LOCAL: local.getItemFile,
+      SourceType.REMOTE: remote.getItemFile,
+    };
+    if(allSources != null) {
+      sources = allSources;
+    }
 
     File? response;
     for (Function fn in sources.values) {
