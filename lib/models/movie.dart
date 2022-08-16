@@ -82,10 +82,12 @@ class Movie {
       };
 
   factory Movie.fromJson(Map<String, dynamic> jsonMap) {
-    // print('factory Movie.fromJson(id: ${jsonMap['id']} - title: ${jsonMap['title']})');
+    print('factory Movie.fromJson(id: ${jsonMap['id']} - title: ${jsonMap['title']})');
+    print('..(jsonMap: $jsonMap');
 
     // List genresList = jsonMap['genres'] ?? jsonMap['genre_ids'];
     List<MovieGenre>? tGenres = jsonMap['genres'] == null ? null : (jsonMap['genres'] as List).map((e) => MovieGenre.fromJson(e)).toList();
+    // List<MovieGenre>? tGenres = [];
 
     List<Company>? tCompanies = jsonMap['production_companies'] == null
         ? null

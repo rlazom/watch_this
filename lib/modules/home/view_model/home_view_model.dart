@@ -41,6 +41,8 @@ class HomeViewModel extends LoaderViewModel {
     } catch (e) {
       print(
           'HomeViewModel - loadData(forceReload: "$forceReload") - CATCH e: "$e"');
+      markAsFailed(error: Exception(e));
+      return;
     }
     markAsSuccess();
   }

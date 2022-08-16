@@ -23,6 +23,17 @@ class HomePage extends StatelessWidget {
               viewModel.scheduleLoadService();
               return const LoadingBlurWdt();
             }
+            if(viewModel.failed) {
+              return Center(
+                child: Container(
+                  color: Colors.red,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(viewModel.error?.toString() ?? ''),
+                  ),
+                ),
+              );
+            }
             return Container(
               color: Colors.blue,
               child: Padding(
