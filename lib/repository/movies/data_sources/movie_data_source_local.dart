@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:watch_this/common/extensions.dart';
+import 'package:watch_this/models/cast.dart';
+import 'package:watch_this/models/crew.dart';
 import 'package:watch_this/models/movie.dart';
 
 import '../../../services/shared_preferences_service.dart';
@@ -23,6 +25,33 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
     }
     // print('RETURN MovieDataSourceLocal - getExtendedMovieData() - response == null [${response == null}]');
     return result;
+  }
+
+  Future<Map?> getMovieCreditsData(int movieId) async {
+    // print('MovieDataSourceLocal - getMovieCreditsData()');
+    List<Cast> cast = [];
+    List<Crew> crew = [];
+    Map<String, dynamic>? credits;
+    var responseCast = _shared.getExtendedMovieCastData(movieId);
+    var responseCrew = _shared.getExtendedMovieCrewData(movieId);
+
+    if (responseCast != null) {
+      List castJsonList = json.decode(responseCast) as List;
+      cast = castJsonList.map((e) => Cast.fromJson(e)).toList();
+    }
+    if (responseCrew != null) {
+      List crewJsonList = json.decode(responseCrew) as List;
+      crew = crewJsonList.map((e) => Crew.fromJson(e)).toList();
+    }
+
+    if(cast.isNotEmpty && crew.isNotEmpty) {
+      credits = {
+        'cast': cast,
+        'crew': crew,
+      };
+    }
+    // print('RETURN MovieDataSourceLocal - getMovieCreditsData() - credits == null [${credits == null}]');
+    return credits;
   }
 
   Future<List<Movie>?> getTrendingMoviesData() async {

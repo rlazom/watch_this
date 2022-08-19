@@ -70,6 +70,10 @@ dependencies:
   flutter_svg: ^1.1.3
   # ------------------------------------------------------------------------------------------------
 
+  # Utilities to make working with 'Duration's easier. Formats duration in human readable form
+  # and also parses duration in human readable form to Dart's Duration.
+  duration: ^3.0.11
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

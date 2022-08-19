@@ -2,7 +2,7 @@ class Company {
   final int id;
   final String name;
   final String? description;
-  final String logoPath;
+  final String? logoPath;
   final String originCountry;
   final int? parentCompany;
   final String? homepage;
@@ -12,7 +12,7 @@ class Company {
     required this.id,
     required this.name,
     this.description,
-    required this.logoPath,
+    this.logoPath,
     required this.originCountry,
     this.parentCompany,
     this.homepage,

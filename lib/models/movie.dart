@@ -22,6 +22,7 @@ class Movie {
   final String originalTitle;
   final String overview;
   final String? tagline;
+  final Duration? runtime;
   final double popularity;
   final List<Company>? productionCompanies;
   final List<ProductionCountry>? productionCountries;
@@ -49,6 +50,7 @@ class Movie {
     required this.originalTitle,
     required this.overview,
     this.tagline,
+    this.runtime,
     required this.popularity,
     this.productionCompanies,
     this.productionCountries,
@@ -75,6 +77,7 @@ class Movie {
         'original_title': originalTitle,
         'overview': overview,
         'tagline': tagline,
+        'runtime': runtime?.inMinutes,
         'popularity': popularity,
         'production_companies': productionCompanies,
         'production_countries': productionCountries,
@@ -98,11 +101,14 @@ class Movie {
             .map((e) => MovieGenre.fromJson(e))
             .toList();
 
+    // List<Company>? tCompanies;
     List<Company>? tCompanies = jsonMap['production_companies'] == null
         ? null
         : (jsonMap['production_companies'] as List)
             .map((e) => Company.fromJson(e))
             .toList();
+
+    // List<ProductionCountry>? tProductionCountries;
     List<ProductionCountry>? tProductionCountries =
         jsonMap['production_countries'] == null
             ? null
@@ -111,6 +117,7 @@ class Movie {
                 .toList();
 
     DateTime releaseDateDt = dateFormat.parse(jsonMap['release_date']);
+    Duration? runtimeDr = jsonMap['runtime'] == null ? null : Duration(minutes: jsonMap['runtime']);
 
     double? tBudget = jsonMap['budget'] == null ? null : double.parse(jsonMap['budget'].toString());
     double? tRevenue = jsonMap['revenue'] == null ? null : double.parse(jsonMap['revenue'].toString());
@@ -131,6 +138,7 @@ class Movie {
         originalTitle: jsonMap['original_title'],
         overview: jsonMap['overview'],
         tagline: jsonMap['tagline'],
+        runtime: runtimeDr,
         popularity: jsonMap['popularity'],
         productionCompanies: tCompanies,
         productionCountries: tProductionCountries,

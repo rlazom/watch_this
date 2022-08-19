@@ -26,6 +26,7 @@ class KUrl {
 class KUrlMovie {
   const KUrlMovie._();
   String details({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId';
+  String credits({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId/credits';
   String keywords({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId/keywords';
   String similar({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId/similar';
   String recommendations({required int movieId}) => '${KUrl.domain}''/3/movie/$movieId/recommendations';

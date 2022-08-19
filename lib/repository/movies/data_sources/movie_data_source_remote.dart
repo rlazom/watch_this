@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:watch_this/models/cast.dart';
+import 'package:watch_this/models/crew.dart';
 
 import '../../../common/constants.dart';
 import '../../../models/movie.dart';
@@ -29,6 +31,36 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
 
     // print('RETURN MovieDataSourceRemote - getExtendedMovieData()');
     return movie;
+  }
+
+  Future<Map> getMovieCreditsData(int movieId) async {
+    // print('MovieDataSourceRemote - getMovieCreditsData()');
+    String url = R.urls.movieModule.credits(movieId: movieId);
+
+    dynamic data;
+    try {
+      // print('TRY BEFORE fetchData(url: "$url")');
+      data = await fetchData(url: url);
+      // print('AFTER fetchData()');
+    } catch (error) {
+      print('MovieDataSourceRemote.getMovieCreditsData() - ["$error"');
+      rethrow;
+    }
+
+    List castJsonList = data['cast'] as List;
+    List crewJsonList = data['crew'] as List;
+    List<Cast> cast = castJsonList.map((e) => Cast.fromJson(e)).toList();
+    List<Crew> crew = crewJsonList.map((e) => Crew.fromJson(e)).toList();
+    shared.setExtendedMovieCastData(json.encode(cast), movieId);
+    shared.setExtendedMovieCrewData(json.encode(crew), movieId);
+
+    Map<String, dynamic> credits = {
+      'cast': cast,
+      'crew': crew,
+    };
+
+    // print('RETURN MovieDataSourceRemote - getExtendedMovieData()');
+    return credits;
   }
 
   Future<List<Movie>> getTrendingMoviesData() async {

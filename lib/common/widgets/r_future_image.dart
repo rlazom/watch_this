@@ -9,6 +9,7 @@ class RFutureImage extends StatelessWidget {
   final Widget? defaultImgWdt;
   final Future<File?>? fImage;
   final Size imgSize;
+  final Alignment imgAlignment;
   final BoxFit? boxFit;
 
   const RFutureImage({
@@ -17,6 +18,7 @@ class RFutureImage extends StatelessWidget {
     this.defaultImgWdt,
     required this.fImage,
     this.imgSize = const Size(30, 30),
+    this.imgAlignment = Alignment.center,
     this.boxFit,
   }) : super(key: key);
 
@@ -58,6 +60,7 @@ class RFutureImage extends StatelessWidget {
               imageFile: tFile,
               imgSize: imgSize,
               boxFit: isSvg ? BoxFit.contain : boxFit,
+              imgAlignment: imgAlignment,
             );
           } else {
             return defaultWdt;

@@ -8,6 +8,8 @@ enum SharePrefsAttribute {
   userLocale,
   checkedMediaData,
   extendedMovie,
+  extendedMovieCast,
+  extendedMovieCrew,
   trendingMovies,
   trendingMoviesDate,
   popularMovies,
@@ -74,13 +76,30 @@ class SharedPreferencesService {
     _prefs.setString(SharePrefsAttribute.checkedMediaData.toShortString(), json.encode(list.toList()));
   }
 
-  /// EXTENDED MOVIE
+  /// EXTENDED MOVIE - DETAILS
   String? getExtendedMovieData(int movieId) {
+    // _prefs.clear();
+    // return null;
     return _prefs.getString('${SharePrefsAttribute.extendedMovie.toShortString()}_$movieId');
   }
 
   void setExtendedMovieData(String value, int movieId) {
     _prefs.setString('${SharePrefsAttribute.extendedMovie.toShortString()}_$movieId', value);
+  }
+
+  /// EXTENDED MOVIE - CREDITS
+  String? getExtendedMovieCastData(int movieId) {
+    return _prefs.getString('${SharePrefsAttribute.extendedMovieCast.toShortString()}_$movieId');
+  }
+  String? getExtendedMovieCrewData(int movieId) {
+    return _prefs.getString('${SharePrefsAttribute.extendedMovieCrew.toShortString()}_$movieId');
+  }
+
+  void setExtendedMovieCastData(String value, int movieId) {
+    _prefs.setString('${SharePrefsAttribute.extendedMovieCast.toShortString()}_$movieId', value);
+  }
+  void setExtendedMovieCrewData(String value, int movieId) {
+    _prefs.setString('${SharePrefsAttribute.extendedMovieCrew.toShortString()}_$movieId', value);
   }
 
   /// TRENDING MOVIES

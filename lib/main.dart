@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'common/providers.dart';
 import 'common/providers/language_provider.dart';
 import 'common/routes.dart';
+import 'common/themes.dart';
 import 'l10n/app_localizations.dart';
 import 'services/navigation_service.dart';
 import 'services/shared_preferences_service.dart';
@@ -34,8 +35,9 @@ class WatchThisApp extends StatelessWidget {
         builder: (context, locale, child) {
           return MaterialApp(
             title: appName,
-            theme: ThemeData.light(),
-            darkTheme: ThemeData.dark(),
+            theme: themeLight,
+            // theme: ThemeData.light(),
+            // darkTheme: ThemeData.dark(),
             themeMode: EasyDynamicTheme.of(context).themeMode,
             locale: locale.currentLocale,
             supportedLocales: locale.supportedLocales,

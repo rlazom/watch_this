@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:watch_this/models/cast.dart';
+import 'package:watch_this/models/crew.dart';
 import 'package:watch_this/models/movie.dart';
+import 'package:watch_this/models/person.dart';
 
 import '../../../../repository/movies/movie_repository.dart';
 import '../../../../services/shared_preferences_service.dart';
@@ -14,11 +17,12 @@ class MovieDetailsViewModel extends LoaderViewModel {
   final MovieRepository movieRepository;
   late UserProvider userProvider;
   Movie? movie;
+  final movieCreditsNotifier = ValueNotifier<List<Person>>([]);
   List<Movie> trendingList = [];
   List<Movie> popularList = [];
 
   final ValueNotifier<bool> centerMapOnUserPositionNotifier =
-  ValueNotifier<bool>(true);
+      ValueNotifier<bool>(true);
   bool mapReady = false;
 
   MovieDetailsViewModel()
@@ -52,6 +56,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
     markAsSuccess();
 
     _updateMediaFiles();
+    _getCastData(movie!.id, forceReload: forceReload);
   }
 
   Future<Movie> _getMovieExtendedData(int movieId,
@@ -59,7 +64,9 @@ class MovieDetailsViewModel extends LoaderViewModel {
     // print('MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId")');
 
     Movie tMovie = await movieRepository.getExtendedMovieData(
-        source: forceReload ? SourceType.REMOTE : null, movieId: movieId);
+      movieId: movieId,
+      source: forceReload ? SourceType.REMOTE : null,
+    );
 
     // print('RETURN MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId")');
     return tMovie;
@@ -68,29 +75,49 @@ class MovieDetailsViewModel extends LoaderViewModel {
   _updateMediaFiles() {
     if (movie!.posterPath.trim() != '') {
       String imageUrl = R.urls.image(movie!.posterPath);
-      movie!.fPoster =
-          movieRepository.getItemFile(fileUrl: imageUrl, matchSizeWithOrigin: false);
+      movie!.fPoster = movieRepository.getItemFile(
+          fileUrl: imageUrl, matchSizeWithOrigin: false);
     }
     if (movie!.backdropPath.trim() != '') {
       String imageUrl = R.urls.image(movie!.backdropPath);
-      movie!.fBackdrop =
-          movieRepository.getItemFile(fileUrl: imageUrl, matchSizeWithOrigin: false);
+      movie!.fBackdrop = movieRepository.getItemFile(
+          fileUrl: imageUrl, matchSizeWithOrigin: false);
     }
+  }
 
-    // for (Workout item in fullList) {
-    //   if (item.level!.image != null && item.level!.image!.trim() != '') {
-    //     item.level!.fImage =
-    //         _workoutRepository.getWorkoutItemFile(fileUrl: item.level!.image!);
-    //   }
-    //
-    //   for (Tool tool in item.tools ?? []) {
-    //     String? toolImage = tool.image;
-    //
-    //     if (toolImage != null && toolImage.trim() != '') {
-    //       tool.fImage = _workoutRepository.getWorkoutItemFile(
-    //           fileUrl: toolImage, matchSizeWithOrigin: false);
-    //     }
-    //   }
-    // }
+  // TODO
+  _getImdbData() {}
+
+  _getCastData(int movieId, {bool forceReload = false}) async {
+    Map movieCredits = await movieRepository.getMovieCreditsData(
+      movieId: movieId,
+      source: forceReload ? SourceType.REMOTE : null,
+    );
+
+    List<Cast> movieCastList = [];
+    List<Crew> movieCrewList = [];
+
+    if(movieCredits['cast'] != null) {
+      movieCastList = List.from(movieCredits['cast']);
+    }
+    if(movieCredits['crew'] != null) {
+      movieCrewList = List.from(movieCredits['crew']);
+    }
+    List<Person> movieCreditsList = [];
+
+    const List<String> crewJobs = ['Director', 'Co-Director', 'Producer'];
+    movieCastList.removeWhere((element) => element.order > 9);
+    movieCrewList.retainWhere((element) => crewJobs.contains(element.job));
+    movieCreditsList.addAll(movieCastList);
+    movieCreditsList.addAll(movieCrewList);
+
+    for(Person person in movieCreditsList) {
+      if (person.profilePath != null && person.profilePath!.trim() != '') {
+        String imageUrl = R.urls.image(person.profilePath!);
+        person.fProfile = movieRepository.getItemFile(
+            fileUrl: imageUrl, matchSizeWithOrigin: false);
+      }
+    }
+    movieCreditsNotifier.value = List.from(movieCreditsList);
   }
 }
