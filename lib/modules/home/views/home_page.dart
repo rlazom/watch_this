@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_shadow/simple_shadow.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:watch_this/common/widgets/grid_item_wdt.dart';
 import 'package:watch_this/common/widgets/r_future_image.dart';
@@ -17,11 +20,23 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String appTitle = viewModel.translate('APP_NAME');
+    final currentTrendingMovieIdNotifier = ValueNotifier<double>(0.0);
 
     PageController controller = PageController(
       viewportFraction: 1,
       keepPage: true,
+      initialPage: 0,
     );
+    // if (controller.hasListeners) {
+    //   controller.removeListener(() {
+    //     currentTrendingMovieIdNotifier.value =
+    //         controller.page ?? controller.initialPage.toDouble();
+    //   });
+    // }
+    controller.addListener(() {
+      currentTrendingMovieIdNotifier.value =
+          controller.page ?? controller.initialPage.toDouble();
+    });
 
     Color backgroundColor = Colors.black;
 
@@ -166,16 +181,20 @@ class HomePage extends StatelessWidget {
                                                             .bottomCenter,
                                                         colors: [
                                                           Colors.black
-                                                              .withOpacity(0.6),
+                                                              .withOpacity(0.8),
                                                           Colors.black45,
-                                                          Colors.transparent,
-                                                          Colors.transparent,
+                                                          // Colors.transparent,
+                                                          // Colors.transparent,
+                                                          backgroundColor
+                                                              .withOpacity(0.3),
+                                                          backgroundColor
+                                                              .withOpacity(0.3),
                                                           backgroundColor,
                                                         ],
                                                         stops: const [
-                                                          0.02,
-                                                          0.09,
-                                                          0.20,
+                                                          0.08,
+                                                          0.23,
+                                                          0.35,
                                                           0.80,
                                                           0.95,
                                                         ],
@@ -191,12 +210,16 @@ class HomePage extends StatelessWidget {
                                                     child: Align(
                                                       alignment: Alignment
                                                           .bottomCenter,
-                                                      child: Text(
-                                                        movie.title,
-                                                        // '${movie.title} ${movie.title} ${movie.title}',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .headline1,
+                                                      child: FittedBox(
+                                                        fit: BoxFit.scaleDown,
+                                                        child: Text(
+                                                          movie.title,
+                                                          // '${movie.title} ${movie.title} ${movie.title}',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .headline1,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -204,6 +227,59 @@ class HomePage extends StatelessWidget {
                                               ),
                                             );
                                           });
+                                    }),
+                                ValueListenableBuilder<double>(
+                                    valueListenable:
+                                        currentTrendingMovieIdNotifier,
+                                    builder:
+                                        (context, currentTrendingMovieId, _) {
+                                      int index =
+                                          (currentTrendingMovieId - 0.023148)
+                                              .round();
+
+                                      int integer =
+                                          currentTrendingMovieId.floor();
+                                      double rest =
+                                          currentTrendingMovieId - integer;
+
+                                      return Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 16.0),
+                                          child: Transform(
+                                            alignment: Alignment.center,
+                                            transform: Matrix4.identity()
+                                              ..setEntry(3, 2, 0.003)
+                                              ..rotateY(rest * 3)
+                                              ..rotateY(
+                                                  rest > 0.5 ? math.pi : 0),
+                                            child: SimpleShadow(
+                                              color: Colors.black,
+                                              offset: const Offset(1, 5),
+                                              opacity: 0.4,
+                                              sigma: 3,
+                                              child: RFutureImage(
+                                                // fn: viewModel.expandImage,
+                                                tag: 'TM_',
+                                                fImage: viewModel
+                                                    .trendingListNotifier.value
+                                                    ?.elementAt(index)
+                                                    .fPoster,
+                                                defaultImgWdt: const Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Icon(
+                                                    Icons.movie_outlined,
+                                                    color: Colors.white30,
+                                                  ),
+                                                ),
+                                                imgSize: const Size(80, 120),
+                                                boxFit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
                                     }),
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -259,11 +335,11 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 16.0),
 
-                      /// MY MOVIE LIST
+                      /// MY MOVIES TO WATCH LIST
                       ValueListenableBuilder<List<Movie>?>(
                           valueListenable: viewModel.myMoviesListNotifier,
-                          builder: (context, popularList, _) {
-                            if (popularList == null) {
+                          builder: (context, myMoviesToWatch, _) {
+                            if (myMoviesToWatch == null) {
                               return Stack(
                                 alignment: Alignment.center,
                                 children: [
@@ -281,12 +357,12 @@ class HomePage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  const Text('MY MOVIES...'),
+                                  const Text('MY MOVIES TO WATCH...'),
                                 ],
                               );
                             }
 
-                            if (popularList.isEmpty) {
+                            if (myMoviesToWatch.isEmpty) {
                               return Container();
                             }
 
@@ -294,7 +370,7 @@ class HomePage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('MY MOVIES',
+                                Text('MY MOVIES TO WATCH',
                                     style:
                                         Theme.of(context).textTheme.headline1),
                                 Material(
@@ -304,11 +380,13 @@ class HomePage extends StatelessWidget {
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      children: popularList
+                                      children: myMoviesToWatch
                                           .map((e) => GridItemWdt(
                                                 fn: () => viewModel
                                                     .navigateToDetails(e),
-                                                fImageDefault: Icons.movie_outlined,
+                                                tag: 'MTW_',
+                                                fImageDefault:
+                                                    Icons.movie_outlined,
                                                 title: e.title,
                                                 fImage: e.fPoster,
                                               ))
@@ -337,7 +415,7 @@ class HomePage extends StatelessWidget {
                                         key: key ??
                                             const Key('circular_loading'),
                                         valueColor:
-                                        AlwaysStoppedAnimation<Color>(
+                                            AlwaysStoppedAnimation<Color>(
                                           Colors.blue.withOpacity(0.6),
                                         ),
                                       ),
@@ -358,22 +436,24 @@ class HomePage extends StatelessWidget {
                               children: [
                                 Text('POPULAR MOVIES',
                                     style:
-                                    Theme.of(context).textTheme.headline1),
+                                        Theme.of(context).textTheme.headline1),
                                 Material(
                                   color: Colors.transparent,
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: popularList
                                           .map((e) => GridItemWdt(
-                                        fn: () => viewModel
-                                            .navigateToDetails(e),
-                                        fImageDefault: Icons.movie_outlined,
-                                        title: e.title,
-                                        fImage: e.fPoster,
-                                      ))
+                                                fn: () => viewModel
+                                                    .navigateToDetails(e),
+                                                tag: 'PM_',
+                                                fImageDefault:
+                                                    Icons.movie_outlined,
+                                                title: e.title,
+                                                fImage: e.fPoster,
+                                              ))
                                           .toList(),
                                     ),
                                   ),
@@ -383,10 +463,10 @@ class HomePage extends StatelessWidget {
                             );
                           }),
 
-                      Text('POPULAR SERIES',
-                          style:
-                          Theme.of(context).textTheme.headline1),
-                      const SizedBox(height: 16.0),
+                      // Text('POPULAR SERIES',
+                      //     style:
+                      //     Theme.of(context).textTheme.headline1),
+                      // const SizedBox(height: 16.0),
                     ],
                   ),
                 ),

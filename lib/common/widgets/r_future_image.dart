@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'r_image.dart';
 
 class RFutureImage extends StatelessWidget {
+  final String tag;
   final String? defaultImgRoute;
   final Widget? defaultImgWdt;
   final Future<File?>? fImage;
@@ -17,6 +18,7 @@ class RFutureImage extends StatelessWidget {
 
   const RFutureImage({
     Key? key,
+    this.tag = '',
     this.defaultImgRoute,
     this.defaultImgWdt,
     required this.fImage,
@@ -42,12 +44,16 @@ class RFutureImage extends StatelessWidget {
           image: AssetImage(defaultImgRoute!),
           height: imgSize.height,
           width: imgSize.width,
+          alignment: imgAlignment,
         );
-    defaultWdt = SizedBox(
-      width: imgSize.width == 0 ? double.infinity : imgSize.width,
-      height: imgSize.height == 0 ? double.infinity : imgSize.height,
-      child: FittedBox(
-        child: defaultWdt,
+    defaultWdt = Container(
+      alignment: imgAlignment,
+      child: SizedBox(
+        width: imgSize.width == 0 ? double.infinity : imgSize.width,
+        height: imgSize.height == 0 ? double.infinity : imgSize.height,
+        child: FittedBox(
+          child: defaultWdt,
+        ),
       ),
     );
 
@@ -62,12 +68,12 @@ class RFutureImage extends StatelessWidget {
           if (snapshot.hasData) {
             final File tFile = snapshot.data!;
             bool isSvg = p.extension(tFile.path).toLowerCase() == '.svg';
-            String tag = tFile.path.split('/').last.split('.').first;
+            String tagName = tFile.path.split('/').last.split('.').first;
 
             return InkWell(
               onTap: voidCallback ?? (fn == null ? null : () => fn!(tFile.path)),
               child: Hero(
-                tag: tag,
+                tag: '$tag''$tagName',
                 child: RImage(
                   imageFile: tFile,
                   imgSize: imgSize,

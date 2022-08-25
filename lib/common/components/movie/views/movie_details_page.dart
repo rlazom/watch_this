@@ -69,14 +69,6 @@ class MovieDetailsPage extends StatelessWidget {
             appBar: AppBar(
               title: const Text('DETAILS'),
               actions: [
-                // IconButton(
-                //   onPressed: (){},
-                //   icon: const Icon(Icons.remove_red_eye_outlined),
-                // ),
-                // IconButton(
-                //   onPressed: (){},
-                //   icon: const Icon(Icons.bookmark_outline),
-                // ),
                 Consumer<UserProvider>(
                     builder: (context, provider, _) {
                       bool? movieIsLike = provider.getMovieRate(viewModel.movie!.id);
@@ -102,21 +94,6 @@ class MovieDetailsPage extends StatelessWidget {
                               return [
                                 PopupMenuItem(
                                   height: 0.0,
-                                  value: () => provider.toggleWatched(viewModel.movie!.id),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(movieIsWatched ? Icons.bookmark : Icons.bookmark_outline),
-                                        const SizedBox(width: 8.0),
-                                        const Text('WATCHED'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  height: 0.0,
                                   value: () => provider.toggleToWatch(viewModel.movie!.id),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -130,10 +107,25 @@ class MovieDetailsPage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
+                                PopupMenuItem(
+                                  height: 0.0,
+                                  value: () => provider.toggleWatched(viewModel.movie!.id),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(movieIsWatched ? Icons.bookmark : Icons.bookmark_outline),
+                                        const SizedBox(width: 8.0),
+                                        const Text('WATCHED'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ];
                             },
                           ),
-                          SizedBox(width: 8.0,),
+                          const SizedBox(width: 8.0,),
                         ],
                       );
                     }

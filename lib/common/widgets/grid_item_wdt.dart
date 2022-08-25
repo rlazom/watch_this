@@ -5,6 +5,7 @@ import 'r_future_image.dart';
 
 class GridItemWdt extends StatelessWidget {
   final VoidCallback? fn;
+  final String tag;
   final Future<File?>? fImage;
   final IconData fImageDefault;
   final Size? imageSize;
@@ -17,6 +18,7 @@ class GridItemWdt extends StatelessWidget {
   const GridItemWdt({
     Key? key,
     this.fn,
+    this.tag = '',
     required this.fImage,
     this.fImageDefault = Icons.person,
     this.imageSize,
@@ -50,13 +52,23 @@ class GridItemWdt extends StatelessWidget {
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RFutureImage(
+                tag: tag,
                 fImage: fImage,
-                defaultImgWdt: Padding(
-                  padding: EdgeInsets.all(imagePadding),
-                  child: Icon(
-                    fImageDefault,
-                    color: Colors.white30,
-                    size: 64.0,
+                imgAlignment: Alignment.topCenter,
+                defaultImgWdt: Container(
+                  width: 200,
+                  height: 400,
+                  color: Colors.white12,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: FittedBox(
+                      child: Icon(
+                        fImageDefault,
+                        // color: Colors.white30,
+                        color: Colors.black45,
+                        size: 64.0,
+                      ),
+                    ),
                   ),
                 ),
                 // imgSize: 100.0,

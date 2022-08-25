@@ -126,6 +126,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
   }
 
   // TODO
+
   _getImdbData() {}
 
   _getCollectionMoviesData(int collectionId, {bool forceReload = false}) async {

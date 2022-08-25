@@ -144,22 +144,25 @@ class Movie implements Comparable<Movie> {
                 .toList();
 
     List<WatchProvider>? tWatchProviders = [];
+    Set<WatchProvider>? tWatchProvidersSet = {};
     if (jsonMap['watch/providers'] != null) {
       Map providersMap = jsonMap['watch/providers']['results'];
 
       for (String locale in providersMap.keys) {
         Map typesMap = providersMap[locale];
         for (String type in typesMap.keys) {
+
           if (type != 'link') {
             List originList = typesMap[type] as List;
             List<WatchProvider> tProviders = originList
                 .map((e) =>
                     WatchProvider.fromJson(e, locale: locale, type: type))
                 .toList();
-            tWatchProviders.addAll(tProviders);
+            tWatchProvidersSet.addAll(tProviders);
           }
         }
       }
+      tWatchProviders = List.from(tWatchProvidersSet)..sort();
     }
 
     Set<String>? certificationsUnique;
@@ -233,8 +236,7 @@ class Movie implements Comparable<Movie> {
       backdropPath: jsonMap['backdrop_path'],
       posterPath: jsonMap['poster_path'],
       watchProviders: jsonMap['watch/providers'],
-      watchProvidersList:
-          tWatchProviders.isEmpty ? null : tWatchProviders.toSet().toList(),
+      watchProvidersList: tWatchProviders.isEmpty ? null : tWatchProviders,
       releaseDates: jsonMap['release_dates'],
       certifications: certificationsUnique?.toList(),
       similar: jsonMap['recommendations'],

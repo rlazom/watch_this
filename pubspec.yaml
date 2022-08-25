@@ -77,6 +77,9 @@ dependencies:
   # Customizable animated page indicator with a set of built-in effects.
   smooth_page_indicator: ^1.0.0+2
 
+  # A customizable shadow for any widget
+  simple_shadow: ^0.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

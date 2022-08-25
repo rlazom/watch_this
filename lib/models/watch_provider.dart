@@ -36,14 +36,13 @@ class WatchProvider implements Comparable<WatchProvider> {
 
   @override
   int get hashCode {
-    return providerId.hashCode;
+    return providerName.hashCode;
   }
 
   @override
   bool operator ==(Object other) {
     return other is WatchProvider &&
-        other.providerId == providerId &&
-        other.providerName == providerName;
+        other.providerName.toString() == providerName.toString();
   }
 
   @override
