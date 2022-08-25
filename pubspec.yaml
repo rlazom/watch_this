@@ -74,6 +74,9 @@ dependencies:
   # and also parses duration in human readable form to Dart's Duration.
   duration: ^3.0.11
 
+  # Customizable animated page indicator with a set of built-in effects.
+  smooth_page_indicator: ^1.0.0+2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

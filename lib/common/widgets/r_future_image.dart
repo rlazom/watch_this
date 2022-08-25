@@ -11,6 +11,9 @@ class RFutureImage extends StatelessWidget {
   final Size imgSize;
   final Alignment imgAlignment;
   final BoxFit? boxFit;
+  final bool showLoading;
+  final Function? fn;
+  final VoidCallback? voidCallback;
 
   const RFutureImage({
     Key? key,
@@ -20,6 +23,9 @@ class RFutureImage extends StatelessWidget {
     this.imgSize = const Size(30, 30),
     this.imgAlignment = Alignment.center,
     this.boxFit,
+    this.showLoading = true,
+    this.fn,
+    this.voidCallback,
   }) : super(key: key);
 
   @override
@@ -30,6 +36,7 @@ class RFutureImage extends StatelessWidget {
       return Container();
     }
 
+
     Widget defaultWdt = defaultImgWdt ??
         Image(
           image: AssetImage(defaultImgRoute!),
@@ -37,8 +44,8 @@ class RFutureImage extends StatelessWidget {
           width: imgSize.width,
         );
     defaultWdt = SizedBox(
-      height: imgSize.height,
-      width: imgSize.width,
+      width: imgSize.width == 0 ? double.infinity : imgSize.width,
+      height: imgSize.height == 0 ? double.infinity : imgSize.height,
       child: FittedBox(
         child: defaultWdt,
       ),
@@ -54,25 +61,39 @@ class RFutureImage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
             final File tFile = snapshot.data!;
-            bool isSvg = p.extension(tFile.path).toLowerCase() != '.svg';
+            bool isSvg = p.extension(tFile.path).toLowerCase() == '.svg';
+            String tag = tFile.path.split('/').last.split('.').first;
 
-            return RImage(
-              imageFile: tFile,
-              imgSize: imgSize,
-              boxFit: isSvg ? BoxFit.contain : boxFit,
-              imgAlignment: imgAlignment,
+            return InkWell(
+              onTap: voidCallback ?? (fn == null ? null : () => fn!(tFile.path)),
+              child: Hero(
+                tag: tag,
+                child: RImage(
+                  imageFile: tFile,
+                  imgSize: imgSize,
+                  boxFit: isSvg ? BoxFit.contain : boxFit,
+                  imgAlignment: imgAlignment,
+                ),
+              ),
             );
           } else {
             return defaultWdt;
           }
         }
-        return SizedBox(
-          width: imgSize.width,
-          height: imgSize.height,
-          child: CircularProgressIndicator(
-              key: const Key('circular_loading_flex_future_image'),
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  Colors.blue.withOpacity(0.6))),
+
+        if(!showLoading) {
+          return const SizedBox();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: CircularProgressIndicator(
+                key: const Key('circular_loading_flex_future_image'),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Colors.blue.withOpacity(0.6))),
+          ),
         );
       },
     );

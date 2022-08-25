@@ -6,10 +6,16 @@ import 'package:watch_this/common/extensions.dart';
 enum SharePrefsAttribute {
   itsFirstTime,
   userLocale,
+  userRates,
+  userFavorites,
+  userWatched,
+  userToWatch,
   checkedMediaData,
   extendedMovie,
   extendedMovieCast,
   extendedMovieCrew,
+  collectionMovies,
+  personMovies,
   trendingMovies,
   trendingMoviesDate,
   popularMovies,
@@ -34,9 +40,10 @@ class SharedPreferencesService {
   /// singleton boilerplate
 
   late SharedPreferences _prefs;
-  // SharedPreferences get prefs => _prefs;
 
   Future initialize() async => _prefs = await SharedPreferences.getInstance();
+
+  sudoKill() => _prefs.clear();
 
   /// CHECK IF IT'S FIRST TIME
   bool getItsFirstTime() => _prefs.getBool(SharePrefsAttribute.itsFirstTime.toShortString()) ?? true;
@@ -56,6 +63,35 @@ class SharedPreferencesService {
 
   void removeUserLocale() {
     _prefs.remove(SharePrefsAttribute.userLocale.toShortString());
+  }
+
+  /// USER MOVIE LISTS
+  String? getUserRates() {
+    return _prefs.getString(SharePrefsAttribute.userRates.toShortString());
+  }
+  void setUserRates(String value) {
+    _prefs.setString(SharePrefsAttribute.userRates.toShortString(), value);
+  }
+
+  String? getUserFavorites() {
+    return _prefs.getString(SharePrefsAttribute.userFavorites.toShortString());
+  }
+  void setUserFavorites(String value) {
+    _prefs.setString(SharePrefsAttribute.userFavorites.toShortString(), value);
+  }
+
+  String? getUserWatched() {
+    return _prefs.getString(SharePrefsAttribute.userWatched.toShortString());
+  }
+  void setUserWatched(String value) {
+    _prefs.setString(SharePrefsAttribute.userWatched.toShortString(), value);
+  }
+
+  String? getUserToWatch() {
+    return _prefs.getString(SharePrefsAttribute.userToWatch.toShortString());
+  }
+  void setUserToWatch(String value) {
+    _prefs.setString(SharePrefsAttribute.userToWatch.toShortString(), value);
   }
 
   /// CHECKED MEDIA
@@ -100,6 +136,24 @@ class SharedPreferencesService {
   }
   void setExtendedMovieCrewData(String value, int movieId) {
     _prefs.setString('${SharePrefsAttribute.extendedMovieCrew.toShortString()}_$movieId', value);
+  }
+
+  /// EXTENDED PERSON - MOVIES
+  String? getPersonMoviesData(int personId) {
+    return _prefs.getString('${SharePrefsAttribute.personMovies.toShortString()}_$personId');
+  }
+
+  void setPersonMoviesData(String value, int personId) {
+    _prefs.setString('${SharePrefsAttribute.personMovies.toShortString()}_$personId', value);
+  }
+
+  /// COLLECTION - MOVIES
+  String? getCollectionMoviesData(int collectionId) {
+    return _prefs.getString('${SharePrefsAttribute.collectionMovies.toShortString()}_$collectionId');
+  }
+
+  void setCollectionMoviesData(String value, int collectionId) {
+    _prefs.setString('${SharePrefsAttribute.collectionMovies.toShortString()}_$collectionId', value);
   }
 
   /// TRENDING MOVIES

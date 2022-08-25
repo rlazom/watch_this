@@ -16,10 +16,14 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
     // print('MovieDataSourceRemote - getExtendedMovieData()');
     String url = R.urls.movieModule.details(movieId: movieId);
 
+    Map queryMap = {
+      'append_to_response': 'watch/providers,release_dates,similar'
+    };
+
     dynamic data;
     try {
       // print('TRY BEFORE fetchData(url: "$url")');
-      data = await fetchData(url: url);
+      data = await fetchData(url: url, query: queryMap);
       // print('AFTER fetchData()');
     } catch (error) {
       print('MovieDataSourceRemote.getExtendedMovieData() - ["$error"');
@@ -63,6 +67,64 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
     return credits;
   }
 
+  Future<List<Movie>> getCollectionMoviesData(int collectionId) async {
+    // print('MovieDataSourceRemote - getCollectionMoviesData()');
+    String url = R.urls.collection(collectionId);
+
+    dynamic data;
+    try {
+      // print('TRY BEFORE fetchData(url: "$url")');
+      data = await fetchData(url: url);
+      // print('AFTER fetchData()');
+    } catch (error) {
+      print('MovieDataSourceRemote.getCollectionMoviesData() - ["$error"');
+      rethrow;
+    }
+
+    List list = data['parts'] as List;
+    List<Movie> collectionMovies = list.map((e) => Movie.fromJson(e)).toList();
+    shared.setCollectionMoviesData(json.encode(collectionMovies), collectionId);
+
+    // print('RETURN MovieDataSourceRemote - getCollectionMoviesData() - ${collectionMovies.length}');
+    return collectionMovies;
+  }
+
+  Future<List<Movie>> getPersonMoviesData(int personId) async {
+    // print('MovieDataSourceRemote - getPersonMoviesData()');
+    String url = R.urls.personModule.movies(personId: personId);
+
+    dynamic data;
+    try {
+      // print('TRY BEFORE fetchData(url: "$url")');
+      data = await fetchData(url: url);
+      // print('AFTER fetchData()');
+    } catch (error) {
+      print('MovieDataSourceRemote.getPersonMoviesData() - ["$error"');
+      rethrow;
+    }
+
+    List castJsonList = data['cast'] as List;
+    List crewJsonList = data['crew'] as List;
+    List<Movie> personMovies = [];
+    List<Movie> personMoviesCast = castJsonList.map((e) => Movie.fromJson(e)).toList();
+    List<Movie> personMoviesCrew = crewJsonList.map((e) => Movie.fromJson(e)).toList();
+
+    personMovies.addAll(personMoviesCast);
+    for(Movie movie in personMoviesCrew) {
+      if(!personMovies.contains(movie)) {
+        personMovies.add(movie);
+      } else {
+        Movie tMovie = personMovies.firstWhere((element) => element == movie);
+        if(movie.job != null) {
+          tMovie.character = '${tMovie.character}  ${movie.job}';
+        }
+      }
+    }
+    shared.setPersonMoviesData(json.encode(personMovies), personId);
+
+    return personMovies;
+  }
+
   Future<List<Movie>> getTrendingMoviesData() async {
     // print('MovieDataSourceRemote - getTrendingMoviesData()');
     String url = R.urls.trending;
@@ -85,6 +147,7 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
   }
 
   Future<List<Movie>> getPopularMoviesData() async {
+    // print('MovieDataSourceRemote - getPopularMoviesData()');
     String url = R.urls.popularity;
 
     dynamic data;
@@ -99,6 +162,7 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
     List<Movie> movieList = list.map((e) => Movie.fromJson(e)).toList();
     shared.setPopularMoviesData(json.encode(movieList));
 
+    // print('MovieDataSourceRemote - getPopularMoviesData() - RETURN ${movieList.length}');
     return movieList;
   }
 

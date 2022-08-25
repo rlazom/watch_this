@@ -29,6 +29,26 @@ class Person {
   String get job {
     return this is Crew ? (this as Crew).job : (this as Cast).character;
   }
+  set job(String newJob) {
+    this is Crew ? ((this as Crew).job += ' / $newJob') : ((this as Cast).character += ' / $newJob');
+  }
+
+  @override
+  String toString() {
+    return name;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is Person &&
+        other.id == id &&
+        other.name == name;
+  }
 
   Map<String, dynamic> toJson() => {
     'adult': adult,

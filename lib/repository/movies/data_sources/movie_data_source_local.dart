@@ -54,6 +54,65 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
     return credits;
   }
 
+  Future<List<Movie>?> getCollectionMoviesData(int collectionId) async {
+    // print('MovieDataSourceLocal - getCollectionMoviesData()');
+    List<Movie>? collectionMovies;
+    var response = _shared.getCollectionMoviesData(collectionId);
+
+    if (response != null) {
+      List list = json.decode(response) as List;
+      collectionMovies = list.map((e) => Movie.fromJson(e)).toList();
+    }
+
+    // print('RETURN MovieDataSourceLocal - getCollectionMoviesData() - credits == null [${credits == null}]');
+    return collectionMovies;
+  }
+
+  Future<List<Movie>?> getPersonMoviesData(int personId) async {
+    // print('MovieDataSourceLocal - getMovieCreditsData()');
+    List<Movie>? personMoviesCast;
+    // List<Crew> crew = [];
+    // Map<String, dynamic>? credits;
+    var responseCast = _shared.getPersonMoviesData(personId);
+    // var responseCrew = _shared.getExtendedMovieCrewData(movieId);
+
+    if (responseCast != null) {
+      List castJsonList = json.decode(responseCast) as List;
+      personMoviesCast = castJsonList.map((e) => Movie.fromJson(e)).toList();
+    }
+    // if (responseCrew != null) {
+    //   List crewJsonList = json.decode(responseCrew) as List;
+    //   crew = crewJsonList.map((e) => Crew.fromJson(e)).toList();
+    // }
+
+    // if(cast.isNotEmpty && crew.isNotEmpty) {
+    //   credits = {
+    //     'cast': cast,
+    //     'crew': crew,
+    //   };
+    // }
+    // print('RETURN MovieDataSourceLocal - getMovieCreditsData() - credits == null [${credits == null}]');
+    return personMoviesCast;
+  }
+
+  //TODO
+  Future<List<Movie>?> getMyMoviesData() async {
+    // print('MovieDataSourceLocal - getMyMoviesData()');
+    List<Movie>? result;
+    var response = _shared.getTrendingMoviesData();
+
+    if (response != null) {
+      String trendingMoviesDateStr = _shared.getTrendingMoviesDataDate()!;
+      DateTime trendingMoviesDate = trendingMoviesDateStr.fromTimeStamp;
+
+      if(trendingMoviesDate.difference(DateTime.now()).inDays.abs() < 7) {
+        List list = json.decode(response) as List;
+        result = List.from(list.map((e) => Movie.fromJson(e)).toList());
+      }
+    }
+    return result;
+  }
+
   Future<List<Movie>?> getTrendingMoviesData() async {
     // print('MovieDataSourceLocal - getTrendingMoviesData()');
     List<Movie>? result;
@@ -72,6 +131,7 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
   }
 
   Future<List<Movie>?> getPopularMoviesData() async {
+    // print('MovieDataSourceLocal - getPopularMoviesData()');
     List<Movie>? result;
     var response = _shared.getPopularMoviesData();
 
@@ -79,11 +139,12 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
       String popularMoviesDateStr = _shared.getPopularMoviesDataDate()!;
       DateTime popularMoviesDate = popularMoviesDateStr.fromTimeStamp;
 
-      if(popularMoviesDate.difference(DateTime.now()).inDays.abs() < 7) {
+      if(popularMoviesDate.difference(DateTime.now()).inDays.abs() < 2) {
         List list = json.decode(response) as List;
         result = List.from(list.map((e) => Movie.fromJson(e)).toList());
       }
     }
+    // print('MovieDataSourceLocal - getPopularMoviesData() - RETURN IS NULL ${result == null} ');
     return result;
   }
 

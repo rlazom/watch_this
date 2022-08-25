@@ -19,6 +19,8 @@ class RImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print('RImage - path: "${imageFile.path}"');
+
     final BoxFit boxFit = this.boxFit ?? BoxFit.fitWidth;
     if (p.extension(imageFile.path).toLowerCase() != '.svg') {
       return Image.file(

@@ -78,7 +78,7 @@ class MainPage extends StatelessWidget {
         child: Consumer<MainViewModel>(
           builder: (context, viewModel, child) {
             if (viewModel.normal) {
-              viewModel.scheduleLoadService();
+              viewModel.scheduleLoadService(context: context);
               return _buildSplash();
             }
             return _buildSplash();

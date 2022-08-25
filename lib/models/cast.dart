@@ -2,7 +2,7 @@ import 'person.dart';
 
 class Cast extends Person {
   final int castId;
-  final String character;
+  String character;
   final int order;
 
   Cast({

@@ -1,3 +1,5 @@
+import 'dart:io' show File;
+
 class Company {
   final int id;
   final String name;
@@ -7,6 +9,7 @@ class Company {
   final int? parentCompany;
   final String? homepage;
   final String? headquarters;
+  Future<File?>? fLogo;
 
   Company({
     required this.id,

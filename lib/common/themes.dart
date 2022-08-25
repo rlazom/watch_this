@@ -3,6 +3,7 @@ const Color kTextColor = Colors.white70;
 const Color kText2Color = Colors.white54;
 
 ThemeData themeLight = ThemeData(
+  useMaterial3: true,
   brightness: Brightness.dark,
   primaryColor: const Color(0xFF009FE3),
   secondaryHeaderColor: const Color(0xFF009FE3),

@@ -70,17 +70,17 @@ class HttpService {
   }) async {
     // print('HttpService - fetchData() - url: "$url"');
     http.Response response;
-    try {
-      // await _updateHeaders();
-      url = _updateQuery(url);
-      // print('...AFTER _updateQuery - url: "$url"');
 
-      if(query != null) {
-        for(Map key in query.keys) {
-          url+='&''$key=${query[key]}';
-        }
+    // await _updateHeaders();
+    url = _updateQuery(url);
+    // print('...AFTER _updateQuery - url: "$url"');
+    if (query != null) {
+      for (String key in query.keys.toList()) {
+        url += '&' '$key=${query[key]}';
       }
+    }
 
+    try {
       // print('...AFTER custom query - url: "$url"');
       response =
           await client.get(url.toUri(), headers: headers).timeout(timeout);
@@ -150,6 +150,7 @@ class HttpService {
   }
 
   String _updateQuery(url) {
+    // print('FlexHttpService - _updateQuery()...');
     url += '?';
     token = tmdbApiKey;
     url += 'api_key=$token';
@@ -159,6 +160,7 @@ class HttpService {
     url += '&';
     url += 'language=$locale';
 
+    // print('FlexHttpService - _updateQuery() - RETURN "$url"');
     return url;
   }
 

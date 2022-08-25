@@ -6,11 +6,11 @@ import '../../models/movie.dart';
 import 'data_sources/movie_data_source_remote.dart';
 
 class MovieRepository extends RMasterRepository {
-  MovieRepository()
+  MovieRepository({String? extendedPath})
       : super(
           local: MovieDataSourceLocal(),
           remote: MovieDataSourceRemote(),
-          extendedPath: 'movies',
+          extendedPath: extendedPath ?? 'movies',
         );
 
   Future<Movie> getExtendedMovieData({required int movieId, SourceType? source}) async {
@@ -33,6 +33,39 @@ class MovieRepository extends RMasterRepository {
     };
 
     return await getAllItemsData(allSources: allSources, source: source, param: movieId, singleResult: true);
+  }
+
+  Future<List> getCollectionMoviesData({required int collectionId, SourceType? source}) async {
+    // print('MovieRepository - getMovieCollectionData(movieId: "$movieId")');
+
+    Map<SourceType, Function> allSources = {
+      SourceType.LOCAL: local.getCollectionMoviesData,
+      SourceType.REMOTE: remote.getCollectionMoviesData,
+    };
+
+    return await getAllItemsData(allSources: allSources, source: source, param: collectionId);
+  }
+
+  Future<List<Movie>> getPersonMoviesData({required int personId, SourceType? source}) async {
+    // print('MovieRepository - getPersonMoviesData(personId: "personId")');
+
+    Map<SourceType, Function> allSources = {
+      SourceType.LOCAL: local.getPersonMoviesData,
+      SourceType.REMOTE: remote.getPersonMoviesData,
+    };
+
+    return await getAllItemsData(allSources: allSources, source: source, param: personId, singleResult: true);
+  }
+
+  //TODO
+  Future<List<Movie>> getMyMoviesData({SourceType? source}) async {
+    Map<SourceType, Function> allSources = {
+      SourceType.LOCAL: local.getMyMoviesData,
+      SourceType.REMOTE: remote.getMyMoviesData,
+    };
+
+    List result = await getAllItemsData(allSources: allSources, source: source);
+    return List<Movie>.from(result);
   }
 
   Future<List<Movie>> getTrendingMoviesData({SourceType? source}) async {

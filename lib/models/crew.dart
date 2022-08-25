@@ -2,7 +2,8 @@ import 'person.dart';
 
 class Crew extends Person {
   final String department;
-  final String job;
+  @override
+  String job;
 
   Crew({
     required this.department,

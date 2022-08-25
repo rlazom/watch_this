@@ -15,13 +15,17 @@ class R {
 class KUrl {
   const KUrl._();
   static const String domain = 'https://api.themoviedb.org';
-  final String popularity = '$domain''/4/discover/movie';
+  // final String popularity = '$domain''/4/discover/movie';
+  final String popularity = '$domain''/3/movie/popular';
   final String trending = '$domain''/3/trending/movie/week';
   String company(String companyId) => '$domain''/3/company/$companyId';
+  String collection(int collectionId) => '$domain''/3/collection/$collectionId';
   KUrlMovie get movieModule => const KUrlMovie._();
   KUrlPerson get personModule => const KUrlPerson._();
 
   String image(String imageUrl) => 'https://image.tmdb.org/t/p/w200$imageUrl';
+  String imageW500(String imageUrl) => 'https://image.tmdb.org/t/p/w500$imageUrl';
+  String imageOriginal(String imageUrl) => 'https://image.tmdb.org/t/p/original$imageUrl';
 }
 class KUrlMovie {
   const KUrlMovie._();
@@ -34,8 +38,8 @@ class KUrlMovie {
 }
 class KUrlPerson {
   const KUrlPerson._();
-  String person({required String personId}) => '${KUrl.domain}''/3/person/$personId';
-  String movies({required String personId}) => '${KUrl.domain}''/3/person/$personId/movie_credits';
+  String person({required int personId}) => '${KUrl.domain}''/3/person/$personId';
+  String movies({required int personId}) => '${KUrl.domain}''/3/person/$personId/movie_credits';
 }
 /// ----------------------------------------------------------------------------
 
