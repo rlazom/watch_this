@@ -20,6 +20,7 @@ enum SharePrefsAttribute {
   trendingMoviesDate,
   popularMovies,
   popularMoviesDate,
+  genres,
 }
 
 extension ParseToString on SharePrefsAttribute {
@@ -182,5 +183,14 @@ class SharedPreferencesService {
   void setPopularMoviesData(String value) {
     _prefs.setString(SharePrefsAttribute.popularMovies.toShortString(), value);
     _prefs.setString(SharePrefsAttribute.popularMoviesDate.toShortString(), DateTime.now().toTimeStamp.toString());
+  }
+
+  /// GENRES
+  String? getGenresData() {
+    return _prefs.getString(SharePrefsAttribute.genres.toShortString());
+  }
+
+  void setGenresData(String value) {
+    _prefs.setString(SharePrefsAttribute.genres.toShortString(), value);
   }
 }

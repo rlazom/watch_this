@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:watch_this/models/cast.dart';
 import 'package:watch_this/models/crew.dart';
+import 'package:watch_this/models/movie_genre.dart';
 
 import '../../../common/constants.dart';
 import '../../../models/movie.dart';
@@ -164,6 +165,26 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
 
     // print('MovieDataSourceRemote - getPopularMoviesData() - RETURN ${movieList.length}');
     return movieList;
+  }
+
+  Future<List<MovieGenre>> getGenresData() async {
+    // print('MovieDataSourceRemote - getGenresData()');
+    String url = R.urls.genres;
+
+    dynamic data;
+    try {
+      data = await fetchData(url: url);
+    } catch (error) {
+      print('MovieDataSourceRemote.getGenresData() - ["$error"');
+      rethrow;
+    }
+
+    List list = data['genres'] as List;
+    List<MovieGenre> movieGenresList = list.map((e) => MovieGenre.fromJson(e)).toList();
+    shared.setGenresData(json.encode(movieGenresList));
+
+    // print('MovieDataSourceRemote - getGenresData() - RETURN ${movieList.length}');
+    return movieGenresList;
   }
 
   /// rangeInBytes='0-100'

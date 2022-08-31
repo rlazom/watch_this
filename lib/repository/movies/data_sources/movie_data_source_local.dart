@@ -6,6 +6,7 @@ import 'package:watch_this/common/extensions.dart';
 import 'package:watch_this/models/cast.dart';
 import 'package:watch_this/models/crew.dart';
 import 'package:watch_this/models/movie.dart';
+import 'package:watch_this/models/movie_genre.dart';
 
 import '../../../services/shared_preferences_service.dart';
 import '../../r_master/data_sources/r_master_data_source_local.dart';
@@ -95,24 +96,6 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
     return personMoviesCast;
   }
 
-  //TODO
-  Future<List<Movie>?> getMyMoviesData() async {
-    // print('MovieDataSourceLocal - getMyMoviesData()');
-    List<Movie>? result;
-    var response = _shared.getTrendingMoviesData();
-
-    if (response != null) {
-      String trendingMoviesDateStr = _shared.getTrendingMoviesDataDate()!;
-      DateTime trendingMoviesDate = trendingMoviesDateStr.fromTimeStamp;
-
-      if(trendingMoviesDate.difference(DateTime.now()).inDays.abs() < 7) {
-        List list = json.decode(response) as List;
-        result = List.from(list.map((e) => Movie.fromJson(e)).toList());
-      }
-    }
-    return result;
-  }
-
   Future<List<Movie>?> getTrendingMoviesData() async {
     // print('MovieDataSourceLocal - getTrendingMoviesData()');
     List<Movie>? result;
@@ -145,6 +128,19 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
       }
     }
     // print('MovieDataSourceLocal - getPopularMoviesData() - RETURN IS NULL ${result == null} ');
+    return result;
+  }
+
+  Future<List<MovieGenre>?> getGenresData() async {
+    // print('MovieDataSourceLocal - getGenresData()');
+    List<MovieGenre>? result;
+    var response = _shared.getGenresData();
+
+    if (response != null) {
+      List list = json.decode(response) as List;
+      result = List.from(list.map((e) => MovieGenre.fromJson(e)).toList());
+    }
+    // print('MovieDataSourceLocal - getGenresData() - RETURN IS NULL ${result == null} ');
     return result;
   }
 

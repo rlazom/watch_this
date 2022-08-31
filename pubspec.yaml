@@ -80,6 +80,9 @@ dependencies:
   # A customizable shadow for any widget
   simple_shadow: ^0.3.0
 
+  # A flutter package project which contains a collection of cool and beautiful text animations.
+  animated_text_kit: ^4.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,3 +1,4 @@
+import 'package:watch_this/models/movie_genre.dart';
 import 'package:watch_this/repository/movies/data_sources/movie_data_source_local.dart';
 import 'package:watch_this/repository/r_master/r_master_repository.dart';
 
@@ -74,7 +75,6 @@ class MovieRepository extends RMasterRepository {
         singleResult: true);
   }
 
-  //TODO
   Future<List<Movie>> getMyMoviesData(
       {required List<int> myMoviesToWatch, SourceType? source}) async {
     List<Movie> result = [];
@@ -91,7 +91,6 @@ class MovieRepository extends RMasterRepository {
       rethrow;
     }
 
-    // List result = await getAllItemsData(allSources: allSources, source: source);
     return List<Movie>.from(result);
   }
 
@@ -113,5 +112,15 @@ class MovieRepository extends RMasterRepository {
 
     List result = await getAllItemsData(allSources: allSources, source: source);
     return List<Movie>.from(result);
+  }
+
+  Future<List<MovieGenre>> getGenresData({SourceType? source}) async {
+    Map<SourceType, Function> allSources = {
+      SourceType.LOCAL: local.getGenresData,
+      SourceType.REMOTE: remote.getGenresData,
+    };
+
+    List result = await getAllItemsData(allSources: allSources, source: source);
+    return List<MovieGenre>.from(result);
   }
 }

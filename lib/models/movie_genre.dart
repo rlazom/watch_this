@@ -1,6 +1,6 @@
 class MovieGenre {
   final int id;
-  final String? name;
+  String? name;
 
   MovieGenre({required this.id, this.name});
 
@@ -13,6 +13,12 @@ class MovieGenre {
     return MovieGenre(
       id: jsonMap['id'],
       name: jsonMap['name'],
+    );
+  }
+
+  factory MovieGenre.fromInt(int genreId) {
+    return MovieGenre(
+      id: genreId
     );
   }
 }

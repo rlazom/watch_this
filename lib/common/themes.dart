@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
-const Color kTextColor = Colors.white70;
-const Color kText2Color = Colors.white54;
+import 'constants.dart';
+
+final Color kPrimaryColor = R.colors.primary;
+final Color kSecondaryColor = R.colors.primaries.green1;
+
+final Color kTextColor = kSecondaryColor;
+final Color kText1Color = kTextColor.withOpacity(0.7);
+final Color kText2Color = kTextColor.withOpacity(0.54);
 
 ThemeData themeLight = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
-  primaryColor: const Color(0xFF009FE3),
-  secondaryHeaderColor: const Color(0xFF009FE3),
+  primaryColor: kPrimaryColor,
+  secondaryHeaderColor: kSecondaryColor,
+  backgroundColor: R.colors.background,
   fontFamily: 'Quicksand',
-  textTheme: const TextTheme(
-    caption: TextStyle(color: Colors.pink),
-    headline1: TextStyle(color: kTextColor, fontSize: 16.0, fontWeight: FontWeight.bold),
+  textTheme: TextTheme(
+    // caption: const TextStyle(color: Colors.pink),
+    headline1: TextStyle(color: kPrimaryColor, fontSize: 16.0, fontWeight: FontWeight.bold),
     headline2: TextStyle(color: kTextColor, fontSize: 14.0,),
-    headline4: TextStyle(color: Colors.yellow),
-    headline5: TextStyle(fontSize: 50.0, fontWeight: FontWeight.bold),
-    headline6: TextStyle(
-        fontSize: 20.0,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF009FE3)),
+    // headline4: const TextStyle(color: Colors.yellow),
+    // headline5: const TextStyle(fontSize: 50.0, fontWeight: FontWeight.bold),
+
+    /// Small texts (ex: Movie Tile text under Movie Title)
+    headline6: TextStyle(fontSize: 10.0, color: kText2Color, fontStyle: FontStyle.italic),
 
     /// DEFAULT TEXT STYLE
     bodyText2: TextStyle(fontSize: 12.0, color: kText2Color, fontStyle: FontStyle.normal),

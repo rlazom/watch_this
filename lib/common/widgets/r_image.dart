@@ -5,14 +5,15 @@ import 'package:flutter/material.dart';
 
 class RImage extends StatelessWidget {
   final File imageFile;
-  final Size imgSize;
+  final Size? imgSize;
   final Alignment imgAlignment;
   final BoxFit? boxFit;
 
   const RImage({
     Key? key,
     required this.imageFile,
-    this.imgSize = const Size(30, 30),
+    this.imgSize,
+    // this.imgSize = const Size(30, 30),
     this.imgAlignment = Alignment.center,
     this.boxFit,
   }) : super(key: key);
@@ -27,16 +28,20 @@ class RImage extends StatelessWidget {
         imageFile,
         // alignment: Alignment.topCenter,
         alignment: imgAlignment,
-        width: imgSize.width == 0 ? double.infinity : imgSize.width,
-        height: imgSize.height == 0 ? double.infinity : imgSize.height,
+        // width: imgSize.width == 0 ? double.infinity : imgSize.width,
+        // height: imgSize.height == 0 ? double.infinity : imgSize.height,
+        width: imgSize?.width ?? double.infinity,
+        height: imgSize?.height ?? double.infinity,
         fit: boxFit,
       );
     } else {
       return SvgPicture.file(
         imageFile,
         fit: boxFit,
-        width: imgSize.width + 8,
-        height: imgSize.height + 8,
+        // width: imgSize.width + 8,
+        // height: imgSize.height + 8,
+        width: imgSize?.width ?? double.infinity,
+        height: imgSize?.height ?? double.infinity,
       );
     }
   }

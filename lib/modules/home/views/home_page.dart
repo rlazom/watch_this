@@ -1,10 +1,10 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:watch_this/common/widgets/grid_item_wdt.dart';
+import 'package:watch_this/common/components/movie/views/movie_tile.dart';
+import 'package:watch_this/common/constants.dart';
 import 'package:watch_this/common/widgets/r_future_image.dart';
 import 'package:watch_this/models/movie.dart';
 import 'package:watch_this/modules/home/view_model/home_view_model.dart';
@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String appTitle = viewModel.translate('APP_NAME');
+    // String appTitle = viewModel.translate('APP_NAME');
     final currentTrendingMovieIdNotifier = ValueNotifier<double>(0.0);
 
     PageController controller = PageController(
@@ -38,11 +38,12 @@ class HomePage extends StatelessWidget {
           controller.page ?? controller.initialPage.toDouble();
     });
 
-    Color backgroundColor = Colors.black;
+    // Color backgroundColor = Colors.black;
+    Color backgroundColor = Theme.of(context).backgroundColor;
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(title: Text(appTitle)),
+      // appBar: AppBar(title: Text(appTitle)),
       body: ChangeNotifierProvider.value(
         value: viewModel,
         child: Consumer<HomeViewModel>(
@@ -56,16 +57,16 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       size: 128,
-                      color: Colors.red,
+                      color: R.colors.accents.rose2,
                     ),
                     const SizedBox(height: 16.0),
                     Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.all(
+                      decoration: BoxDecoration(
+                        color: R.colors.accents.rose2,
+                        borderRadius: const BorderRadius.all(
                           Radius.circular(8.0),
                         ),
                       ),
@@ -85,389 +86,445 @@ class HomePage extends StatelessWidget {
             List<Widget> stackList = [];
 
             stackList.add(
-              RefreshIndicator(
-                onRefresh: () =>
-                    viewModel.loadData(context: context, forceReload: true),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// TRENDING MOVIES PAGE VIEW
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          /// TRENDING MOVIE IMAGE
-                          SizedBox(
-                            height: 200,
-                            child: Stack(
-                              children: [
-                                ValueListenableBuilder<List<Movie>?>(
-                                    valueListenable:
-                                        viewModel.trendingListNotifier,
-                                    builder: (context, trendingList, _) {
-                                      if (trendingList == null) {
-                                        return Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            SizedBox(
-                                              width: 100.0,
-                                              height: 100.0,
-                                              child: Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  key: key ??
-                                                      const Key(
-                                                          'TRENDING MOVIES circular_loading'),
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                          Color>(
-                                                    Colors.blue
-                                                        .withOpacity(0.6),
+              SafeArea(
+                child: RefreshIndicator(
+                  onRefresh: () =>
+                      viewModel.loadData(context: context, forceReload: true),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// TRENDING MOVIES PAGE VIEW
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            /// TRENDING MOVIE IMAGE
+                            SizedBox(
+                              height: 200,
+                              child: Stack(
+                                children: [
+                                  /// MOVIE BACKDROP IMAGES
+                                  ValueListenableBuilder<List<Movie>?>(
+                                      valueListenable:
+                                          viewModel.trendingListNotifier,
+                                      builder: (context, trendingList, _) {
+                                        if (trendingList == null) {
+                                          return Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              SizedBox(
+                                                width: 100.0,
+                                                height: 100.0,
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    key: key ??
+                                                        const Key(
+                                                            'TRENDING MOVIES circular_loading'),
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                            Color>(
+                                                      Colors.blue
+                                                          .withOpacity(0.6),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            const Text('TRENDING MOVIES...'),
-                                          ],
-                                        );
-                                      }
+                                              const Text('TRENDING MOVIES...'),
+                                            ],
+                                          );
+                                        }
 
-                                      if (trendingList.isEmpty) {
-                                        return Image.asset(
-                                          'assets/jpeg/default_backdrop.jpg',
-                                          height: 200,
-                                          width: 500,
-                                          alignment: Alignment.topCenter,
-                                          fit: BoxFit.cover,
-                                        );
-                                      }
+                                        if (trendingList.isEmpty) {
+                                          return Image.asset(
+                                            R.assets.images.defaultBackdropJpeg,
+                                            height: 200,
+                                            width: 500,
+                                            alignment: Alignment.topCenter,
+                                            fit: BoxFit.cover,
+                                          );
+                                        }
 
-                                      return PageView.builder(
-                                          itemCount: trendingList.length,
-                                          scrollDirection: Axis.horizontal,
-                                          controller: controller,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            Movie movie =
-                                                trendingList.elementAt(index);
-                                            return InkWell(
-                                              onTap: () => viewModel
-                                                  .navigateToDetails(movie),
-                                              child: Stack(
-                                                children: [
-                                                  RFutureImage(
-                                                    fImage: movie.fBackdrop,
-                                                    defaultImgWdt:
-                                                        const Padding(
+                                        return PageView.builder(
+                                            itemCount: trendingList.length,
+                                            scrollDirection: Axis.horizontal,
+                                            controller: controller,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              Movie movie =
+                                                  trendingList.elementAt(index);
+                                              return InkWell(
+                                                onTap: () => viewModel
+                                                    .navigateToDetails(movie),
+                                                child: Stack(
+                                                  children: [
+                                                    RFutureImage(
+                                                      fImage: movie.fBackdrop,
+                                                      defaultImgWdt:
+                                                          const Padding(
+                                                        padding:
+                                                            EdgeInsets.all(8.0),
+                                                        child: Icon(
+                                                          Icons.movie_outlined,
+                                                          color: Colors.white30,
+                                                        ),
+                                                      ),
+                                                      imgSize:
+                                                          const Size(500, 200),
+                                                      imgAlignment:
+                                                          Alignment.topCenter,
+                                                      boxFit: BoxFit.cover,
+                                                    ),
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        gradient: LinearGradient(
+                                                          begin:
+                                                              Alignment.topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          colors: [
+                                                            Colors.black
+                                                                .withOpacity(0.8),
+                                                            Colors.black45,
+                                                            // Colors.transparent,
+                                                            // Colors.transparent,
+                                                            backgroundColor
+                                                                .withOpacity(0.3),
+                                                            backgroundColor
+                                                                .withOpacity(0.3),
+                                                            backgroundColor,
+                                                          ],
+                                                          stops: const [
+                                                            0.08,
+                                                            0.23,
+                                                            0.35,
+                                                            0.80,
+                                                            0.95,
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Padding(
                                                       padding:
-                                                          EdgeInsets.all(8.0),
-                                                      child: Icon(
-                                                        Icons.movie_outlined,
-                                                        color: Colors.white30,
-                                                      ),
-                                                    ),
-                                                    imgSize:
-                                                        const Size(500, 200),
-                                                    imgAlignment:
-                                                        Alignment.topCenter,
-                                                    boxFit: BoxFit.cover,
-                                                  ),
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      gradient: LinearGradient(
-                                                        begin:
-                                                            Alignment.topCenter,
-                                                        end: Alignment
+                                                          const EdgeInsets.only(
+                                                              bottom: 12.0,
+                                                              left: 16.0,
+                                                              right: 16.0),
+                                                      child: Align(
+                                                        alignment: Alignment
                                                             .bottomCenter,
-                                                        colors: [
-                                                          Colors.black
-                                                              .withOpacity(0.8),
-                                                          Colors.black45,
-                                                          // Colors.transparent,
-                                                          // Colors.transparent,
-                                                          backgroundColor
-                                                              .withOpacity(0.3),
-                                                          backgroundColor
-                                                              .withOpacity(0.3),
-                                                          backgroundColor,
-                                                        ],
-                                                        stops: const [
-                                                          0.08,
-                                                          0.23,
-                                                          0.35,
-                                                          0.80,
-                                                          0.95,
-                                                        ],
+                                                        child: FittedBox(
+                                                          fit: BoxFit.scaleDown,
+                                                          child: Text(
+                                                            movie.title,
+                                                            // '${movie.title} ${movie.title} ${movie.title}',
+                                                            style:
+                                                                Theme.of(context)
+                                                                    .textTheme
+                                                                    .headline1,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      }),
+
+                                  /// MOVIE INDEX
+                                  IgnorePointer(
+                                    child: ValueListenableBuilder<double>(
+                                        valueListenable:
+                                            currentTrendingMovieIdNotifier,
+                                        builder:
+                                            (context, currentTrendingMovieId, _) {
+                                          const double centerOffset = 0.023148;
+                                          const double center =
+                                              centerOffset + 0.5;
+                                          int index = (currentTrendingMovieId -
+                                                  centerOffset)
+                                              .round();
+
+                                          int integer =
+                                              currentTrendingMovieId.floor();
+                                          double rest =
+                                              currentTrendingMovieId - integer;
+                                          double opacity =
+                                              (rest - center).abs() / center;
+
+                                          // print('currentTrendingMovieId: $currentTrendingMovieId, '
+                                          //     'index: $index, '
+                                          //     'integer: $integer, '
+                                          //     'rest: $rest, '
+                                          //     'OPACITY: $opacity'
+                                          //   ,);
+
+                                          return Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 16.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  /// POSTER
+                                                  Transform(
+                                                    alignment: Alignment.center,
+                                                    transform: Matrix4.identity()
+                                                      ..setEntry(3, 2, 0.003)
+                                                      ..rotateY(rest * 3)
+                                                      ..rotateY(rest > 0.5
+                                                          ? math.pi
+                                                          : 0),
+                                                    child: SimpleShadow(
+                                                      color: Colors.black,
+                                                      offset: const Offset(1, 5),
+                                                      opacity: 0.4,
+                                                      sigma: 3,
+                                                      child: RFutureImage(
+                                                        // fn: viewModel.expandImage,
+                                                        tag: 'TM_',
+                                                        fImage: viewModel
+                                                            .trendingListNotifier
+                                                            .value
+                                                            ?.elementAt(index)
+                                                            .fPoster,
+                                                        defaultImgWdt:
+                                                            const Padding(
+                                                          padding:
+                                                              EdgeInsets.all(8.0),
+                                                          child: Icon(
+                                                            Icons.movie_outlined,
+                                                            color: Colors.white30,
+                                                          ),
+                                                        ),
+                                                        imgSize:
+                                                            const Size(80, 120),
+                                                        boxFit: BoxFit.cover,
                                                       ),
                                                     ),
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            bottom: 12.0,
-                                                            left: 16.0,
-                                                            right: 16.0),
-                                                    child: Align(
-                                                      alignment: Alignment
-                                                          .bottomCenter,
-                                                      child: FittedBox(
-                                                        fit: BoxFit.scaleDown,
+
+                                                  // SizedBox(
+                                                  //   height: double.infinity,
+                                                  //   child: FittedBox(
+                                                  //     child: AnimatedTextKit(
+                                                  //       key: ValueKey(index),
+                                                  //       repeatForever: true,
+                                                  //       isRepeatingAnimation: false,
+                                                  //       // repeatForever: true,
+                                                  //       animatedTexts: [
+                                                  //         RotateAnimatedText(
+                                                  //           (index + 1).toString(),
+                                                  //           rotateOut: false,
+                                                  //           duration: const Duration(milliseconds: 500),
+                                                  //         ),
+                                                  //       ],
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
+
+                                                  /// INDEX
+                                                  SizedBox(
+                                                    height: double.infinity,
+                                                    child: FittedBox(
+                                                      child: Opacity(
+                                                        opacity: opacity,
                                                         child: Text(
-                                                          movie.title,
-                                                          // '${movie.title} ${movie.title} ${movie.title}',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .headline1,
+                                                          (index + 1).toString(),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                            );
-                                          });
-                                    }),
-                                ValueListenableBuilder<double>(
-                                    valueListenable:
-                                        currentTrendingMovieIdNotifier,
-                                    builder:
-                                        (context, currentTrendingMovieId, _) {
-                                      int index =
-                                          (currentTrendingMovieId - 0.023148)
-                                              .round();
-
-                                      int integer =
-                                          currentTrendingMovieId.floor();
-                                      double rest =
-                                          currentTrendingMovieId - integer;
-
-                                      return Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 16.0),
-                                          child: Transform(
-                                            alignment: Alignment.center,
-                                            transform: Matrix4.identity()
-                                              ..setEntry(3, 2, 0.003)
-                                              ..rotateY(rest * 3)
-                                              ..rotateY(
-                                                  rest > 0.5 ? math.pi : 0),
-                                            child: SimpleShadow(
-                                              color: Colors.black,
-                                              offset: const Offset(1, 5),
-                                              opacity: 0.4,
-                                              sigma: 3,
-                                              child: RFutureImage(
-                                                // fn: viewModel.expandImage,
-                                                tag: 'TM_',
-                                                fImage: viewModel
-                                                    .trendingListNotifier.value
-                                                    ?.elementAt(index)
-                                                    .fPoster,
-                                                defaultImgWdt: const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons.movie_outlined,
-                                                    color: Colors.white30,
-                                                  ),
-                                                ),
-                                                imgSize: const Size(80, 120),
-                                                boxFit: BoxFit.cover,
-                                              ),
                                             ),
+                                          );
+                                        }),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 4.0, left: 16.0),
+                                    child: Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.trending_up,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2
+                                                  ?.color,
+                                              size: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2
+                                                  ?.fontSize),
+                                          const SizedBox(width: 8.0),
+                                          const Text('TOP TRENDING MOVIES'),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            /// TRENDING MOVIE PAGE INDICATOR
+                            SizedBox(
+                              height: 20,
+                              child: ValueListenableBuilder<List<Movie>?>(
+                                  valueListenable: viewModel.trendingListNotifier,
+                                  builder: (context, trendingList, _) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: SmoothPageIndicator(
+                                        controller: controller, // PageController
+                                        count: trendingList?.length ?? 0,
+                                        effect: ScrollingDotsEffect(
+                                          // activeDotColor: Colors.blue,
+                                          activeDotColor: Theme.of(context).primaryColor,
+                                          maxVisibleDots: 9,
+                                          activeDotScale: 1.5,
+                                          dotHeight: 12.0,
+                                          dotWidth: 12.0,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 16.0),
+
+                        /// MY MOVIES TO WATCH LIST
+                        ValueListenableBuilder<List<Movie>?>(
+                            valueListenable: viewModel.myMoviesListNotifier,
+                            builder: (context, myMoviesToWatch, _) {
+                              if (myMoviesToWatch == null) {
+                                return Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 100.0,
+                                      height: 100.0,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          key: key ??
+                                              const Key('circular_loading'),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            Colors.blue.withOpacity(0.6),
                                           ),
                                         ),
-                                      );
-                                    }),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 4.0, left: 16.0),
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.trending_up,
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .headline2
-                                                ?.color,
-                                            size: Theme.of(context)
-                                                .textTheme
-                                                .headline2
-                                                ?.fontSize),
-                                        const SizedBox(width: 8.0),
-                                        const Text('TOP TRENDING MOVIES'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          /// TRENDING MOVIE PAGE INDICATOR
-                          SizedBox(
-                            height: 20,
-                            child: ValueListenableBuilder<List<Movie>?>(
-                                valueListenable: viewModel.trendingListNotifier,
-                                builder: (context, trendingList, _) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: SmoothPageIndicator(
-                                      controller: controller, // PageController
-                                      count: trendingList?.length ?? 0,
-                                      effect: const ScrollingDotsEffect(
-                                        activeDotColor: Colors.blue,
-                                        maxVisibleDots: 9,
-                                        activeDotScale: 1.5,
-                                        dotHeight: 12.0,
-                                        dotWidth: 12.0,
                                       ),
                                     ),
-                                  );
-                                }),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 16.0),
+                                    const Text('MY MOVIES TO WATCH...'),
+                                  ],
+                                );
+                              }
 
-                      /// MY MOVIES TO WATCH LIST
-                      ValueListenableBuilder<List<Movie>?>(
-                          valueListenable: viewModel.myMoviesListNotifier,
-                          builder: (context, myMoviesToWatch, _) {
-                            if (myMoviesToWatch == null) {
-                              return Stack(
-                                alignment: Alignment.center,
+                              if (myMoviesToWatch.isEmpty) {
+                                return Container();
+                              }
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  SizedBox(
-                                    width: 100.0,
-                                    height: 100.0,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        key: key ??
-                                            const Key('circular_loading'),
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          Colors.blue.withOpacity(0.6),
+                                  Text('MY MOVIES TO WATCH',
+                                      style:
+                                          Theme.of(context).textTheme.headline1),
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: myMoviesToWatch
+                                            .map((e) => MovieTile(
+                                                  fn: () => viewModel
+                                                      .navigateToDetails(e),
+                                                  movie: e,
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16.0),
+                                ],
+                              );
+                            }),
+
+                        /// POPULAR MOVIES
+                        ValueListenableBuilder<List<Movie>?>(
+                            valueListenable: viewModel.popularListNotifier,
+                            builder: (context, popularList, _) {
+                              if (popularList == null) {
+                                return Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 100.0,
+                                      height: 100.0,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          key: key ??
+                                              const Key('circular_loading'),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            Colors.blue.withOpacity(0.6),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  const Text('MY MOVIES TO WATCH...'),
-                                ],
-                              );
-                            }
+                                    const Text('POPULAR MOVIES...'),
+                                  ],
+                                );
+                              }
 
-                            if (myMoviesToWatch.isEmpty) {
-                              return Container();
-                            }
+                              if (popularList.isEmpty) {
+                                return Container();
+                              }
 
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('MY MOVIES TO WATCH',
-                                    style:
-                                        Theme.of(context).textTheme.headline1),
-                                Material(
-                                  color: Colors.transparent,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: myMoviesToWatch
-                                          .map((e) => GridItemWdt(
-                                                fn: () => viewModel
-                                                    .navigateToDetails(e),
-                                                tag: 'MTW_',
-                                                fImageDefault:
-                                                    Icons.movie_outlined,
-                                                title: e.title,
-                                                fImage: e.fPoster,
-                                              ))
-                                          .toList(),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16.0),
-                              ],
-                            );
-                          }),
-
-                      /// POPULAR MOVIES
-                      ValueListenableBuilder<List<Movie>?>(
-                          valueListenable: viewModel.popularListNotifier,
-                          builder: (context, popularList, _) {
-                            if (popularList == null) {
-                              return Stack(
-                                alignment: Alignment.center,
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  SizedBox(
-                                    width: 100.0,
-                                    height: 100.0,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        key: key ??
-                                            const Key('circular_loading'),
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          Colors.blue.withOpacity(0.6),
-                                        ),
+                                  Text('POPULAR MOVIES',
+                                      style:
+                                          Theme.of(context).textTheme.headline1),
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: popularList
+                                            .map((e) => MovieTile(
+                                                  fn: () => viewModel
+                                                      .navigateToDetails(e),
+                                                  movie: e,
+                                                ))
+                                            .toList(),
                                       ),
                                     ),
                                   ),
-                                  const Text('POPULAR MOVIES...'),
+                                  const SizedBox(height: 16.0),
                                 ],
                               );
-                            }
+                            }),
 
-                            if (popularList.isEmpty) {
-                              return Container();
-                            }
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('POPULAR MOVIES',
-                                    style:
-                                        Theme.of(context).textTheme.headline1),
-                                Material(
-                                  color: Colors.transparent,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: popularList
-                                          .map((e) => GridItemWdt(
-                                                fn: () => viewModel
-                                                    .navigateToDetails(e),
-                                                tag: 'PM_',
-                                                fImageDefault:
-                                                    Icons.movie_outlined,
-                                                title: e.title,
-                                                fImage: e.fPoster,
-                                              ))
-                                          .toList(),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16.0),
-                              ],
-                            );
-                          }),
-
-                      // Text('POPULAR SERIES',
-                      //     style:
-                      //     Theme.of(context).textTheme.headline1),
-                      // const SizedBox(height: 16.0),
-                    ],
+                        // Text('POPULAR SERIES',
+                        //     style:
+                        //     Theme.of(context).textTheme.headline1),
+                        // const SizedBox(height: 16.0),
+                      ],
+                    ),
                   ),
                 ),
               ),

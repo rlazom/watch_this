@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watch_this/common/providers/user_provider.dart';
+import 'package:watch_this/repository/movies/data_sources/movie_data_source_remote.dart';
 
 import '../../../common/providers/loader_state.dart';
 import '../../../common/routes.dart';
@@ -19,11 +20,13 @@ class MainViewModel extends LoaderViewModel {
   @override
   loadData({BuildContext? context}) async {
     await sharedPreferencesService.initialize();
+    // sharedPreferencesService.sudoKill();
 
     userProvider = Provider.of<UserProvider>(context!, listen: false);
+    userProvider.loadUserLists();
+    await userProvider.getGenres();
     _forceRefreshOnAllRemoteData();
 
-    // sharedPreferencesService.sudoKill();
     bool itsFirstTime = sharedPreferencesService.getItsFirstTime();
     if (kDebugMode) {
       print('MainViewModel - loadData() - itsFirstTime: $itsFirstTime');
@@ -39,6 +42,9 @@ class MainViewModel extends LoaderViewModel {
   }
 
   _forceRefreshOnAllRemoteData() {
-    userProvider.loadUserLists();
+    MovieDataSourceRemote remote = MovieDataSourceRemote();
+
+    remote.getTrendingMoviesData();
+    remote.getPopularMoviesData();
   }
 }

@@ -18,6 +18,7 @@ class KUrl {
   // final String popularity = '$domain''/4/discover/movie';
   final String popularity = '$domain''/3/movie/popular';
   final String trending = '$domain''/3/trending/movie/week';
+  final String genres = '$domain''/3/genre/movie/list';
   String company(String companyId) => '$domain''/3/company/$companyId';
   String collection(int collectionId) => '$domain''/3/collection/$collectionId';
   KUrlMovie get movieModule => const KUrlMovie._();
@@ -49,47 +50,49 @@ class RkColors {
   RkColorPrimary get primaries => const RkColorPrimary._();
   RkColorAccent get accents => const RkColorAccent._();
   RkColorNeutral get neutrals => const RkColorNeutral._();
-  RkColorSemantic get semantics => const RkColorSemantic._();
+  // RkColorSemantic get semantics => const RkColorSemantic._();
 
-  Color get mapDarkBackgroundColor => '#242424'.hexToColor();
-  Color get mapLightBackgroundColor => '#9ec5ef'.hexToColor();
+  Color get primary => '#03A062'.hexToColor();
+  Color get background => '#0B0F0F'.hexToColor();
+  // Color get mapDarkBackgroundColor => '#242424'.hexToColor();
+  // Color get mapLightBackgroundColor => '#9ec5ef'.hexToColor();
 }
 class RkColorPrimary {
   const RkColorPrimary._();
-  Color get red1 => '#F25050'.hexToColor();
-  Color get red2 => '#CC4343'.hexToColor();
-  Color get red3 => '#993232'.hexToColor();
-  Color get red4 => '#802A2A'.hexToColor();
-  Color get yellow1 => '#F2C70B'.hexToColor();
-  Color get yellow2 => '#CCA809'.hexToColor();
-  Color get yellow3 => '#997E07'.hexToColor();
-  Color get yellow4 => '#665404'.hexToColor();
+  Color get green1 => '#CDECE0'.hexToColor();
+  Color get green2 => '#35B381'.hexToColor();
+  Color get green3 => '#1C9A68'.hexToColor();
+  Color get green4 => '#02804E'.hexToColor();
+  Color get green5 => '#01301D'.hexToColor();
+  Color get green6 => '#00100A'.hexToColor();
+  Color get gray1 => '#B2B2B2'.hexToColor();
+  Color get gray2 => '#7A7A7A'.hexToColor();
+  Color get gray3 => '#6A6A6A'.hexToColor();
+  Color get gray4 => '#575757'.hexToColor();
 }
 class RkColorAccent {
   const RkColorAccent._();
-  Color get blue1 => '#1095F2'.hexToColor();
-  Color get blue2 => '#0D7ECC'.hexToColor();
-  Color get blue3 => '#0A5E99'.hexToColor();
-  Color get blue4 => '#073F66'.hexToColor();
+  Color get rose1 => '#FC5F9D'.hexToColor();
+  Color get rose2 => '#A00341'.hexToColor();
 }
 class RkColorNeutral {
   const RkColorNeutral._();
-  Color get yellow1 => '#FFF1B4'.hexToColor();
-  Color get yellow2 => '#FAE277'.hexToColor();
-  Color get yellow3 => '#E6D173'.hexToColor();
-  Color get yellow4 => '#E4BA00'.hexToColor();
+  Color get gray1 => '#B2B2B2'.hexToColor();
+  Color get gray2 => '#7A7A7A'.hexToColor();
+  Color get gray3 => '#6A6A6A'.hexToColor();
+  Color get gray4 => '#525252'.hexToColor();
 }
-class RkColorSemantic {
-  const RkColorSemantic._();
-  Color get green1 => '#8FF297'.hexToColor();
-  Color get green2 => '#78CC7F'.hexToColor();
-  Color get green3 => '#4B7F50'.hexToColor();
-  Color get green4 => '#3C6640'.hexToColor();
-  Color get red1 => '#F25050'.hexToColor();
-  Color get red2 => '#CC4343'.hexToColor();
-  Color get red3 => '#993232'.hexToColor();
-  Color get red4 => '#662222'.hexToColor();
-}
+// class RkColorSemantic {
+//   const RkColorSemantic._();
+//   Color get green1 => '#8FF297'.hexToColor();
+//   Color get green2 => '#78CC7F'.hexToColor();
+//   Color get green3 => '#4B7F50'.hexToColor();
+//   Color get green4 => '#3C6640'.hexToColor();
+//   Color get red1 => '#F25050'.hexToColor();
+//   Color get red2 => '#CC4343'.hexToColor();
+//   Color get red3 => '#993232'.hexToColor();
+//   Color get red4 => '#662222'.hexToColor();
+// }
 /// ----------------------------------------------------------------------------
 
 /// Assets  --------------------------------------------------------------------
@@ -117,9 +120,12 @@ class RkImages {
   static const String assetsSvgFolder = 'svg/';
 
   String get makkuraLogoJpeg => '${RkAssets.assetsFolder}$assetsJpegFolder''makkura.jpg';
+  String get tmdbLogoSvg => '${RkAssets.assetsFolder}$assetsSvgFolder''tmdb_logo.svg';
 
   /// ---- SPLASH
   String get splashJpeg => makkuraLogoJpeg;
+
+  String get defaultBackdropJpeg => '${RkAssets.assetsFolder}$assetsJpegFolder''default_backdrop.jpg';
 }
 /// ----------------------------------------------------------------------------
 

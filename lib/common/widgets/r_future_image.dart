@@ -9,7 +9,7 @@ class RFutureImage extends StatelessWidget {
   final String? defaultImgRoute;
   final Widget? defaultImgWdt;
   final Future<File?>? fImage;
-  final Size imgSize;
+  final Size? imgSize;
   final Alignment imgAlignment;
   final BoxFit? boxFit;
   final bool showLoading;
@@ -22,7 +22,7 @@ class RFutureImage extends StatelessWidget {
     this.defaultImgRoute,
     this.defaultImgWdt,
     required this.fImage,
-    this.imgSize = const Size(30, 30),
+    this.imgSize,
     this.imgAlignment = Alignment.center,
     this.boxFit,
     this.showLoading = true,
@@ -42,15 +42,15 @@ class RFutureImage extends StatelessWidget {
     Widget defaultWdt = defaultImgWdt ??
         Image(
           image: AssetImage(defaultImgRoute!),
-          height: imgSize.height,
-          width: imgSize.width,
+          // height: imgSize.height,
+          // width: imgSize.width,
           alignment: imgAlignment,
         );
     defaultWdt = Container(
       alignment: imgAlignment,
       child: SizedBox(
-        width: imgSize.width == 0 ? double.infinity : imgSize.width,
-        height: imgSize.height == 0 ? double.infinity : imgSize.height,
+        // width: imgSize.width == 0 ? double.infinity : imgSize.width,
+        // height: imgSize.height == 0 ? double.infinity : imgSize.height,
         child: FittedBox(
           child: defaultWdt,
         ),

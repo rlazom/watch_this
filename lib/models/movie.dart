@@ -113,7 +113,7 @@ class Movie implements Comparable<Movie> {
         'poster_path': posterPath,
         'watch/providers': watchProviders,
         'release_dates': releaseDates,
-        'recommendations': similar,
+        'similar': similar,
       };
 
   factory Movie.fromJson(Map<String, dynamic> jsonMap) {
@@ -123,7 +123,11 @@ class Movie implements Comparable<Movie> {
     // List genresList = jsonMap['genres'] ?? jsonMap['genre_ids'];
     // List<MovieGenre>? tGenres;
     List<MovieGenre>? tGenres = jsonMap['genres'] == null
-        ? null
+        ? jsonMap['genre_ids'] == null
+            ? null
+            : (jsonMap['genre_ids'] as List)
+                .map((e) => MovieGenre.fromInt(e))
+                .toList()
         : (jsonMap['genres'] as List)
             .map((e) => MovieGenre.fromJson(e))
             .toList();
@@ -151,7 +155,6 @@ class Movie implements Comparable<Movie> {
       for (String locale in providersMap.keys) {
         Map typesMap = providersMap[locale];
         for (String type in typesMap.keys) {
-
           if (type != 'link') {
             List originList = typesMap[type] as List;
             List<WatchProvider> tProviders = originList
@@ -186,9 +189,9 @@ class Movie implements Comparable<Movie> {
       releaseDateDt = dateFormat.parse(jsonMap['release_date']);
     }
 
-    List<Movie>? tSimilarMovies = jsonMap['recommendations'] == null
+    List<Movie>? tSimilarMovies = jsonMap['similar'] == null
         ? null
-        : (jsonMap['recommendations']['results'] as List)
+        : (jsonMap['similar']['results'] as List)
             .map((e) => Movie.fromJson(e))
             .toList();
 
@@ -239,7 +242,7 @@ class Movie implements Comparable<Movie> {
       watchProvidersList: tWatchProviders.isEmpty ? null : tWatchProviders,
       releaseDates: jsonMap['release_dates'],
       certifications: certificationsUnique?.toList(),
-      similar: jsonMap['recommendations'],
+      similar: jsonMap['similar'],
       similarMovies: tSimilarMovies,
     );
   }
