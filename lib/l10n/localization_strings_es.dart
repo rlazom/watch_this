@@ -1,7 +1,9 @@
 final es = {
   "APP_NAME": "Mira Esto",
-  "MY_FAVORITES": "Mis Favoritos",
   "DESCRIPTION": "Descripción",
+  "HOME_TEXT": "Principal",
+  "MY_LIST_TEXT": "Mis Listas",
+  "MY_FAVORITES": "Mis Favoritos",
 
   "CLOSE_TEXT": "Cerrar",
   "CONFIRM_TEXT": "Confirmar",

@@ -1,7 +1,9 @@
 final en = {
   "APP_NAME": "Watch This",
-  "MY_FAVORITES": "My Favorites",
   "DESCRIPTION": "Description",
+  "HOME_TEXT": "Home",
+  "MY_LIST_TEXT": "My Lists",
+  "MY_FAVORITES": "My Favorites",
 
   "CLOSE_TEXT": "Close",
   "CONFIRM_TEXT": "Confirm",

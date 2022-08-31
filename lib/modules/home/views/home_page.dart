@@ -5,6 +5,7 @@ import 'package:simple_shadow/simple_shadow.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:watch_this/common/components/movie/views/movie_tile.dart';
 import 'package:watch_this/common/constants.dart';
+import 'package:watch_this/common/widgets/bottom_navigator_bar.dart';
 import 'package:watch_this/common/widgets/r_future_image.dart';
 import 'package:watch_this/models/movie.dart';
 import 'package:watch_this/modules/home/view_model/home_view_model.dart';
@@ -44,6 +45,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
       // appBar: AppBar(title: Text(appTitle)),
+      bottomNavigationBar: BottomNavigatorBar(),
       body: ChangeNotifierProvider.value(
         value: viewModel,
         child: Consumer<HomeViewModel>(

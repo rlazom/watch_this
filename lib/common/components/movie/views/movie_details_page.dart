@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:watch_this/common/components/person/views/person_tile.dart';
 import 'package:watch_this/common/constants.dart';
 import 'package:watch_this/common/providers/user_provider.dart';
+import 'package:watch_this/common/widgets/bottom_navigator_bar.dart';
 import 'package:watch_this/common/widgets/grid_item_wdt.dart';
 import 'package:watch_this/models/movie.dart';
 import 'package:watch_this/models/person.dart';
@@ -173,7 +174,8 @@ class MovieDetailsPage extends StatelessWidget {
               }),
             ],
           ),
-          backgroundColor: Colors.black,
+          backgroundColor: Theme.of(context).backgroundColor,
+          bottomNavigationBar: BottomNavigatorBar(),
           body: SafeArea(
             child: Stack(
               children: [
