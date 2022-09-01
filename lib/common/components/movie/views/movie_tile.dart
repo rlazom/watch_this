@@ -13,16 +13,21 @@ import 'package:watch_this/repository/movies/movie_repository.dart';
 class MovieTile extends StatelessWidget {
   final VoidCallback? fn;
   final Movie movie;
+  final bool showToWatchIcon;
   final MovieRepository movieRepository;
 
-  MovieTile({Key? key, this.fn, required this.movie})
-      : movieRepository = MovieRepository(),
+  MovieTile({
+    Key? key,
+    this.fn,
+    required this.movie,
+    this.showToWatchIcon = true,
+  })  : movieRepository = MovieRepository(),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider =
-    Provider.of<UserProvider>(context, listen: false);
+        Provider.of<UserProvider>(context, listen: false);
     String title = movie.title;
     String subTitle = '';
 
@@ -32,13 +37,11 @@ class MovieTile extends StatelessWidget {
     // }
 
     List<String?> genres = movie.genres?.map((MovieGenre e) {
-      if (e.name == null || e.name.toString().trim() == '') {
-        e.name = userProvider
-            .getGenreById(e.id)
-            .name;
-      }
-      return e.name;
-    }).toList() ??
+          if (e.name == null || e.name.toString().trim() == '') {
+            e.name = userProvider.getGenreById(e.id).name;
+          }
+          return e.name;
+        }).toList() ??
         [];
 
     subTitle = genres.first!;
@@ -46,16 +49,14 @@ class MovieTile extends StatelessWidget {
       subTitle += ' | ${movie.releaseDate!.year}';
     }
 
-    final TextStyle textStyle = Theme
-        .of(context)
-        .textTheme
-        .headline6!;
-    // final TextStyle textStyle = Theme.of(context).textTheme.bodyText2!;
+    final TextStyle textStyle = Theme.of(context).textTheme.headline6!;
     final Color iconColor = textStyle.color!;
     final double iconSize = textStyle.fontSize!;
 
     bool movieIsFavorite = userProvider.movieIsFavorite(movie.id);
     bool? movieIsLike = userProvider.getMovieRate(movie.id);
+    bool movieIsToWatch = userProvider.movieIsToWatch(movie.id);
+
     Widget subTitleWdt = FittedBox(
       child: Text(
         subTitle.replaceAll(' / ', '\nº'),
@@ -78,15 +79,29 @@ class MovieTile extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (showToWatchIcon && movieIsToWatch)
+              Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: Icon(
+                  Icons.remove_red_eye,
+                  size: iconSize,
+                  color: iconColor,
+                ),
+              ),
             if (movieIsLike != null)
               Padding(
                 padding: const EdgeInsets.only(right: 4.0),
-                child: Icon(movieIsLike ? Icons.thumb_up : Icons.thumb_down,
-                    size: iconSize, color: iconColor),
+                child: Icon(
+                  movieIsLike ? Icons.thumb_up : Icons.thumb_down,
+                  size: iconSize,
+                  color: iconColor,
+                ),
               ),
-            Icon(movieIsFavorite ? Icons.favorite : Icons.favorite_border,
-                size: iconSize,
-                color: movieIsFavorite ? R.colors.accents.rose1 : iconColor),
+            Icon(
+              movieIsFavorite ? Icons.favorite : Icons.favorite_border,
+              size: iconSize,
+              color: movieIsFavorite ? R.colors.accents.rose1 : iconColor,
+            ),
           ],
         )
       ],
@@ -117,26 +132,27 @@ class MovieTile extends StatelessWidget {
       }
 
       List<Widget> topProviderWdtList = List.from(topProviders
-          .map((e) =>
-          Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: ClipOval(
-                child: GridItemWdt(
-                  tag: e.providerName,
-                  fImage: e.fLogo,
-                  fImageDefault: Icons.account_balance,
-                  backgroundColor: Colors.transparent,
-                  itemWidth: 20,
-                  itemHeight: 20,
-                  imagePadding: 0.0,
+          .map((e) => Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: ClipOval(
+                    child: GridItemWdt(
+                      tag: e.providerName,
+                      fImage: e.fLogo,
+                      fImageDefault: Icons.account_balance,
+                      backgroundColor: Colors.transparent,
+                      itemWidth: 20,
+                      itemHeight: 20,
+                      imagePadding: 0.0,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ))
+              ))
           .toList());
-      topProviderWdtList.add(const SizedBox(height: 2.0,));
+      topProviderWdtList.add(const SizedBox(
+        height: 2.0,
+      ));
 
       topBookmarkWdt = SimpleShadow(
         child: Align(
@@ -144,21 +160,21 @@ class MovieTile extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Container(
-                width: 20.0,
-                decoration: const BoxDecoration(
-                  color: Colors.white54,
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(10.0),
-                  ),
+              width: 20.0,
+              decoration: const BoxDecoration(
+                color: Colors.white54,
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(10.0),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: topProviderWdtList,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: topProviderWdtList,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-    );
+      );
     }
 
     /*
@@ -174,13 +190,13 @@ class MovieTile extends StatelessWidget {
     * */
 
     return GridItemWdt(
-    fn: fn,
-    fImage: movie.fPoster,
-    title: title,
-    subTitleWdt: subTitleWdt,
-    extraWdt: extraWdt,
-    topBookmarkWdt: topBookmarkWdt,
-    backgroundColor: Colors.white10,
+      fn: fn,
+      fImage: movie.fPoster,
+      title: title,
+      subTitleWdt: subTitleWdt,
+      extraWdt: extraWdt,
+      topBookmarkWdt: topBookmarkWdt,
+      backgroundColor: Colors.white10,
     );
   }
 }
