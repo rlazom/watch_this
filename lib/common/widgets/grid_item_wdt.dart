@@ -20,6 +20,7 @@ class GridItemWdt extends StatelessWidget {
   final String? subTitle;
   final Widget? subTitleWdt;
   final Widget? extraWdt;
+  final Widget? topBookmarkWdt;
   final Color? backgroundColor;
 
   const GridItemWdt({
@@ -41,6 +42,7 @@ class GridItemWdt extends StatelessWidget {
     this.subTitle,
     this.subTitleWdt,
     this.extraWdt,
+    this.topBookmarkWdt,
     this.backgroundColor,
   }) : super(key: key);
 
@@ -58,28 +60,52 @@ class GridItemWdt extends StatelessWidget {
             children: [
               Expanded(
                 flex: imageFlex,
-                child: RFutureImage(
-                  tag: tag,
-                  fImage: fImage,
-                  imgAlignment: Alignment.topCenter,
-                  defaultImgWdt: Container(
-                    width: 200,
-                    height: 400,
-                    color: Colors.white12,
-                    child: Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: FittedBox(
-                        child: Icon(
-                          fImageDefault,
-                          // color: Colors.white30,
-                          color: Colors.black45,
-                          size: 64.0,
+                child: Stack(
+                  // alignment: Alignment.centerRight,
+                  children: [
+                    RFutureImage(
+                      tag: tag,
+                      fImage: fImage,
+                      imgAlignment: Alignment.topCenter,
+                      defaultImgWdt: Container(
+                        width: 200,
+                        height: 400,
+                        color: Colors.white12,
+                        child: Padding(
+                          padding: const EdgeInsets.all(0.0),
+                          child: FittedBox(
+                            child: Icon(
+                              fImageDefault,
+                              // color: Colors.white30,
+                              color: Colors.black45,
+                              size: 64.0,
+                            ),
+                          ),
                         ),
                       ),
+                      imgSize: imageSize,
+                      boxFit: BoxFit.cover,
                     ),
-                  ),
-                  imgSize: imageSize,
-                  boxFit: BoxFit.cover,
+                    if(topBookmarkWdt != null)
+                      topBookmarkWdt!,
+                    // SimpleShadow(
+                    //   child: Align(
+                    //     alignment: Alignment.topRight,
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.only(right: 8.0),
+                    //       child: Container(
+                    //         width: 20,
+                    //         height: 20,
+                    //         // color: Colors.red,
+                    //         decoration: const BoxDecoration(
+                    //           color: Colors.red,
+                    //           borderRadius: BorderRadius.vertical(bottom: Radius.circular(8.0)),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
                 ),
               ),
               if (title != null ||

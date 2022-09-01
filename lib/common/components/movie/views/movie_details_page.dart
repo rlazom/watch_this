@@ -185,10 +185,8 @@ class MovieDetailsPage extends StatelessWidget {
                   children: [
                     RFutureImage(
                       showLoading: false,
-                      fImage: viewModel.movie!.fBackdrop ??
-                          viewModel.movie!.fPoster,
-                      defaultImgWdt:
-                          Image.asset(R.assets.images.defaultBackdropJpeg),
+                      fImage: viewModel.movie!.fBackdrop ?? viewModel.movie!.fPoster,
+                      defaultImgWdt: Image.asset(R.assets.images.defaultBackdropJpeg),
                       imgSize: const Size(0, 300),
                       boxFit: BoxFit.cover,
                       imgAlignment: Alignment.topCenter,
@@ -227,6 +225,7 @@ class MovieDetailsPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        /// HEADER [TITLE, POSTER, BACKDROP,ETC]
                         Row(
                           children: [
                             /// POSTER

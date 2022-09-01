@@ -1,9 +1,11 @@
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:watch_this/common/components/movie/views/movie_tile.dart';
+import 'package:watch_this/common/components/movie/views/stars_rating.dart';
 import 'package:watch_this/common/constants.dart';
 import 'package:watch_this/common/widgets/bottom_navigator_bar.dart';
 import 'package:watch_this/common/widgets/r_future_image.dart';
@@ -85,7 +87,14 @@ class HomePage extends StatelessWidget {
               );
             }
 
+            TextStyle textStyle = Theme.of(context).textTheme.headline2!;
             List<Widget> stackList = [];
+
+            Function translate = viewModel.translate;
+            String topTrendingMoviesStr =
+                translate('TOP_TRENDING_MOVIES_TEXT', param: '20');
+            String myMoviesToWatchStr = translate('MY_MOVIES_TO_WATCH_TEXT');
+            String popularMoviesStr = translate('POPULAR_MOVIES_TEXT');
 
             stackList.add(
               SafeArea(
@@ -132,7 +141,7 @@ class HomePage extends StatelessWidget {
                                                   ),
                                                 ),
                                               ),
-                                              const Text('TRENDING MOVIES...'),
+                                              Text('$myMoviesToWatchStr...'),
                                             ],
                                           );
                                         }
@@ -161,39 +170,34 @@ class HomePage extends StatelessWidget {
                                                 child: Stack(
                                                   children: [
                                                     RFutureImage(
-                                                      fImage: movie.fBackdrop,
+                                                      showLoading: false,
+                                                      fImage: movie.fBackdrop ?? movie.fPoster,
                                                       defaultImgWdt:
-                                                          const Padding(
-                                                        padding:
-                                                            EdgeInsets.all(8.0),
-                                                        child: Icon(
-                                                          Icons.movie_outlined,
-                                                          color: Colors.white30,
-                                                        ),
-                                                      ),
-                                                      imgSize:
-                                                          const Size(500, 200),
+                                                      Image.asset(R.assets.images.defaultBackdropJpeg),
+                                                      imgSize: const Size(0, 200),
+                                                      boxFit: BoxFit.cover,
                                                       imgAlignment:
                                                           Alignment.topCenter,
-                                                      boxFit: BoxFit.cover,
                                                     ),
                                                     Container(
                                                       decoration: BoxDecoration(
-                                                        gradient: LinearGradient(
-                                                          begin:
-                                                              Alignment.topCenter,
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
                                                           end: Alignment
                                                               .bottomCenter,
                                                           colors: [
                                                             Colors.black
-                                                                .withOpacity(0.8),
+                                                                .withOpacity(
+                                                                    0.8),
                                                             Colors.black45,
-                                                            // Colors.transparent,
-                                                            // Colors.transparent,
                                                             backgroundColor
-                                                                .withOpacity(0.3),
+                                                                .withOpacity(
+                                                                    0.3),
                                                             backgroundColor
-                                                                .withOpacity(0.3),
+                                                                .withOpacity(
+                                                                    0.3),
                                                             backgroundColor,
                                                           ],
                                                           stops: const [
@@ -203,28 +207,6 @@ class HomePage extends StatelessWidget {
                                                             0.80,
                                                             0.95,
                                                           ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              bottom: 12.0,
-                                                              left: 16.0,
-                                                              right: 16.0),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .bottomCenter,
-                                                        child: FittedBox(
-                                                          fit: BoxFit.scaleDown,
-                                                          child: Text(
-                                                            movie.title,
-                                                            // '${movie.title} ${movie.title} ${movie.title}',
-                                                            style:
-                                                                Theme.of(context)
-                                                                    .textTheme
-                                                                    .headline1,
-                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -239,14 +221,39 @@ class HomePage extends StatelessWidget {
                                     child: ValueListenableBuilder<double>(
                                         valueListenable:
                                             currentTrendingMovieIdNotifier,
-                                        builder:
-                                            (context, currentTrendingMovieId, _) {
+                                        builder: (context,
+                                            currentTrendingMovieId, _) {
                                           const double centerOffset = 0.023148;
-                                          const double center =
-                                              centerOffset + 0.5;
+                                          const double center = centerOffset + 0.5;
                                           int index = (currentTrendingMovieId -
                                                   centerOffset)
                                               .round();
+
+                                          //////////////////////////////////////
+                                          Movie movie = viewModel
+                                              .trendingListNotifier.value!
+                                              .elementAt(index);
+
+
+                                          List<String?> genres = movie.genres?.map((e) {
+                                            if (e.name == null || e.name.toString().trim() == '') {
+                                              e.name = viewModel.userProvider.getGenreById(e.id).name;
+                                            }
+                                            return e.name;
+                                          }).toList() ?? [];
+                                          List<Widget> genresWdt = genres.map((e) => Padding(
+                                            padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.black38,
+                                                border: Border.all(width: 1.0, color: R.colors.primaries.green1),
+                                                borderRadius: BorderRadius.circular(8.0),
+                                              ),
+                                              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                                              child: e == null ? const SizedBox() : Text(e, style: TextStyle(fontSize: 10.0, color: R.colors.primaries.green1),),
+                                            ),
+                                          )).toList();
+                                          //////////////////////////////////////
 
                                           int integer =
                                               currentTrendingMovieId.floor();
@@ -254,18 +261,22 @@ class HomePage extends StatelessWidget {
                                               currentTrendingMovieId - integer;
                                           double opacity =
                                               (rest - center).abs() / center;
+                                          double padding = (center - (rest > center ? (rest - center) : (center - rest))) *100;
+                                          padding -= rest > center ? 4 : 0;
 
                                           // print('currentTrendingMovieId: $currentTrendingMovieId, '
                                           //     'index: $index, '
                                           //     'integer: $integer, '
-                                          //     'rest: $rest, '
+                                          //     'rest: $rest, ${rest * 3 + 0.0034}, '
+                                          //     'padding: $padding, '
                                           //     'OPACITY: $opacity'
                                           //   ,);
 
                                           return Center(
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 16.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16.0),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
@@ -274,32 +285,32 @@ class HomePage extends StatelessWidget {
                                                   /// POSTER
                                                   Transform(
                                                     alignment: Alignment.center,
-                                                    transform: Matrix4.identity()
-                                                      ..setEntry(3, 2, 0.003)
-                                                      ..rotateY(rest * 3)
-                                                      ..rotateY(rest > 0.5
-                                                          ? math.pi
-                                                          : 0),
+                                                    transform:
+                                                        Matrix4.identity()
+                                                          ..setEntry(
+                                                              3, 2, 0.003)
+                                                          ..rotateY(rest * 3.15)
+                                                          ..rotateY(rest > 0.5 ? math.pi : 0),
                                                     child: SimpleShadow(
                                                       color: Colors.black,
-                                                      offset: const Offset(1, 5),
+                                                      offset:
+                                                          const Offset(1, 5),
                                                       opacity: 0.4,
                                                       sigma: 3,
                                                       child: RFutureImage(
                                                         // fn: viewModel.expandImage,
                                                         tag: 'TM_',
-                                                        fImage: viewModel
-                                                            .trendingListNotifier
-                                                            .value
-                                                            ?.elementAt(index)
-                                                            .fPoster,
+                                                        fImage: movie.fPoster,
                                                         defaultImgWdt:
                                                             const Padding(
                                                           padding:
-                                                              EdgeInsets.all(8.0),
+                                                              EdgeInsets.all(
+                                                                  8.0),
                                                           child: Icon(
-                                                            Icons.movie_outlined,
-                                                            color: Colors.white30,
+                                                            Icons
+                                                                .movie_outlined,
+                                                            color:
+                                                                Colors.white30,
                                                           ),
                                                         ),
                                                         imgSize:
@@ -309,35 +320,71 @@ class HomePage extends StatelessWidget {
                                                     ),
                                                   ),
 
-                                                  // SizedBox(
-                                                  //   height: double.infinity,
-                                                  //   child: FittedBox(
-                                                  //     child: AnimatedTextKit(
-                                                  //       key: ValueKey(index),
-                                                  //       repeatForever: true,
-                                                  //       isRepeatingAnimation: false,
-                                                  //       // repeatForever: true,
-                                                  //       animatedTexts: [
-                                                  //         RotateAnimatedText(
-                                                  //           (index + 1).toString(),
-                                                  //           rotateOut: false,
-                                                  //           duration: const Duration(milliseconds: 500),
-                                                  //         ),
-                                                  //       ],
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
+                                                  const SizedBox(
+                                                    width: 16.0,
+                                                  ),
 
-                                                  /// INDEX
-                                                  SizedBox(
-                                                    height: double.infinity,
-                                                    child: FittedBox(
-                                                      child: Opacity(
-                                                        opacity: opacity,
-                                                        child: Text(
-                                                          (index + 1).toString(),
+                                                  Expanded(
+                                                    child: Stack(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      children: [
+                                                        /// INDEX
+                                                        SizedBox(
+                                                          height:
+                                                              double.infinity,
+                                                          child: FittedBox(
+                                                            child: Opacity(
+                                                              opacity: opacity,
+                                                              child: Padding(
+                                                                // padding: EdgeInsets.only(left: rest < center ? padding: 0),
+                                                                padding: EdgeInsets.only(left: 0),
+                                                                child: Text(
+                                                                  (index + 1)
+                                                                      .toString(),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+
+                                                        Opacity(
+                                                          opacity: opacity,
+                                                          child: Padding(
+                                                            padding: EdgeInsets.only(top: rest < center ? padding: 0, bottom: rest > center ? padding: 0),
+                                                            child: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Text('${movie.releaseDate!.year}'),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child: FittedBox(
+                                                                        child: StarsRating(
+                                                                            rating: movie
+                                                                                .voteAverage),
+                                                                      ),
+                                                                    ),
+                                                                    Expanded(
+                                                                      flex: 2,
+                                                                      child: Container(),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Text(
+                                                                  movie.title,
+                                                                  style: Theme.of(context).textTheme.headline1?.copyWith(
+                                                                    fontSize: 20.0
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(height: 4.0,),
+                                                                Wrap(children: genresWdt)
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ],
@@ -355,16 +402,10 @@ class HomePage extends StatelessWidget {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Icon(Icons.trending_up,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .headline2
-                                                  ?.color,
-                                              size: Theme.of(context)
-                                                  .textTheme
-                                                  .headline2
-                                                  ?.fontSize),
+                                              color: textStyle.color,
+                                              size: textStyle.fontSize),
                                           const SizedBox(width: 8.0),
-                                          const Text('TOP TRENDING MOVIES'),
+                                          Text(topTrendingMoviesStr, style: textStyle,),
                                         ],
                                       ),
                                     ),
@@ -377,17 +418,20 @@ class HomePage extends StatelessWidget {
                             SizedBox(
                               height: 20,
                               child: ValueListenableBuilder<List<Movie>?>(
-                                  valueListenable: viewModel.trendingListNotifier,
+                                  valueListenable:
+                                      viewModel.trendingListNotifier,
                                   builder: (context, trendingList, _) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0),
                                       child: SmoothPageIndicator(
-                                        controller: controller, // PageController
+                                        controller: controller,
+                                        // PageController
                                         count: trendingList?.length ?? 0,
                                         effect: ScrollingDotsEffect(
                                           // activeDotColor: Colors.blue,
-                                          activeDotColor: Theme.of(context).primaryColor,
+                                          activeDotColor:
+                                              Theme.of(context).primaryColor,
                                           maxVisibleDots: 9,
                                           activeDotScale: 1.5,
                                           dotHeight: 12.0,
@@ -423,7 +467,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    const Text('MY MOVIES TO WATCH...'),
+                                    Text('$myMoviesToWatchStr...'),
                                   ],
                                 );
                               }
@@ -436,9 +480,13 @@ class HomePage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('MY MOVIES TO WATCH',
-                                      style:
-                                          Theme.of(context).textTheme.headline1),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(myMoviesToWatchStr,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1),
+                                  ),
                                   Material(
                                     color: Colors.transparent,
                                     child: SingleChildScrollView(
@@ -483,7 +531,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    const Text('POPULAR MOVIES...'),
+                                    Text('$popularMoviesStr...'),
                                   ],
                                 );
                               }
@@ -496,9 +544,13 @@ class HomePage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('POPULAR MOVIES',
-                                      style:
-                                          Theme.of(context).textTheme.headline1),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(popularMoviesStr,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1),
+                                  ),
                                   Material(
                                     color: Colors.transparent,
                                     child: SingleChildScrollView(

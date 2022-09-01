@@ -5,6 +5,10 @@ final es = {
   "MY_LIST_TEXT": "Mis Listas",
   "MY_FAVORITES": "Mis Favoritos",
 
+  "TOP_TRENDING_MOVIES_TEXT": "Las [PARAM] películas en tendencia",
+  "MY_MOVIES_TO_WATCH_TEXT": "Mis películas para ver",
+  "POPULAR_MOVIES_TEXT": "Películas Más Populares",
+
   "CLOSE_TEXT": "Cerrar",
   "CONFIRM_TEXT": "Confirmar",
   "LOADING": "Cargando...",

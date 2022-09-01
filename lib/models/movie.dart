@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:io' show File;
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:watch_this/common/enums.dart';
 import 'package:watch_this/models/company.dart';
 import 'package:watch_this/models/watch_provider.dart';
 
@@ -80,6 +81,30 @@ class Movie implements Comparable<Movie> {
     this.similar,
     this.similarMovies,
   });
+
+  String _getProviderName(TopProvider topProvider) {
+    switch (topProvider) {
+      case TopProvider.netflix:
+        return 'netflix';
+      case TopProvider.amazon:
+        return 'amazon prime video';
+      case TopProvider.google:
+        return 'google play movies';
+      case TopProvider.apple:
+        return 'apple itunes';
+      default:
+        return '';
+    }
+  }
+
+  bool _haveProvider(TopProvider provider) => watchProvidersList?.firstWhereOrNull((WatchProvider prov) => prov.providerName.toLowerCase().trim() == _getProviderName(provider).toLowerCase().trim()) != null;
+  WatchProvider? getProvider(TopProvider provider) => watchProvidersList?.firstWhereOrNull((WatchProvider prov) => prov.providerName.toLowerCase().trim() == _getProviderName(provider).toLowerCase().trim());
+
+  // Category? categoryVideos = allCategories.firstWhereOrNull((element) => element.name == 'Videos');
+  bool get inNetflix => _haveProvider(TopProvider.netflix);
+  bool get inAmazon => _haveProvider(TopProvider.amazon);
+  bool get inGoogle => _haveProvider(TopProvider.google);
+  bool get inApple => _haveProvider(TopProvider.apple);
 
   Map<String, dynamic> toJson() => {
         'id': id,

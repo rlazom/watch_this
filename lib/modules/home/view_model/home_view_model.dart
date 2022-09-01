@@ -51,15 +51,6 @@ class HomeViewModel extends LoaderViewModel {
     _updateMediaFiles();
   }
 
-  Future _getMyMovieDataList({bool forceReload = false}) async {
-    List<Movie> tList = await movieRepository.getMyMoviesData(
-      myMoviesToWatch: userProvider.toWatch,
-      source: forceReload ? SourceType.REMOTE : null,
-    );
-
-    myMoviesListNotifier.value = List.from(tList);
-  }
-
   _updateMediaFiles() {
     for (Movie movie in trendingListNotifier.value ?? []) {
       if (movie.posterPath != null && movie.posterPath!.trim() != '') {
@@ -113,8 +104,23 @@ class HomeViewModel extends LoaderViewModel {
     List<Movie> tList = await movieRepository.getPopularMoviesData(
         source: forceReload ? SourceType.REMOTE : null);
 
+    List<Movie> tList2 = await movieRepository.getMyMoviesData(
+      myMoviesToWatch: tList.map((e) => e.id).toList(),
+      source: forceReload ? SourceType.REMOTE : null,
+    );
+
     // print('_getPopularMovieDataList() - RETURN - ${tList.length}');
-    popularListNotifier.value = List.from(tList);
+    // popularListNotifier.value = List.from(tList);
+    popularListNotifier.value = List.from(tList2);
+  }
+
+  Future _getMyMovieDataList({bool forceReload = false}) async {
+    List<Movie> tList = await movieRepository.getMyMoviesData(
+      myMoviesToWatch: userProvider.toWatch,
+      source: forceReload ? SourceType.REMOTE : null,
+    );
+
+    myMoviesListNotifier.value = List.from(tList);
   }
 
   navigateToDetails(Movie movie) async {

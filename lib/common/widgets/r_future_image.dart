@@ -75,6 +75,7 @@ class RFutureImage extends StatelessWidget {
               child: Hero(
                 tag: '$tag''$tagName',
                 child: RImage(
+                  // tag: tag,
                   imageFile: tFile,
                   imgSize: imgSize,
                   boxFit: isSvg ? BoxFit.contain : boxFit,

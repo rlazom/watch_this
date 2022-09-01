@@ -43,10 +43,11 @@ class UserProvider with ChangeNotifier {
     toWatch = List.from(userToWatch);
   }
 
-  Future getGenres({bool forceReload = false}) async {
+  Future<List<MovieGenre>> getGenres({bool forceReload = false}) async {
     genres = await movieRepository.getGenresData(
       source: forceReload ? SourceType.REMOTE : null,
     );
+    return genres;
   }
   MovieGenre getGenreById(int genreId) {
     return genres.firstWhere((element) => element.id == genreId);

@@ -51,3 +51,10 @@ enum SignType {
   signOut,
   forgotPassword,
 }
+
+enum TopProvider {
+  netflix,
+  amazon,
+  google,
+  apple,
+}
