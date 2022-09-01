@@ -52,17 +52,25 @@ class MovieDetailsPage extends StatelessWidget {
         List<String?> genres =
             viewModel.movie!.genres?.map((e) => e.name).toList() ?? [];
         // String genresStr = genres.join(' / ');
-        List<Widget> genresWdt = genres.map((e) => Padding(
-          padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(width: 1.0, color: R.colors.primary),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-            child: e == null ? const SizedBox() : Text(e, style: TextStyle(color: R.colors.primary),),
-          ),
-        )).toList();
+        List<Widget> genresWdt = genres
+            .map((e) => Padding(
+                  padding: const EdgeInsets.only(right: 8.0, bottom: 4.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1.0, color: R.colors.primary),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 2.0),
+                    child: e == null
+                        ? const SizedBox()
+                        : Text(
+                            e,
+                            style: TextStyle(color: R.colors.primary),
+                          ),
+                  ),
+                ))
+            .toList();
 
         IconData? movieStatus = viewModel.movie!.getStatusIcon();
 
@@ -102,11 +110,14 @@ class MovieDetailsPage extends StatelessWidget {
                               : movieIsLike
                                   ? false
                                   : null),
-                      icon: Icon(movieIsLike == null
-                          ? Icons.thumbs_up_down_outlined
-                          : movieIsLike
-                              ? Icons.thumb_up
-                              : Icons.thumb_down, color: (movieIsLike ?? false) ? R.colors.primary : null),
+                      icon: Icon(
+                          movieIsLike == null
+                              ? Icons.thumbs_up_down_outlined
+                              : movieIsLike
+                                  ? Icons.thumb_up
+                                  : Icons.thumb_down,
+                          color:
+                              (movieIsLike ?? false) ? R.colors.primary : null),
                     ),
                     IconButton(
                       tooltip: movieIsFavorite
@@ -114,9 +125,12 @@ class MovieDetailsPage extends StatelessWidget {
                           : 'ADD TO "FAVORITES"',
                       onPressed: () =>
                           provider.toggleFavorite(viewModel.movie!.id),
-                      icon: Icon(movieIsFavorite
-                          ? Icons.favorite
-                          : Icons.favorite_border, color: movieIsFavorite ? R.colors.accents.rose1 : null),
+                      icon: Icon(
+                          movieIsFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color:
+                              movieIsFavorite ? R.colors.accents.rose1 : null),
                     ),
                     PopupMenuButton(
                       onSelected: viewModel.loading ? null : _onSelect,
@@ -135,9 +149,12 @@ class MovieDetailsPage extends StatelessWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
+                                  // Icon(movieIsToWatch
+                                  //     ? Icons.playlist_add_circle
+                                  //     : Icons.playlist_add_circle_outlined),
                                   Icon(movieIsToWatch
-                                      ? Icons.playlist_add_circle
-                                      : Icons.playlist_add_circle_outlined),
+                                      ? Icons.remove_red_eye
+                                      : Icons.remove_red_eye_outlined),
                                   const SizedBox(width: 8.0),
                                   const Text('TO WATCH'),
                                 ],
@@ -185,8 +202,10 @@ class MovieDetailsPage extends StatelessWidget {
                   children: [
                     RFutureImage(
                       showLoading: false,
-                      fImage: viewModel.movie!.fBackdrop ?? viewModel.movie!.fPoster,
-                      defaultImgWdt: Image.asset(R.assets.images.defaultBackdropJpeg),
+                      fImage: viewModel.movie!.fBackdrop ??
+                          viewModel.movie!.fPoster,
+                      defaultImgWdt:
+                          Image.asset(R.assets.images.defaultBackdropJpeg),
                       imgSize: const Size(0, 300),
                       boxFit: BoxFit.cover,
                       imgAlignment: Alignment.topCenter,
@@ -342,33 +361,45 @@ class MovieDetailsPage extends StatelessWidget {
                                           width: 16.0,
                                         ),
                                         // const Expanded(child: SizedBox()),
-                                        (viewModel.movie!.certifications == null ||
-                                            viewModel
-                                                .movie!.certifications!.isEmpty) ? const Expanded(child: SizedBox()) :
-                                          Expanded(
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    color: R.colors.primary,
-                                                    borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 8.0, vertical: 2.0),
-                                                    child: Text(
-                                                      viewModel.movie!.certifications!
-                                                          .join(' | '),
-                                                      style: TextStyle(
-                                                          fontWeight: FontWeight.bold, color: R.colors.background),
+                                        (viewModel.movie!.certifications ==
+                                                    null ||
+                                                viewModel.movie!.certifications!
+                                                    .isEmpty)
+                                            ? const Expanded(child: SizedBox())
+                                            : Expanded(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        color: R.colors.primary,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal: 8.0,
+                                                                vertical: 2.0),
+                                                        child: Text(
+                                                          viewModel.movie!
+                                                              .certifications!
+                                                              .join(' | '),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: R.colors
+                                                                  .background),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          ),
+                                              ),
                                         // Expanded(
                                         //   flex: 1,
                                         //   child: viewModel.movie!.voteAverage ==
@@ -401,7 +432,8 @@ class MovieDetailsPage extends StatelessWidget {
                                     Text(movieDurationStr),
                                   // Text(genresStr),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0),
                                     child: Wrap(
                                       children: genresWdt,
                                     ),
@@ -446,26 +478,28 @@ class MovieDetailsPage extends StatelessWidget {
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: viewModel
                                         .movie!.watchProvidersList!
                                         .map((e) => Padding(
-                                      padding:
-                                      const EdgeInsets.only(top: 8.0, right: 16.0),
-                                      child: Tooltip(
-                                        message: e.providerName,
-                                        child: GridItemWdt(
-                                          tag: e.providerName,
-                                          fImage: e.fLogo,
-                                          fImageDefault: Icons.account_balance,
-                                          backgroundColor: Colors.transparent,
-                                          itemWidth: 40,
-                                          itemHeight: 40,
-                                          // imageSize: const Size(40, 40),
-                                          imagePadding: 0.0,
-                                        ),
-                                      ),
-                                    ))
+                                              padding: const EdgeInsets.only(
+                                                  top: 8.0, right: 16.0),
+                                              child: Tooltip(
+                                                message: e.providerName,
+                                                child: GridItemWdt(
+                                                  tag: e.providerName,
+                                                  fImage: e.fLogo,
+                                                  fImageDefault:
+                                                      Icons.account_balance,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  itemWidth: 40,
+                                                  itemHeight: 40,
+                                                  // imageSize: const Size(40, 40),
+                                                  imagePadding: 0.0,
+                                                ),
+                                              ),
+                                            ))
                                         .toList(),
                                   ),
                                 ),

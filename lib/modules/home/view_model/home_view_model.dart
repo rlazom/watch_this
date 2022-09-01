@@ -96,7 +96,7 @@ class HomeViewModel extends LoaderViewModel {
     List<Movie> tList = await movieRepository.getTrendingMoviesData(
         source: forceReload ? SourceType.REMOTE : null);
 
-    trendingListNotifier.value = List.from(tList);
+    trendingListNotifier.value = List.from(tList.take(10));
   }
 
   Future _getPopularMovieDataList({bool forceReload = false}) async {
