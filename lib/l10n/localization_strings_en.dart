@@ -4,6 +4,7 @@ final en = {
   "HOME_TEXT": "Home",
   "MY_LIST_TEXT": "My Lists",
   "MY_FAVORITES": "My Favorites",
+  "VIEW_ALL_TEXT": "View all",
 
   "TOP_TRENDING_MOVIES_TEXT": "Top [PARAM] Trending Movies",
   "MY_MOVIES_TO_WATCH_TEXT": "My Movies to Watch",

@@ -42,9 +42,10 @@ class RFutureImage extends StatelessWidget {
     Widget defaultWdt = defaultImgWdt ??
         Image(
           image: AssetImage(defaultImgRoute!),
-          // height: imgSize.height,
-          // width: imgSize.width,
+          height: imgSize?.height == 0 ? double.infinity : imgSize?.height ?? double.infinity,
+          width: imgSize?.width == 0 ? double.infinity : imgSize?.width ?? double.infinity,
           alignment: imgAlignment,
+          fit: boxFit,
         );
     defaultWdt = Container(
       alignment: imgAlignment,

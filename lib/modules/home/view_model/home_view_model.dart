@@ -18,6 +18,8 @@ class HomeViewModel extends LoaderViewModel {
   final popularListNotifier = ValueNotifier<List<Movie>?>(null);
   final myMoviesListNotifier = ValueNotifier<List<Movie>?>(null);
 
+  List<Movie> popularListAll = [];
+
   final ValueNotifier<bool> centerMapOnUserPositionNotifier =
       ValueNotifier<bool>(true);
   bool mapReady = false;
@@ -104,6 +106,9 @@ class HomeViewModel extends LoaderViewModel {
     List<Movie> tList = await movieRepository.getPopularMoviesData(
         source: forceReload ? SourceType.REMOTE : null);
 
+    popularListAll = List.from(tList);
+
+    tList = List.from(tList.take(10));
     List<Movie> tList2 = await movieRepository.getMyMoviesData(
       myMoviesToWatch: tList.map((e) => e.id).toList(),
       source: forceReload ? SourceType.REMOTE : null,
@@ -125,6 +130,11 @@ class HomeViewModel extends LoaderViewModel {
 
   navigateToDetails(Movie movie) async {
     await navigator.toRoute(routeMovieDetails, arguments: movie);
+    loadData();
+  }
+
+  navigateToViewAll() async {
+    await navigator.toRoute(routeMoviesPage, arguments: popularListAll);
     loadData();
   }
 }

@@ -68,6 +68,7 @@ class PersonDetailsViewModel extends LoaderViewModel {
 
     // print('RETURN PersonDetailsViewModel - _getPersonMovies(movieId: "$personId")');
     // person = tPerson;
+    tPersonMovies.sort((a,b) => (b.releaseDate ?? DateTime(1900)).compareTo(a.releaseDate ?? DateTime(1900)));
     personMoviesNotifier.value = List.from(tPersonMovies);
     _updateMoviesMediaFiles();
   }

@@ -9,6 +9,7 @@ class BottomNavigatorBar extends StatelessWidget {
   static final NavigationService navigator = NavigationService();
   final selectedItemColor = R.colors.primary;
   final unselectedItemColor = Colors.white70;
+  final disabledItemColor = Colors.white24;
 
   // final List<String> _kTabPages = <String>[
   //   // MyFavoritesRoutes.root,
@@ -16,8 +17,9 @@ class BottomNavigatorBar extends StatelessWidget {
   //   // CustomTimerRoutes.root,
   // ];
   final List<Map> tabPagesMap = [
-    {'icon':const Icon(Icons.home_outlined), 'label':_translate('HOME_TEXT'),'route': HomePage.route},
-    {'icon':const Icon(Icons.bookmark_outline), 'label':_translate('MY_LIST_TEXT'),'route': HomePage.route},
+    {'icon':const Icon(Icons.home_outlined), 'label':_translate('HOME_TEXT'), 'route': HomePage.route},
+    // {'icon':const Icon(Icons.bookmark_outline), 'label':_translate('MY_LIST_TEXT'), 'route': ''},
+    {'icon':const Icon(Icons.bookmark_outline), 'label':_translate('MY_LIST_TEXT'), 'route': HomePage.route},
   ];
 
   BottomNavigatorBar({Key? key}) : super(key: key);
@@ -26,13 +28,17 @@ class BottomNavigatorBar extends StatelessWidget {
 
   List<BottomNavigationBarItem> _getBottomNavBarItems(int idx) {
     List<BottomNavigationBarItem> list = [];
+    // int i = 0;
     for(Map page in tabPagesMap) {
+      // String? route = page['route'];
       list.add(
           BottomNavigationBarItem(
             icon: page['icon'],
+            // icon: Icon((page['icon'] as Icon).icon, color: route == null || route.isEmpty ? disabledItemColor : i == idx ? selectedItemColor : unselectedItemColor,) ,
             label: page['label'],
           )
       );
+      // i++;
     }
     // list.addAll([
     //   BottomNavigationBarItem(
@@ -76,7 +82,10 @@ class BottomNavigatorBar extends StatelessWidget {
   }
 
   _navigateTo(int index) {
-    navigator.pushNamedAndRemoveUntilHome(kTabPages.elementAt(index));
+    String? route = kTabPages.elementAt(index);
+    if(route != null) {
+      navigator.pushNamedAndRemoveUntilHome(route);
+    }
   }
 
   @override
@@ -93,6 +102,7 @@ class BottomNavigatorBar extends StatelessWidget {
       currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,
       onTap: _navigateTo,
+      showUnselectedLabels: false,
     );
 
     return bottomNavBar;

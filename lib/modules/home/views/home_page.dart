@@ -95,6 +95,7 @@ class HomePage extends StatelessWidget {
                 translate('TOP_TRENDING_MOVIES_TEXT', param: '10');
             String myMoviesToWatchStr = translate('MY_MOVIES_TO_WATCH_TEXT');
             String popularMoviesStr = translate('POPULAR_MOVIES_TEXT');
+            String viewAllStr = translate('VIEW_ALL_TEXT');
 
             stackList.add(
               SafeArea(
@@ -620,11 +621,33 @@ class HomePage extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(popularMoviesStr,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(popularMoviesStr,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline1),
+                                        Container(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white12,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                          ),
+                                          child: InkWell(
+                                            onTap: viewModel.navigateToViewAll,
+                                            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                              child: Text(viewAllStr,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headline6),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Material(
                                     color: Colors.transparent,

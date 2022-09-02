@@ -4,6 +4,7 @@ final es = {
   "HOME_TEXT": "Principal",
   "MY_LIST_TEXT": "Mis Listas",
   "MY_FAVORITES": "Mis Favoritos",
+  "VIEW_ALL_TEXT": "Ver todo",
 
   "TOP_TRENDING_MOVIES_TEXT": "Las [PARAM] películas en tendencia",
   "MY_MOVIES_TO_WATCH_TEXT": "Mis películas para ver",
