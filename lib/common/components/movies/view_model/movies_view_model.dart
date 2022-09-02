@@ -15,6 +15,7 @@ class MoviesViewModel extends LoaderViewModel {
   final MovieRepository movieRepository;
   late UserProvider userProvider;
   final moviesNotifier = ValueNotifier<List<Movie>?>(null);
+  int currentPage = 1;
 
   final ValueNotifier<bool> centerMapOnUserPositionNotifier =
       ValueNotifier<bool>(true);
@@ -66,6 +67,20 @@ class MoviesViewModel extends LoaderViewModel {
       moviesNotifier.value = List.from(tMovies);
       _updateMoviesMediaFiles();
     }
+  }
+
+  getMoreData() async {
+    currentPage++;
+    List<Movie> tMovies = await movieRepository.getPopularMoviesData(
+      // myMoviesToWatch: moviesNotifier.value!.map((e) => e.id).toList(),
+      page: currentPage,
+      source: SourceType.REMOTE,
+    );
+
+    List<Movie> currentMovies = List.from(moviesNotifier.value ?? []);
+    currentMovies.addAll(tMovies);
+    moviesNotifier.value = List.from(currentMovies);
+    _updateMoviesMediaFiles();
   }
 
   _updateMoviesMediaFiles() {

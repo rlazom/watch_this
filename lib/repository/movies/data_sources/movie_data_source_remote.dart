@@ -147,13 +147,17 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
     return movieList;
   }
 
-  Future<List<Movie>> getPopularMoviesData() async {
-    // print('MovieDataSourceRemote - getPopularMoviesData()');
+  Future<List<Movie>> getPopularMoviesData(int page) async {
+    // print('MovieDataSourceRemote - getPopularMoviesData(page: $page)');
     String url = R.urls.popularity;
+
+    Map queryMap = {
+      'page': page
+    };
 
     dynamic data;
     try {
-      data = await fetchData(url: url);
+      data = await fetchData(url: url, query: queryMap);
     } catch (error) {
       print('MovieDataSourceRemote.getPopularMoviesData() - ["$error"');
       rethrow;
@@ -161,9 +165,12 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
 
     List list = data['results'] as List;
     List<Movie> movieList = list.map((e) => Movie.fromJson(e)).toList();
-    shared.setPopularMoviesData(json.encode(movieList));
+    if(page == 1) {
+      shared.setPopularMoviesData(json.encode(movieList));
+    }
 
-    // print('MovieDataSourceRemote - getPopularMoviesData() - RETURN ${movieList.length}');
+    // print('MovieDataSourceRemote - getPopularMoviesData($page) - RETURN first: ${movieList.first.title}');
+    // print('MovieDataSourceRemote - getPopularMoviesData($page) - RETURN ${movieList.length}');
     return movieList;
   }
 

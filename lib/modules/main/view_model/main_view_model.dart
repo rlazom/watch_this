@@ -45,6 +45,6 @@ class MainViewModel extends LoaderViewModel {
     MovieDataSourceRemote remote = MovieDataSourceRemote();
 
     remote.getTrendingMoviesData();
-    remote.getPopularMoviesData();
+    remote.getPopularMoviesData(1);
   }
 }

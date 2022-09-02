@@ -113,7 +113,7 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
     return result;
   }
 
-  Future<List<Movie>?> getPopularMoviesData() async {
+  Future<List<Movie>?> getPopularMoviesData(int page) async {
     // print('MovieDataSourceLocal - getPopularMoviesData()');
     List<Movie>? result;
     var response = _shared.getPopularMoviesData();

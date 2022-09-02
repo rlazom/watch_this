@@ -228,7 +228,11 @@ class HomePage extends StatelessWidget {
                                             currentTrendingMovieIdNotifier,
                                         builder: (context,
                                             currentTrendingMovieId, _) {
+
+                                          // TODO: FIX OFFSET
                                           const double centerOffset = 0.023148;
+                                          // const double centerOffset = 0.0;
+
                                           const double center =
                                               centerOffset + 0.5;
                                           int index = (currentTrendingMovieId -
@@ -309,14 +313,19 @@ class HomePage extends StatelessWidget {
                                           padding -= rest > center ? 4 : 0;
                                           offset *= 10;
                                           offset -= rest > center ? 0.47 : 0;
+                                          double size = (1-opacity) * 0.3;
+                                          size -= rest > center ? 0.0272 : 0;
+                                          opacity += rest > center ? 0.10 : 0;
+                                          opacity = opacity > 1.0 ? 1.0 : opacity;
 
                                           // print('currentTrendingMovieId: $currentTrendingMovieId, '
                                           //     'index: $index, '
-                                          //     'integer: $integer, '
-                                          //     'rest: $rest, ${rest * 3.15}, '
-                                          //     'padding: $padding, '
+                                          //     // 'integer: $integer, '
+                                          //     'rest: $rest, ${rest * math.pi}, '
+                                          //     // 'padding: $padding, '
                                           //     'offset: $offset, '
-                                          //     'OPACITY: $opacity'
+                                          //     'opacity: $opacity, '
+                                          //     'size: $size'
                                           //   ,);
 
                                           return Center(
@@ -330,47 +339,48 @@ class HomePage extends StatelessWidget {
                                                         .spaceBetween,
                                                 children: [
                                                   /// POSTER
-                                                  Transform(
-                                                    alignment: Alignment.center,
-                                                    transform:
-                                                        Matrix4.identity()
-                                                          ..setEntry(
-                                                              3, 2, 0.003)
-                                                          ..rotateY(rest * 3.15)
-                                                          ..rotateY(rest > 0.5
-                                                              ? math.pi
-                                                              : 0),
-                                                    child: SimpleShadow(
-                                                      color: Colors.black,
-                                                      offset:
-                                                          const Offset(1, 5),
-                                                      opacity: 0.4,
-                                                      sigma: 3,
-                                                      child: RFutureImage(
-                                                        // fn: viewModel.expandImage,
-                                                        tag: 'TM_',
-                                                        fImage: movie.fPoster,
-                                                        defaultImgWdt:
-                                                            const Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  8.0),
-                                                          child: Icon(
-                                                            Icons
-                                                                .movie_outlined,
-                                                            color:
-                                                                Colors.white30,
+                                                  SizedBox(
+                                                    width: 90,
+                                                    child: Center(
+                                                      child: Transform(
+                                                        alignment: Alignment.center,
+                                                        transform:
+                                                            Matrix4.identity()
+                                                              ..setEntry(
+                                                                  3, 2, 0.003)
+                                                              ..rotateY(rest * math.pi)
+                                                              ..rotateY(rest > 0.5
+                                                                  ? math.pi
+                                                                  : 0),
+                                                        child: SimpleShadow(
+                                                          color: Colors.black,
+                                                          offset:
+                                                              const Offset(1, 5),
+                                                          opacity: 0.4,
+                                                          sigma: 3,
+                                                          child: RFutureImage(
+                                                            // fn: viewModel.expandImage,
+                                                            tag: 'TM_',
+                                                            fImage: movie.fPoster,
+                                                            defaultImgWdt:
+                                                                const Padding(
+                                                              padding:
+                                                                  EdgeInsets.all(
+                                                                      8.0),
+                                                              child: Icon(
+                                                                Icons
+                                                                    .movie_outlined,
+                                                                color:
+                                                                    Colors.white30,
+                                                              ),
+                                                            ),
+                                                            // imgSize: const Size(80, 120),
+                                                            imgSize: Size(80 + (size*80), 120 + (size*120)),
+                                                            boxFit: BoxFit.cover,
                                                           ),
                                                         ),
-                                                        imgSize:
-                                                            const Size(80, 120),
-                                                        boxFit: BoxFit.cover,
                                                       ),
                                                     ),
-                                                  ),
-
-                                                  const SizedBox(
-                                                    width: 16.0,
                                                   ),
 
                                                   Expanded(

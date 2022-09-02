@@ -104,13 +104,13 @@ class MovieRepository extends RMasterRepository {
     return List<Movie>.from(result);
   }
 
-  Future<List<Movie>> getPopularMoviesData({SourceType? source}) async {
+  Future<List<Movie>> getPopularMoviesData({int page = 1, SourceType? source}) async {
     Map<SourceType, Function> allSources = {
       SourceType.LOCAL: local.getPopularMoviesData,
       SourceType.REMOTE: remote.getPopularMoviesData,
     };
 
-    List result = await getAllItemsData(allSources: allSources, source: source);
+    List result = await getAllItemsData(allSources: allSources, source: source, param: page);
     return List<Movie>.from(result);
   }
 
