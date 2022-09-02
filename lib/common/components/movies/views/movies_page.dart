@@ -131,7 +131,7 @@ class MoviesPage extends StatelessWidget {
                             itemExtent: 60,
                             itemBuilder: (context, index) {
 
-                              if ((index+itemAmount) < movieList.length) {
+                              if (index < movieList.length) {
                                 Movie movie = movieList.elementAt(index);
                                 print('index: $index/${movieList.length} - movie: "${movie.title}"');
                                 // Show your info
