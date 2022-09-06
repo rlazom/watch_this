@@ -57,4 +57,5 @@ enum TopProvider {
   amazon,
   google,
   apple,
+  disney,
 }

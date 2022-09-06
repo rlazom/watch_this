@@ -2,7 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watch_this/common/constants.dart';
-import 'package:watch_this/common/widgets/grid_item_wdt.dart';
+
+// import 'package:watch_this/common/widgets/grid_item_wdt.dart';
 import 'package:watch_this/models/movie.dart';
 import '../../../widgets/loading_blur_wdt.dart';
 import '../../../widgets/r_future_image.dart';
@@ -13,28 +14,33 @@ class MoviesPage extends StatelessWidget {
   static const String route = '/movies';
   final MoviesViewModel viewModel;
 
-  const MoviesPage({Key? key, required this.viewModel})
-      : super(key: key);
+  const MoviesPage({Key? key, required this.viewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        title: ValueListenableBuilder<String?>(
+          valueListenable: viewModel.titleNotifier,
+          builder: (context, title, _) {
+            return title == null ? const SizedBox() : Text(title);
+          },
+        ),
       ),
       backgroundColor: Colors.black,
       body: SafeArea(
         child: ChangeNotifierProvider.value(
           value: viewModel,
-          child: Consumer<MoviesViewModel>(
-              builder: (context, viewModel, child) {
+          child:
+              Consumer<MoviesViewModel>(builder: (context, viewModel, child) {
             if (viewModel.normal) {
               viewModel.scheduleLoadService(context: context);
               return const LoadingBlurWdt();
             }
 
             Function translate = viewModel.translate;
-            String myMoviesToWatchStr = translate('MY_MOVIES_TO_WATCH_TEXT');
+            String loadingStr = translate('LOADING');
 
             double blur = 3.0;
             Size size = MediaQuery.of(context).size;
@@ -49,10 +55,8 @@ class MoviesPage extends StatelessWidget {
                       RFutureImage(
                         fImage: null,
                         // defaultImgRoute: R.assets.images.defaultBackdropJpeg,
-                        defaultImgWdt: Image.asset(R
-                            .assets
-                            .images
-                            .defaultBackdropJpeg,
+                        defaultImgWdt: Image.asset(
+                          R.assets.images.defaultBackdropJpeg,
                           height: size.height,
                           width: size.width,
                         ),
@@ -101,19 +105,16 @@ class MoviesPage extends StatelessWidget {
                                   width: 100.0,
                                   height: 100.0,
                                   child: Center(
-                                    child:
-                                    CircularProgressIndicator(
-                                      key: key ?? const Key('MOVIES circular_loading'),
-                                      valueColor:
-                                      AlwaysStoppedAnimation<
-                                          Color>(
-                                        Colors.blue
-                                            .withOpacity(0.6),
+                                    child: CircularProgressIndicator(
+                                      key: key ??
+                                          const Key('MOVIES circular_loading'),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.blue.withOpacity(0.6),
                                       ),
                                     ),
                                   ),
                                 ),
-                                Text('$myMoviesToWatchStr...'),
+                                Text('$loadingStr...'),
                               ],
                             );
                           }
@@ -122,84 +123,28 @@ class MoviesPage extends StatelessWidget {
                             return Container();
                           }
 
-                          final double maxWidth = MediaQuery.of(context).size.width;
-                          const double itemAmount = 3;
-                          const double paddingHorizontal = 16+16;
-                          final double itemWidth = maxWidth / itemAmount - paddingHorizontal;
-
-                          return ListView.builder(
-                            itemExtent: 60,
-                            itemBuilder: (context, index) {
-
+                          return GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3, childAspectRatio: 0.45),
+                            itemBuilder: (_, index) {
                               if (index < movieList.length) {
                                 Movie movie = movieList.elementAt(index);
-                                print('index: $index/${movieList.length} - movie: "${movie.title}"');
-                                // Show your info
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 2.0),
-                                  child: Container(color:Colors.white10, height: 60,child: Text('$index - ${movie.title}')),
+                                // print('index: $index/${movieList.length} - movie: [${movie.id}] "${movie.title}"');
+
+                                return ChangeNotifierProvider<Movie>.value(
+                                  value: movie,
+                                  child: MovieTile(),
                                 );
-
-                                // return Material(
-                                //   color: Colors.transparent,
-                                //   child: Wrap(
-                                //       children: movieList
-                                //           .map(
-                                //             (e) {
-                                //           String title = e.title;
-                                //           if(e.releaseDate != null) {
-                                //             title += ' (${e.releaseDate?.year})';
-                                //           }
-                                //
-                                //           return MovieTile(
-                                //             fn: () => viewModel
-                                //                 .navigateToMovieDetails(e),
-                                //             movie: e,
-                                //           );
-                                //         },
-                                //       ).toList()),
-                                // );
-
                               } else {
-                                print('index: $index - movie: "-"');
                                 viewModel.getMoreData();
-                                return const Center(child: CircularProgressIndicator());
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               }
-                              // return const Center(child: CircularProgressIndicator());
                             },
-                            itemCount: movieList.length + 1,
-                          );
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // if (movieCredits.isNotEmpty)
-                              //   Text('CREDITS',
-                              //       style: Theme.of(context)
-                              //           .textTheme
-                              //           .headline1),
-
-                              Material(
-                                color: Colors.transparent,
-                                child: Wrap(
-                                    children: movieList
-                                        .map(
-                                          (e) {
-                                            String title = e.title;
-                                            if(e.releaseDate != null) {
-                                              title += ' (${e.releaseDate?.year})';
-                                            }
-
-                                            return MovieTile(
-                                              fn: () => viewModel
-                                                  .navigateToMovieDetails(e),
-                                              movie: e,
-                                            );
-                                          },
-                                        ).toList()),
-                              ),
-                            ],
+                            itemCount: viewModel.isFullList
+                                ? movieList.length
+                                : movieList.length + 1,
                           );
                         }),
                   ),

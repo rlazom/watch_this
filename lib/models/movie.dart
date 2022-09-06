@@ -3,15 +3,17 @@ import 'package:intl/intl.dart';
 import 'dart:io' show File;
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:watch_this/common/enums.dart';
+import 'package:watch_this/common/routes.dart';
 import 'package:watch_this/models/company.dart';
 import 'package:watch_this/models/watch_provider.dart';
+import 'package:watch_this/services/navigation_service.dart';
 
 import 'production_country.dart';
 import 'movie_genre.dart';
 
 final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 
-class Movie implements Comparable<Movie> {
+class Movie extends ChangeNotifier implements Comparable<Movie> {
   final int id;
   final String? imdbId;
   final double? imdbRate;
@@ -36,10 +38,10 @@ class Movie implements Comparable<Movie> {
   final int voteCount;
   String? character;
   final String? job;
-  final String? backdropPath;
-  final String? posterPath;
+  String? backdropPath;
+  String? posterPath;
   final Map? watchProviders;
-  final List<WatchProvider>? watchProvidersList;
+  List<WatchProvider>? watchProvidersList;
   final Map? releaseDates;
   final List<String>? certifications;
   final Map? similar;
@@ -92,8 +94,31 @@ class Movie implements Comparable<Movie> {
         return 'google play movies';
       case TopProvider.apple:
         return 'apple itunes';
+      case TopProvider.disney:
+        return 'disney plus';
       default:
         return '';
+    }
+  }
+
+  void updateMovieTileData({List? pWatchProvidersList, String? pPosterPath, String? pBackdropPath}) {
+    // fPoster = '!this.done';
+    bool update = false;
+    if(pWatchProvidersList != null) {
+      watchProvidersList = List.from(pWatchProvidersList);
+      update = true;
+    }
+    if(pPosterPath != null) {
+      posterPath = pPosterPath;
+      update = true;
+    }
+    if(pBackdropPath != null) {
+      backdropPath = pBackdropPath;
+      update = true;
+    }
+
+    if(update) {
+      notifyListeners();
     }
   }
 
@@ -105,6 +130,7 @@ class Movie implements Comparable<Movie> {
   bool get inAmazon => _haveProvider(TopProvider.amazon);
   bool get inGoogle => _haveProvider(TopProvider.google);
   bool get inApple => _haveProvider(TopProvider.apple);
+  bool get inDisney => _haveProvider(TopProvider.disney);
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -310,5 +336,9 @@ class Movie implements Comparable<Movie> {
       default:
         return null;
     }
+  }
+
+  navigateToMovieDetails() {
+    NavigationService().toRoute(routeMovieDetails, arguments: this);
   }
 }

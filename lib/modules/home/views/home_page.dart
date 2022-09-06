@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_shadow/simple_shadow.dart';
@@ -7,6 +7,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:watch_this/common/components/movie/views/movie_tile.dart';
 import 'package:watch_this/common/components/movie/views/stars_rating.dart';
 import 'package:watch_this/common/constants.dart';
+import 'package:watch_this/common/providers/user_provider.dart';
 import 'package:watch_this/common/widgets/bottom_navigator_bar.dart';
 import 'package:watch_this/common/widgets/r_future_image.dart';
 import 'package:watch_this/models/movie.dart';
@@ -229,15 +230,8 @@ class HomePage extends StatelessWidget {
                                         builder: (context,
                                             currentTrendingMovieId, _) {
 
-                                          // TODO: FIX OFFSET
-                                          const double centerOffset = 0.023148;
-                                          // const double centerOffset = 0.0;
-
-                                          const double center =
-                                              centerOffset + 0.5;
-                                          int index = (currentTrendingMovieId -
-                                                  centerOffset)
-                                              .round();
+                                          const double center = 0.5;
+                                          int index = currentTrendingMovieId.round();
 
                                           //////////////////////////////////////
                                           Movie movie = viewModel
@@ -299,34 +293,30 @@ class HomePage extends StatelessWidget {
                                               .toList();
                                           //////////////////////////////////////
 
-                                          int integer =
-                                              currentTrendingMovieId.floor();
-                                          double rest =
-                                              currentTrendingMovieId - integer;
-                                          double opacity =
-                                              (rest - center).abs() / center;
+                                          int integer = currentTrendingMovieId.floor();
+                                          double rest = currentTrendingMovieId - integer;
+                                          double opacity = (rest - center).abs() / center;
                                           double offset = center -
                                                   (rest > center
                                                       ? (rest - center)
                                                       : (center - rest));
-                                          double padding = offset * 100;
-                                          padding -= rest > center ? 4 : 0;
-                                          offset *= 10;
-                                          offset -= rest > center ? 0.47 : 0;
-                                          double size = (1-opacity) * 0.3;
-                                          size -= rest > center ? 0.0272 : 0;
-                                          opacity += rest > center ? 0.10 : 0;
-                                          opacity = opacity > 1.0 ? 1.0 : opacity;
 
-                                          // print('currentTrendingMovieId: $currentTrendingMovieId, '
-                                          //     'index: $index, '
-                                          //     // 'integer: $integer, '
-                                          //     'rest: $rest, ${rest * math.pi}, '
-                                          //     // 'padding: $padding, '
-                                          //     'offset: $offset, '
-                                          //     'opacity: $opacity, '
-                                          //     'size: $size'
-                                          //   ,);
+                                          double padding = offset * 50;
+                                          offset *= 10;
+                                          double size = (1-opacity) * 0.3;
+
+                                          // if(kDebugMode) {
+                                          //   print(
+                                          //     'currentTrendingMovieId: $currentTrendingMovieId, '
+                                          //         'index: $index, '
+                                          //         'integer: $integer, '
+                                          //         'rest: $rest, '
+                                          //         'padding: $padding, '
+                                          //         'offset: $offset, '
+                                          //         'opacity: $opacity, '
+                                          //         'size: $size'
+                                          //     ,);
+                                          // }
 
                                           return Center(
                                             child: Padding(
@@ -396,7 +386,7 @@ class HomePage extends StatelessWidget {
                                                             child: Opacity(
                                                               opacity: opacity,
                                                               child: Transform.translate(
-                                                                offset: Offset(rest < center ? -offset : offset,0),
+                                                                offset: Offset(rest < center ? -offset : offset, 0),
                                                                 child: Text(
                                                                   (index + 1)
                                                                       .toString(),
@@ -406,18 +396,11 @@ class HomePage extends StatelessWidget {
                                                           ),
                                                         ),
 
+                                                        /// MOVIE DATA
                                                         Opacity(
                                                           opacity: opacity,
-                                                          child: Padding(
-                                                            padding: EdgeInsets.only(
-                                                                top: rest <
-                                                                        center
-                                                                    ? padding
-                                                                    : 0,
-                                                                bottom: rest >
-                                                                        center
-                                                                    ? padding
-                                                                    : 0),
+                                                          child: Transform.translate(
+                                                            offset: Offset(0, rest > center ? -padding : padding),
                                                             child: Column(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -426,41 +409,56 @@ class HomePage extends StatelessWidget {
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                Text(
-                                                                    '${movie.releaseDate!.year}'),
-                                                                Row(
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          FittedBox(
-                                                                        child: StarsRating(
-                                                                            rating:
-                                                                                movie.voteAverage),
-                                                                      ),
-                                                                    ),
-                                                                    Expanded(
-                                                                      flex: 2,
-                                                                      child:
-                                                                          Container(),
-                                                                    ),
-                                                                  ],
+                                                                Transform.translate(
+                                                                  // offset: Offset(0, rest > center ? (1-opacity) : 60*(1-opacity)),
+                                                                  offset: Offset(0, rest > center ? (1-opacity) : (1-opacity)),
+                                                                  child: Text(
+                                                                      '${movie.releaseDate!.year}'),
                                                                 ),
-                                                                Text(
-                                                                  movie.title,
-                                                                  style: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .headline1
-                                                                      ?.copyWith(
-                                                                          fontSize:
-                                                                              20.0),
+                                                                Transform.translate(
+                                                                  // offset: Offset(0, rest > center ? -15*(1-opacity) : 43*(1-opacity)),
+                                                                  offset: Offset(0, rest > center ? -15*(1-opacity) : (1-opacity)),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Expanded(
+                                                                        child:
+                                                                            FittedBox(
+                                                                          child: StarsRating(
+                                                                              rating:
+                                                                                  movie.voteAverage),
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        flex: 2,
+                                                                        child:
+                                                                            Container(),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Transform.translate(
+                                                                  // offset: Offset(0, rest > center ? -34*(1-opacity) : 25*(1-opacity)),
+                                                                  offset: Offset(0, rest > center ? -34*(1-opacity) : (1-opacity)),
+                                                                  child: Text(
+                                                                    movie.title,
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .headline1
+                                                                        ?.copyWith(
+                                                                            fontSize:
+                                                                                20.0),
+                                                                  ),
                                                                 ),
                                                                 const SizedBox(
                                                                   height: 4.0,
                                                                 ),
-                                                                Wrap(
-                                                                    children:
-                                                                        genresWdt)
+                                                                Transform.translate(
+                                                                  offset: Offset(0, rest > center ? -58*(1-opacity) : (1-opacity)),
+                                                                  child: Wrap(
+                                                                      children:
+                                                                          genresWdt),
+                                                                )
                                                               ],
                                                             ),
                                                           ),
@@ -531,69 +529,76 @@ class HomePage extends StatelessWidget {
                         const SizedBox(height: 16.0),
 
                         /// MY MOVIES TO WATCH LIST
-                        ValueListenableBuilder<List<Movie>?>(
-                            valueListenable: viewModel.myMoviesListNotifier,
-                            builder: (context, myMoviesToWatch, _) {
-                              if (myMoviesToWatch == null) {
-                                return Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 100.0,
-                                      height: 100.0,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          key: key ??
-                                              const Key('circular_loading'),
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                            Colors.blue.withOpacity(0.6),
+                        Consumer<UserProvider>(
+                          builder: (context, userProvider, _) {
+                            viewModel.getMyMovieDataList(movieIdList: userProvider.toWatch).then((value) {
+                              viewModel.updateMediaFiles(myMovies: true, popular: false, trending: false);
+                            });
+                            return ValueListenableBuilder<List<Movie>?>(
+                                valueListenable: viewModel.myMoviesListNotifier,
+                                builder: (context, myMoviesToWatch, _) {
+                                  if (myMoviesToWatch == null) {
+                                    return Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 100.0,
+                                          height: 100.0,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              key: key ??
+                                                  const Key('circular_loading'),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                Colors.blue.withOpacity(0.6),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Text('$myMoviesToWatchStr...'),
+                                      ],
+                                    );
+                                  }
+
+                                  if (myMoviesToWatch.isEmpty) {
+                                    return Container();
+                                  }
+
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8.0),
+                                        child: Text(myMoviesToWatchStr,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline1),
+                                      ),
+                                      Material(
+                                        color: Colors.transparent,
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: myMoviesToWatch
+                                                .map((e) => ChangeNotifierProvider<Movie>.value(
+                                                  value: e,
+                                                  child: MovieTile(
+                                                        showToWatchIcon: false,
+                                                      ),
+                                                ))
+                                                .toList(),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Text('$myMoviesToWatchStr...'),
-                                  ],
-                                );
-                              }
-
-                              if (myMoviesToWatch.isEmpty) {
-                                return Container();
-                              }
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(myMoviesToWatchStr,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1),
-                                  ),
-                                  Material(
-                                    color: Colors.transparent,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: myMoviesToWatch
-                                            .map((e) => MovieTile(
-                                                  fn: () => viewModel
-                                                      .navigateToDetails(e),
-                                                  movie: e,
-                                                  showToWatchIcon: false,
-                                                ))
-                                            .toList(),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                ],
-                              );
-                            }),
+                                      const SizedBox(height: 16.0),
+                                    ],
+                                  );
+                                });
+                          }
+                        ),
 
                         /// POPULAR MOVIES
                         ValueListenableBuilder<List<Movie>?>(
@@ -667,11 +672,10 @@ class HomePage extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: popularList
-                                            .map((e) => MovieTile(
-                                                  fn: () => viewModel
-                                                      .navigateToDetails(e),
-                                                  movie: e,
-                                                ))
+                                            .map((e) => ChangeNotifierProvider<Movie>.value(
+                                              value: e,
+                                              child: MovieTile(),
+                                            ))
                                             .toList(),
                                       ),
                                     ),

@@ -639,12 +639,10 @@ class MovieDetailsPage extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: collectionMovies
-                                            .map((e) => MovieTile(
-                                                  fn: () => viewModel
-                                                      .navigateToMovieDetails(
-                                                          e),
-                                                  movie: e,
-                                                ))
+                                            .map((e) => ChangeNotifierProvider<Movie>.value(
+                                              value: e,
+                                              child: MovieTile(),
+                                            ))
                                             .toList(),
                                       ),
                                     ),
@@ -721,11 +719,9 @@ class MovieDetailsPage extends StatelessWidget {
                                                   const EdgeInsets.all(8.0),
                                               child: Tooltip(
                                                 message: e.title,
-                                                child: MovieTile(
-                                                  fn: () => viewModel
-                                                      .navigateToMovieDetails(
-                                                          e),
-                                                  movie: e,
+                                                child: ChangeNotifierProvider<Movie>.value(
+                                                  value: e,
+                                                  child: MovieTile(),
                                                 ),
                                               ),
                                             ))

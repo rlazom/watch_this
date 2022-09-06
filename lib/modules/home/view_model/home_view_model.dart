@@ -38,7 +38,7 @@ class HomeViewModel extends LoaderViewModel {
     List<Future> futureList = [
       _getTrendingMovieDataList(forceReload: forceReload),
       _getPopularMovieDataList(forceReload: forceReload),
-      _getMyMovieDataList(forceReload: forceReload),
+      getMyMovieDataList(forceReload: forceReload),
     ];
 
     try {
@@ -50,46 +50,52 @@ class HomeViewModel extends LoaderViewModel {
       return;
     }
     markAsSuccess();
-    _updateMediaFiles();
+    updateMediaFiles();
   }
 
-  _updateMediaFiles() {
-    for (Movie movie in trendingListNotifier.value ?? []) {
-      if (movie.posterPath != null && movie.posterPath!.trim() != '') {
-        String imageUrl = R.urls.image(movie.posterPath!);
-        movie.fPoster = movieRepository.getItemFile(
-            fileUrl: imageUrl, matchSizeWithOrigin: false);
-      }
-      if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
-        String imageUrl = R.urls.imageW500(movie.backdropPath!);
-        movie.fBackdrop = movieRepository.getItemFile(
-            fileUrl: imageUrl, matchSizeWithOrigin: false);
-      }
-    }
-
-    for (Movie movie in popularListNotifier.value ?? []) {
-      if (movie.posterPath != null && movie.posterPath!.trim() != '') {
-        String imageUrl = R.urls.image(movie.posterPath!);
-        movie.fPoster = movieRepository.getItemFile(
-            fileUrl: imageUrl, matchSizeWithOrigin: false);
-      }
-      if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
-        String imageUrl = R.urls.imageW500(movie.backdropPath!);
-        movie.fBackdrop = movieRepository.getItemFile(
-            fileUrl: imageUrl, matchSizeWithOrigin: false);
+  updateMediaFiles({bool trending = true, bool popular = true, bool myMovies = true}) {
+    if (trending) {
+      for (Movie movie in trendingListNotifier.value ?? []) {
+        if (movie.posterPath != null && movie.posterPath!.trim() != '') {
+          String imageUrl = R.urls.image(movie.posterPath!);
+          movie.fPoster = movieRepository.getItemFile(
+              fileUrl: imageUrl, matchSizeWithOrigin: false);
+        }
+        if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
+          String imageUrl = R.urls.imageW500(movie.backdropPath!);
+          movie.fBackdrop = movieRepository.getItemFile(
+              fileUrl: imageUrl, matchSizeWithOrigin: false);
+        }
       }
     }
 
-    for (Movie movie in myMoviesListNotifier.value ?? []) {
-      if (movie.posterPath != null && movie.posterPath!.trim() != '') {
-        String imageUrl = R.urls.image(movie.posterPath!);
-        movie.fPoster = movieRepository.getItemFile(
-            fileUrl: imageUrl, matchSizeWithOrigin: false);
+    if (popular) {
+      for (Movie movie in popularListNotifier.value ?? []) {
+        if (movie.posterPath != null && movie.posterPath!.trim() != '') {
+          String imageUrl = R.urls.image(movie.posterPath!);
+          movie.fPoster = movieRepository.getItemFile(
+              fileUrl: imageUrl, matchSizeWithOrigin: false);
+        }
+        if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
+          String imageUrl = R.urls.imageW500(movie.backdropPath!);
+          movie.fBackdrop = movieRepository.getItemFile(
+              fileUrl: imageUrl, matchSizeWithOrigin: false);
+        }
       }
-      if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
-        String imageUrl = R.urls.imageW500(movie.backdropPath!);
-        movie.fBackdrop = movieRepository.getItemFile(
-            fileUrl: imageUrl, matchSizeWithOrigin: false);
+    }
+
+    if (myMovies) {
+      for (Movie movie in myMoviesListNotifier.value ?? []) {
+        if (movie.posterPath != null && movie.posterPath!.trim() != '') {
+          String imageUrl = R.urls.image(movie.posterPath!);
+          movie.fPoster = movieRepository.getItemFile(
+              fileUrl: imageUrl, matchSizeWithOrigin: false);
+        }
+        if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
+          String imageUrl = R.urls.imageW500(movie.backdropPath!);
+          movie.fBackdrop = movieRepository.getItemFile(
+              fileUrl: imageUrl, matchSizeWithOrigin: false);
+        }
       }
     }
   }
@@ -119,22 +125,25 @@ class HomeViewModel extends LoaderViewModel {
     popularListNotifier.value = List.from(tList2);
   }
 
-  Future _getMyMovieDataList({bool forceReload = false}) async {
+  Future getMyMovieDataList({bool forceReload = false, List<int>? movieIdList}) async {
     List<Movie> tList = await movieRepository.getMyMoviesData(
-      myMoviesToWatch: userProvider.toWatch,
+      myMoviesToWatch: movieIdList ?? userProvider.toWatch,
       source: forceReload ? SourceType.REMOTE : null,
     );
 
     myMoviesListNotifier.value = List.from(tList);
   }
 
-  navigateToDetails(Movie movie) async {
-    await navigator.toRoute(routeMovieDetails, arguments: movie);
-    loadData();
+  navigateToDetails(Movie movie) {
+    navigator.toRoute(routeMovieDetails, arguments: movie);
   }
 
-  navigateToViewAll() async {
-    await navigator.toRoute(routeMoviesPage, arguments: popularListAll);
-    loadData();
+  navigateToViewAll() {
+    String popularMoviesStr = translate('POPULAR_MOVIES_TEXT');
+    Map argMap = {
+      'title': popularMoviesStr,
+      'futureFn': movieRepository.getPopularMoviesData,
+    };
+    navigator.toRoute(routeMoviesPage, arguments: argMap);
   }
 }

@@ -41,6 +41,11 @@ class UserProvider with ChangeNotifier {
     favorites = List.from(userFavorites);
     watched = List.from(userWatched);
     toWatch = List.from(userToWatch);
+
+    // print('rated: "$rated"');
+    // print('favorites: "$favorites"');
+    // print('watched: "$watched"');
+    // print('toWatch: "$toWatch"');
   }
 
   Future<List<MovieGenre>> getGenres({bool forceReload = false}) async {

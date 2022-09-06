@@ -126,7 +126,6 @@ class MovieDetailsViewModel extends LoaderViewModel {
   }
 
   // TODO
-
   _getImdbData() {}
 
   _getCollectionMoviesData(int collectionId, {bool forceReload = false}) async {
@@ -199,11 +198,14 @@ class MovieDetailsViewModel extends LoaderViewModel {
   }
 
   navigateToPersonDetails(Person person) {
-    navigator.toRoute(routePersonDetails, arguments: person);
-  }
-
-  navigateToMovieDetails(Movie movie) {
-    navigator.toRoute(routeMovieDetails, arguments: movie);
+    String titleStr = person.name;
+    Map argMap = {
+      'title': titleStr,
+      'futureFn': () => movieRepository.getPersonMoviesData(personId: person.id),
+      'sortFn': (Movie a, Movie b) => (b.releaseDate ?? DateTime(1900)).compareTo(a.releaseDate ?? DateTime(1900)),
+      'isFullList': true,
+    };
+    navigator.toRoute(routeMoviesPage, arguments: argMap);
   }
 
   expandImage(String? image) {
