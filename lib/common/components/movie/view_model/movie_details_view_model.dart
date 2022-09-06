@@ -29,11 +29,13 @@ class MovieDetailsViewModel extends LoaderViewModel {
         sharedPreferencesService = SharedPreferencesService();
 
   @override
-  void loadData({BuildContext? context, forceReload = false}) async {
+  Future loadData({BuildContext? context, forceReload = false}) async {
+    // print('MovieDetailsViewModel - loadData(forceReload = "$forceReload")');
     if (success) {
       markAsLoading();
     }
 
+    // print('..loadData() - context != null => "${context != null}", movie == null => "${movie == null}"');
     if (context != null && movie == null) {
       movie = ModalRoute.of(context)!.settings.arguments as Movie;
     }
@@ -65,7 +67,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
   }
 
   Future _getMovieExtendedData(int movieId, {bool forceReload = false}) async {
-    // print('MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId")');
+    // print('MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId", forceReload: "$forceReload")');
 
     Movie tMovie = await movieRepository.getExtendedMovieData(
       movieId: movieId,
@@ -103,7 +105,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
 
     if (movie!.watchProvidersList != null &&
         movie!.watchProvidersList!.isNotEmpty) {
-      movie!.watchProvidersList!.removeWhere((element) => element.displayPriority > 20);
+      // movie!.watchProvidersList!.removeWhere((element) => element.displayPriority > 20);
       movie!.watchProvidersList!.sort();
       for (WatchProvider provider in movie!.watchProvidersList!) {
         if (provider.logoPath != null && provider.logoPath!.trim() != '') {

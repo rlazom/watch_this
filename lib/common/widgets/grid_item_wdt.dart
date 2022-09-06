@@ -21,6 +21,7 @@ class GridItemWdt extends StatelessWidget {
   final Widget? subTitleWdt;
   final Widget? extraWdt;
   final Widget? topBookmarkWdt;
+  final Widget? topMediaTypeWdt;
   final Color? backgroundColor;
 
   const GridItemWdt({
@@ -43,6 +44,7 @@ class GridItemWdt extends StatelessWidget {
     this.subTitleWdt,
     this.extraWdt,
     this.topBookmarkWdt,
+    this.topMediaTypeWdt,
     this.backgroundColor,
   }) : super(key: key);
 
@@ -86,25 +88,8 @@ class GridItemWdt extends StatelessWidget {
                       imgSize: imageSize,
                       boxFit: BoxFit.cover,
                     ),
-                    if(topBookmarkWdt != null)
-                      topBookmarkWdt!,
-                    // SimpleShadow(
-                    //   child: Align(
-                    //     alignment: Alignment.topRight,
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.only(right: 8.0),
-                    //       child: Container(
-                    //         width: 20,
-                    //         height: 20,
-                    //         // color: Colors.red,
-                    //         decoration: const BoxDecoration(
-                    //           color: Colors.red,
-                    //           borderRadius: BorderRadius.vertical(bottom: Radius.circular(8.0)),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    if (topBookmarkWdt != null) topBookmarkWdt!,
+                    if (topMediaTypeWdt != null) topMediaTypeWdt!,
                   ],
                 ),
               ),
@@ -124,7 +109,8 @@ class GridItemWdt extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (titleWdt != null || (title != null && title.toString().trim() != ''))
+                          if (titleWdt != null ||
+                              (title != null && title.toString().trim() != ''))
                             Expanded(
                               flex: titleFlex,
                               child: Align(

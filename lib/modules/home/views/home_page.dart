@@ -222,7 +222,7 @@ class HomePage extends StatelessWidget {
                                             });
                                       }),
 
-                                  /// MOVIE INDEX
+                                  /// MOVIE DATA [INDEX, TITLE, GENRES, ETC]
                                   IgnorePointer(
                                     child: ValueListenableBuilder<double>(
                                         valueListenable:
@@ -412,8 +412,11 @@ class HomePage extends StatelessWidget {
                                                                 Transform.translate(
                                                                   // offset: Offset(0, rest > center ? (1-opacity) : 60*(1-opacity)),
                                                                   offset: Offset(0, rest > center ? (1-opacity) : (1-opacity)),
-                                                                  child: Text(
-                                                                      '${movie.releaseDate!.year}'),
+                                                                  child: SimpleShadow(
+                                                                    offset: const Offset(0, 0),
+                                                                    sigma: 2.0,
+                                                                    child: Text('${movie.releaseDate!.year}'),
+                                                                  ),
                                                                 ),
                                                                 Transform.translate(
                                                                   // offset: Offset(0, rest > center ? -15*(1-opacity) : 43*(1-opacity)),
@@ -423,9 +426,13 @@ class HomePage extends StatelessWidget {
                                                                       Expanded(
                                                                         child:
                                                                             FittedBox(
-                                                                          child: StarsRating(
-                                                                              rating:
-                                                                                  movie.voteAverage),
+                                                                          child: SimpleShadow(
+                                                                            offset: const Offset(0, 0),
+                                                                            sigma: 2.0,
+                                                                            child: StarsRating(
+                                                                                rating:
+                                                                                    movie.voteAverage),
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                       Expanded(
@@ -439,15 +446,19 @@ class HomePage extends StatelessWidget {
                                                                 Transform.translate(
                                                                   // offset: Offset(0, rest > center ? -34*(1-opacity) : 25*(1-opacity)),
                                                                   offset: Offset(0, rest > center ? -34*(1-opacity) : (1-opacity)),
-                                                                  child: Text(
-                                                                    movie.title,
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .headline1
-                                                                        ?.copyWith(
-                                                                            fontSize:
-                                                                                20.0),
+                                                                  child: SimpleShadow(
+                                                                    offset: const Offset(0, 0),
+                                                                    sigma: 2.0,
+                                                                    child: Text(
+                                                                      movie.title,
+                                                                      style: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .headline1
+                                                                          ?.copyWith(
+                                                                              fontSize:
+                                                                                  20.0),
+                                                                    ),
                                                                   ),
                                                                 ),
                                                                 const SizedBox(
@@ -455,9 +466,13 @@ class HomePage extends StatelessWidget {
                                                                 ),
                                                                 Transform.translate(
                                                                   offset: Offset(0, rest > center ? -58*(1-opacity) : (1-opacity)),
-                                                                  child: Wrap(
-                                                                      children:
-                                                                          genresWdt),
+                                                                  child: SimpleShadow(
+                                                                    offset: const Offset(0, 0),
+                                                                    sigma: 2.0,
+                                                                    child: Wrap(
+                                                                        children:
+                                                                            genresWdt),
+                                                                  ),
                                                                 )
                                                               ],
                                                             ),

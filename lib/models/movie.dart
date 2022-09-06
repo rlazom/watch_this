@@ -53,7 +53,7 @@ class Movie extends ChangeNotifier implements Comparable<Movie> {
     required this.id,
     this.imdbId,
     this.imdbRate,
-    required this.adult,
+    this.adult = false,
     this.belongsToCollection,
     this.budget,
     this.revenue,
