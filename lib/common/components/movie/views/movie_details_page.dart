@@ -4,6 +4,7 @@ import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_shadow/simple_shadow.dart';
 import 'package:watch_this/common/components/person/views/person_tile.dart';
 import 'package:watch_this/common/constants.dart';
 import 'package:watch_this/common/providers/user_provider.dart';
@@ -46,11 +47,19 @@ class MovieDetailsPage extends StatelessWidget {
 
         // String locale = Localizations.localeOf(navigator.context).toString();
         // final DateFormat dateFormat = DateFormat('dd MMMM yyyy', locale);
+        // final DateFormat dateFormat = DateFormat.yMMMMEEEEd(locale);
+        final DateFormat dateFormatShort = DateFormat.yMd(locale);
         final DateFormat dateFormat = DateFormat.yMMMMd(locale);
         DateTime? releaseDateDt = viewModel.movie!.releaseDate;
-        String? releaseDateStr;
+        String releaseDateStr = '';
+        String? releaseDateTooltipStr = '';
         if(releaseDateDt != null) {
-          releaseDateStr = dateFormat.format(releaseDateDt);
+          if(releaseDateDt.isAfter(DateTime.now())) {
+            releaseDateStr = dateFormatShort.format(releaseDateDt);
+          } else {
+            releaseDateStr = viewModel.movie!.releaseDate!.year.toString();
+            releaseDateTooltipStr = dateFormat.format(releaseDateDt);
+          }
         }
 
         String movieDurationStr = printDuration(
@@ -98,7 +107,8 @@ class MovieDetailsPage extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            // backgroundColor: Colors.transparent,
+            backgroundColor: Theme.of(context).backgroundColor,
             // title: const Text('DETAILS'),
             actions: [
               Consumer<UserProvider>(builder: (context, provider, _) {
@@ -232,12 +242,12 @@ class MovieDetailsPage extends StatelessWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.transparent,
-                              Colors.black45,
+                              Colors.black54,
+                              Colors.black38,
                               Colors.black,
                             ],
                             stops: [
-                              0.02,
+                              0.05,
                               0.12,
                               0.25,
                             ],
@@ -279,11 +289,14 @@ class MovieDetailsPage extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      viewModel.movie!.title,
-                                      // viewModel.movie!.title + ' ' + viewModel.movie!.title + ' ',
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
+                                    SimpleShadow(
+                                      offset: const Offset(0,0),
+                                      child: Text(
+                                        viewModel.movie!.title,
+                                        // viewModel.movie!.title + ' ' + viewModel.movie!.title + ' ',
+                                        style:
+                                            Theme.of(context).textTheme.headline1,
+                                      ),
                                     ),
                                     if (viewModel.movie!.originalTitle !=
                                         viewModel.movie!.title)
@@ -332,19 +345,31 @@ class MovieDetailsPage extends StatelessWidget {
                                         ),
                                       ),
                                     if (tagline != null)
-                                      Text(
-                                        '"$tagline"',
-                                        style: const TextStyle(
-                                            fontStyle: FontStyle.italic),
+                                      SimpleShadow(
+                                        offset: const Offset(0,0),
+                                        child: Text(
+                                          '"$tagline"',
+                                          style: const TextStyle(
+                                              fontStyle: FontStyle.italic),
+                                        ),
                                       ),
                                     const SizedBox(height: 8.0),
                                     Row(
                                       children: [
                                         if (viewModel.movie!.releaseDate != null)
                                           Tooltip(
-                                            message: releaseDateStr,
-                                            child: Text(
-                                              '${viewModel.movie!.releaseDate!.year}',
+                                            message: releaseDateTooltipStr,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.black12,
+                                                border: Border.all(width: 1.0, color: Theme.of(context).textTheme.bodyText2?.color ?? R.colors.primary),
+                                                borderRadius: BorderRadius.circular(8.0),
+                                              ),
+                                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+                                              child: Text(
+                                                releaseDateStr,
+                                                // '${viewModel.movie!.releaseDate!.year}',
+                                              ),
                                             ),
                                           ),
                                         if (viewModel.movie!.releaseDate !=
@@ -354,11 +379,9 @@ class MovieDetailsPage extends StatelessWidget {
                                                 null &&
                                             viewModel.movie!.productionCountries!
                                                 .isNotEmpty)
-                                          const Text(
-                                            ' | ',
-                                          ),
+                                          const SizedBox(width: 4.0),
                                         if (productionCountries != null)
-                                          Text(productionCountries),
+                                          SimpleShadow(offset: const Offset(0,0), child: Text(productionCountries),),
                                       ],
                                     ),
                                     if (viewModel.movie!.voteCount > 0)

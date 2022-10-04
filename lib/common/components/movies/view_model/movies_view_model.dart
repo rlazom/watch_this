@@ -16,6 +16,7 @@ class MoviesViewModel extends LoaderViewModel {
   Function? sortFn;
   int currentPage = 1;
   bool isFullList = false;
+  bool isLastPage = false;
 
   final ValueNotifier<bool> centerMapOnUserPositionNotifier =
       ValueNotifier<bool>(true);
@@ -47,7 +48,7 @@ class MoviesViewModel extends LoaderViewModel {
         List tList = argMap['list'] == null ? [] : argMap['list'] as List;
         moviesNotifier.value = List<Movie>.from(tList);
 
-        futureList.add(_getMoviesData(forceReload: forceReload));
+        // futureList.add(_getMoviesData(forceReload: forceReload));
       } else {
         futureList.add(futureFn!().then((value) {
           print('futureFn.THEN');
@@ -55,7 +56,8 @@ class MoviesViewModel extends LoaderViewModel {
             value.sort(sortFn);
           }
           moviesNotifier.value = List<Movie>.from(value);
-          _getMoviesData(forceReload: forceReload);
+          _updateMoviesMediaFiles();
+          // _getMoviesData(forceReload: forceReload);
         }));
       }
     }
@@ -123,12 +125,16 @@ class MoviesViewModel extends LoaderViewModel {
       source: SourceType.REMOTE,
     );
 
-    List<Movie> currentMovies = List.from(moviesNotifier.value ?? []);
-    currentMovies.addAll(tMovies);
-    moviesNotifier.value = List.from(currentMovies);
+    if(tMovies.isEmpty) {
+      isLastPage = true;
+    } else {
+      List<Movie> currentMovies = List.from(moviesNotifier.value ?? []);
+      currentMovies.addAll(tMovies);
+      moviesNotifier.value = List.from(currentMovies);
 
-    _getMoviesData();
-    _updateMoviesMediaFiles();
+      // _getMoviesData();
+      _updateMoviesMediaFiles();
+    }
   }
 
   _updateMoviesMediaFiles() {

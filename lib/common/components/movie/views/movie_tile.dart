@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 import 'package:watch_this/common/constants.dart';
@@ -12,11 +13,13 @@ import 'package:watch_this/repository/movies/movie_repository.dart';
 
 class MovieTile extends StatelessWidget {
   final bool showToWatchIcon;
+  final bool showMediaTypeIcon;
   final MovieRepository movieRepository;
 
   MovieTile({
     Key? key,
     this.showToWatchIcon = true,
+    this.showMediaTypeIcon = false,
   })  : movieRepository = MovieRepository(),
         super(key: key);
 
@@ -42,11 +45,12 @@ class MovieTile extends StatelessWidget {
             }).toList() ??
             [];
 
+        IconData? movieStatus = movie.getStatusIcon();
         String genreStr = genres.isEmpty ? '' : genres.first ?? '';
         String releaseDateStr = movie.releaseDate?.year.toString() ?? '';
 
         subTitle = genreStr;
-        if (releaseDateStr.isNotEmpty) {
+        if (releaseDateStr.isNotEmpty && movieStatus == null) {
           subTitle += genreStr.isEmpty ? releaseDateStr : ' | $releaseDateStr';
         }
 
@@ -70,46 +74,104 @@ class MovieTile extends StatelessWidget {
                 ),
               );
 
-        Widget extraWdt = Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (movie.voteAverage <= 0) const Expanded(child: SizedBox()),
-            if (movie.voteAverage > 0)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.star_border, size: iconSize, color: iconColor),
-                  const SizedBox(width: 4.0),
-                  Text(movie.voteAverage.toStringAsFixed(1), style: textStyle),
-                ],
-              ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (showToWatchIcon && movieIsToWatch)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 4.0),
-                    child: Icon(
-                      Icons.remove_red_eye,
-                      size: iconSize,
-                      color: iconColor,
+        Widget ratingOrStatus = const Expanded(child: SizedBox.shrink());
+
+        String locale = Localizations.localeOf(context).toString();
+        locale = locale.split('_').first;
+        final DateFormat dateFormatShort = DateFormat.yMd(locale);
+        DateTime? releaseDateDt = movie.releaseDate;
+        String releaseFullDateStr = '';
+        if(releaseDateDt != null) {
+          if(releaseDateDt.isAfter(DateTime.now())) {
+            releaseFullDateStr = dateFormatShort.format(releaseDateDt);
+          }
+        }
+        final Color backgroundColor = Theme.of(context).backgroundColor;
+
+        if(movie.voteAverage > 0) {
+          ratingOrStatus = Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.star_border, size: iconSize, color: iconColor),
+              const SizedBox(width: 4.0),
+              Text(movie.voteAverage.toStringAsFixed(1), style: textStyle),
+            ],
+          );
+        } else {
+          if(movieStatus != null) {
+            ratingOrStatus = Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius:
+                    BorderRadius.circular(8.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(movieStatus, size: iconSize, color: backgroundColor),
+                        const SizedBox(width: 4.0),
+                        Expanded(
+                          child: FittedBox(
+                            child: Text(
+                              releaseFullDateStr,
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic, color: backgroundColor),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                if (movieIsLike != null)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 4.0),
-                    child: Icon(
-                      movieIsLike ? Icons.thumb_up : Icons.thumb_down,
-                      size: iconSize,
-                      color: iconColor,
-                    ),
-                  ),
-                Icon(
-                  movieIsFavorite ? Icons.favorite : Icons.favorite_border,
-                  size: iconSize,
-                  color: movieIsFavorite ? R.colors.accents.rose1 : iconColor,
                 ),
-              ],
+              ),
+            );
+          }
+        }
+
+        Widget extraWdt = Row(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ratingOrStatus,
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (showToWatchIcon && movieIsToWatch)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Icon(
+                          Icons.remove_red_eye,
+                          size: iconSize,
+                          color: iconColor,
+                        ),
+                      ),
+                    if (movieIsLike != null)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Icon(
+                          movieIsLike ? Icons.thumb_up : Icons.thumb_down,
+                          size: iconSize,
+                          color: iconColor,
+                        ),
+                      ),
+                    Icon(
+                      movieIsFavorite ? Icons.favorite : Icons.favorite_border,
+                      size: iconSize,
+                      color: movieIsFavorite ? R.colors.accents.rose1 : iconColor,
+                    ),
+                  ],
+                ),
+              ),
             )
           ],
         );
@@ -187,33 +249,37 @@ class MovieTile extends StatelessWidget {
           );
         }
 
-        Widget topMediaTypeWdt = SimpleShadow(
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Container(
-              width: 16.0,
-              height: 16.0,
-              decoration: const BoxDecoration(
-                color: Colors.black45,
-                borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(6),
+        Widget topMediaTypeWdt = const SizedBox.shrink();
+        if(showMediaTypeIcon) {
+          topMediaTypeWdt = SimpleShadow(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                width: 16.0,
+                height: 16.0,
+                decoration: const BoxDecoration(
+                  color: Colors.black45,
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(6),
+                  ),
                 ),
-              ),
-              child: FittedBox(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 4.0, left: 2.0),
-                  child: Icon(
-                    Icons.movie_outlined,
-                    color: Theme.of(context)
-                        .primaryTextTheme
-                        .headline2
-                        ?.color,
+                child: FittedBox(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 4.0, left: 2.0),
+                    child: Icon(
+                      Icons.movie_outlined,
+                      color: Theme
+                          .of(context)
+                          .primaryTextTheme
+                          .headline2
+                          ?.color,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
+          );
+        }
 
         return GridItemWdt(
           // fn: fn,

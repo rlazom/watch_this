@@ -5,10 +5,12 @@ final es = {
   "MY_LIST_TEXT": "Mis Listas",
   "MY_FAVORITES": "Mis Favoritos",
   "VIEW_ALL_TEXT": "Ver todo",
+  "FILTERS_TEXT": "Filtros",
 
   "TOP_TRENDING_MOVIES_TEXT": "Las [PARAM] películas en tendencia",
   "MY_MOVIES_TO_WATCH_TEXT": "Mis películas para ver",
   "POPULAR_MOVIES_TEXT": "Películas Más Populares",
+  "UPCOMING_MOVIES_TEXT": "Próximas Películas",
 
   "CLOSE_TEXT": "Cerrar",
   "CONFIRM_TEXT": "Confirmar",
@@ -51,4 +53,5 @@ final es = {
 
   /// BUTTONS
   "START_TXT": "Iniciar",
+  "TRY_AGAIN_TXT": "Inténtelo de nuevo",
 };

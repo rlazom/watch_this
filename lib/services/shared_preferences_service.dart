@@ -20,6 +20,8 @@ enum SharePrefsAttribute {
   trendingMoviesDate,
   popularMovies,
   popularMoviesDate,
+  upcomingMovies,
+  upcomingMoviesDate,
   genres,
 }
 
@@ -71,6 +73,7 @@ class SharedPreferencesService {
     return _prefs.getString(SharePrefsAttribute.userRates.toShortString());
   }
   void setUserRates(String value) {
+    // _prefs.remove(SharePrefsAttribute.userRates.toShortString());
     _prefs.setString(SharePrefsAttribute.userRates.toShortString(), value);
   }
 
@@ -183,6 +186,20 @@ class SharedPreferencesService {
   void setPopularMoviesData(String value) {
     _prefs.setString(SharePrefsAttribute.popularMovies.toShortString(), value);
     _prefs.setString(SharePrefsAttribute.popularMoviesDate.toShortString(), DateTime.now().toTimeStamp.toString());
+  }
+
+  /// UPCOMING MOVIES
+  String? getUpcomingMoviesDataDate() {
+    return _prefs.getString(SharePrefsAttribute.upcomingMoviesDate.toShortString());
+  }
+
+  String? getUpcomingMoviesData() {
+    return _prefs.getString(SharePrefsAttribute.upcomingMovies.toShortString());
+  }
+
+  void setUpcomingMoviesData(String value) {
+    _prefs.setString(SharePrefsAttribute.upcomingMovies.toShortString(), value);
+    _prefs.setString(SharePrefsAttribute.upcomingMoviesDate.toShortString(), DateTime.now().toTimeStamp.toString());
   }
 
   /// GENRES

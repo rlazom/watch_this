@@ -5,10 +5,12 @@ final en = {
   "MY_LIST_TEXT": "My Lists",
   "MY_FAVORITES": "My Favorites",
   "VIEW_ALL_TEXT": "View all",
+  "FILTERS_TEXT": "Filters",
 
   "TOP_TRENDING_MOVIES_TEXT": "Top [PARAM] Trending Movies",
   "MY_MOVIES_TO_WATCH_TEXT": "My Movies to Watch",
   "POPULAR_MOVIES_TEXT": "Popular Movies",
+  "UPCOMING_MOVIES_TEXT": "Upcoming Movies",
 
   "CLOSE_TEXT": "Close",
   "CONFIRM_TEXT": "Confirm",
@@ -51,4 +53,5 @@ final en = {
 
   /// BUTTONS
   "START_TXT": "Start",
+  "TRY_AGAIN_TXT": "Try Again",
 };

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:watch_this/l10n/app_localizations.dart';
-import 'package:watch_this/modules/home/views/home_page.dart';
 import 'package:watch_this/services/navigation_service.dart';
 
 import '../constants.dart';
+import '../routes.dart';
 
 class BottomNavigatorBar extends StatelessWidget {
   static final NavigationService navigator = NavigationService();
@@ -18,7 +18,7 @@ class BottomNavigatorBar extends StatelessWidget {
   // ];
   final List<Map> tabPagesMap = [
     {'icon':const Icon(Icons.home_outlined), 'label':_translate('HOME_TEXT'), 'route': HomePage.route},
-    // {'icon':const Icon(Icons.bookmark_outline), 'label':_translate('MY_LIST_TEXT'), 'route': ''},
+    {'icon':const Icon(Icons.filter_list), 'label':_translate('FILTERS_TEXT'), 'route': FilterPage.route},
     {'icon':const Icon(Icons.bookmark_outline), 'label':_translate('MY_LIST_TEXT'), 'route': HomePage.route},
   ];
 
@@ -97,7 +97,7 @@ class BottomNavigatorBar extends StatelessWidget {
 
     final bottomNavBar = BottomNavigationBar(
       items: kBottomNavBarItems,
-      selectedItemColor: currentIndex == 1 ? unselectedItemColor : null,
+      // selectedItemColor: currentIndex == 1 ? unselectedItemColor : null,
       unselectedItemColor: unselectedItemColor,
       currentIndex: currentIndex,
       type: BottomNavigationBarType.fixed,

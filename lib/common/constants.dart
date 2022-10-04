@@ -16,6 +16,8 @@ class KUrl {
   const KUrl._();
   static const String domain = 'https://api.themoviedb.org';
   // final String popularity = '$domain''/4/discover/movie';
+  final String multiSearch = '$domain''/3/search/multi';
+  final String upcoming = '$domain''/3/movie/upcoming';
   final String popularity = '$domain''/3/movie/popular';
   final String trending = '$domain''/3/trending/movie/week';
   final String genres = '$domain''/3/genre/movie/list';

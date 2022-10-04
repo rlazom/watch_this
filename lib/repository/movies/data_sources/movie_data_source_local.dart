@@ -131,6 +131,24 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
     return result;
   }
 
+  Future<List<Movie>?> getUpcomingMoviesData(int page) async {
+    // print('MovieDataSourceLocal - getUpcomingMoviesData()');
+    List<Movie>? result;
+    var response = _shared.getUpcomingMoviesData();
+
+    if (response != null) {
+      String upcomingMoviesDateStr = _shared.getUpcomingMoviesDataDate()!;
+      DateTime upcomingMoviesDate = upcomingMoviesDateStr.fromTimeStamp;
+
+      if(upcomingMoviesDate.difference(DateTime.now()).inDays.abs() < 7) {
+        List list = json.decode(response) as List;
+        result = List.from(list.map((e) => Movie.fromJson(e)).toList());
+      }
+    }
+    // print('MovieDataSourceLocal - getUpcomingMoviesData() - RETURN IS NULL ${result == null} ');
+    return result;
+  }
+
   Future<List<MovieGenre>?> getGenresData() async {
     // print('MovieDataSourceLocal - getGenresData()');
     List<MovieGenre>? result;

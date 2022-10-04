@@ -2,13 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:watch_this/models/cast.dart';
 import 'package:watch_this/models/crew.dart';
+import 'package:watch_this/models/media.dart';
 import 'package:watch_this/models/movie_genre.dart';
 
 import '../../../common/constants.dart';
 import '../../../models/movie.dart';
 import '../../r_master/data_sources/r_master_data_source_remote.dart';
+
+final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 
 class MovieDataSourceRemote extends RMasterDataSourceRemote {
   MovieDataSourceRemote() : super();
@@ -174,6 +178,38 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
     return movieList;
   }
 
+  Future<List<Movie>> getUpcomingMoviesData(int page) async {
+    // print('MovieDataSourceRemote - getUpcomingMoviesData(page: $page)');
+    String url = R.urls.upcoming;
+
+    Map queryMap = {
+      'page': page
+    };
+
+    dynamic data;
+    try {
+      data = await fetchData(url: url, query: queryMap);
+    } catch (error) {
+      print('MovieDataSourceRemote.getUpcomingMoviesData() - ["$error"');
+      rethrow;
+    }
+
+    DateTime dateMinimum = dateFormat.parse(data['dates']['minimum']);
+    DateTime dateMaximum = dateFormat.parse(data['dates']['maximum']);
+    List list = data['results'] as List;
+    List<Movie> movieList = list.map((e) => Movie.fromJson(e)).toList();
+    movieList.removeWhere((element) => element.releaseDate?.isBefore(dateMinimum) ?? false);
+    movieList.removeWhere((element) => element.releaseDate?.isAfter(dateMaximum) ?? false);
+
+    if(page == 1) {
+      shared.setUpcomingMoviesData(json.encode(movieList));
+    }
+
+    // print('MovieDataSourceRemote - getUpcomingMoviesData($page) - RETURN first: ${movieList.first.title}');
+    // print('MovieDataSourceRemote - getUpcomingMoviesData($page) - RETURN ${movieList.length}');
+    return movieList;
+  }
+
   Future<List<MovieGenre>> getGenresData() async {
     // print('MovieDataSourceRemote - getGenresData()');
     String url = R.urls.genres;
@@ -192,6 +228,54 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
 
     // print('MovieDataSourceRemote - getGenresData() - RETURN ${movieList.length}');
     return movieGenresList;
+  }
+
+  Future<List<Media>> getMultiSearchData(Map map) async {
+    // print('MovieDataSourceRemote - getMultiSearchData(map: $map)');
+    String url = R.urls.multiSearch;
+
+    String text = map['text'];
+    int page = map['page'];
+
+    Map queryMap = {
+      'query': text,
+      'page': page,
+    };
+
+    dynamic data;
+    try {
+      data = await fetchData(url: url, query: queryMap, timeout: const Duration(minutes: 1));
+    } catch (error) {
+      print('MovieDataSourceRemote.getMultiSearchData() - ["$error"');
+      rethrow;
+    }
+
+    List list = data['results'] as List;
+    list.removeWhere((element) => element['media_type'] != 'movie' && element['media_type'] != 'person');
+
+    // List<Movie> movieList = list.map((e) => Movie.fromJson(e)).toList();
+    List<Media> mediaList = list.map((e) {
+      Media media = Media.fromJson(e);
+
+      if(media.mediaType == 'movie') {
+        return Movie.fromJson(e);
+      } else if (media.mediaType == 'person') {
+        // return Person.fromJson(e);
+        return Cast.fromJson(e);
+      } else {
+        return media;
+        // return null;
+      }
+    }).toList();
+
+
+    // if(page == 1) {
+    //   shared.setUpcomingMoviesData(json.encode(movieList));
+    // }
+
+    // print('MovieDataSourceRemote - getUpcomingMoviesData($page) - RETURN first: ${movieList.first.title}');
+    // print('MovieDataSourceRemote - getUpcomingMoviesData($page) - RETURN ${movieList.length}');
+    return mediaList;
   }
 
   /// rangeInBytes='0-100'

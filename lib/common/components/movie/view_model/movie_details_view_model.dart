@@ -74,6 +74,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
       source: forceReload ? SourceType.REMOTE : null,
     );
 
+    tMovie.similarMovies?.removeWhere((element) => element == movie);
     movie = tMovie;
     // print('RETURN MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId")');
   }
@@ -153,6 +154,8 @@ class MovieDetailsViewModel extends LoaderViewModel {
     }
 
     // print('RETURN MovieDetailsViewModel - _getCollectionMoviesData(collectionId: "$collectionId", length: "${tCollectionMovies.length}")');
+    tCollectionMovies.sort((a, b) => a.releaseDate.compareTo(b.releaseDate));
+    // tCollectionMovies.sort((Movie a, Movie b) => (a.releaseDate ?? DateTime(1900)).compareTo(b.releaseDate ?? DateTime(1900)));
     collectionMoviesNotifier.value = List.from(tCollectionMovies);
     // _updateMoviesMediaFiles();
   }
@@ -175,7 +178,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
     List<Person> movieCreditsList = [];
 
     const List<String> crewJobs = ['Director', 'Co-Director', 'Producer'];
-    movieCastList.removeWhere((element) => element.order > 9);
+    movieCastList.removeWhere((element) => (element.order ?? 99) > 9);
     movieCrewList.retainWhere((element) => crewJobs.contains(element.job));
     movieCreditsList.addAll(movieCastList);
 

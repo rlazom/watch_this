@@ -17,8 +17,7 @@ class HomeViewModel extends LoaderViewModel {
   final trendingListNotifier = ValueNotifier<List<Movie>?>(null);
   final popularListNotifier = ValueNotifier<List<Movie>?>(null);
   final myMoviesListNotifier = ValueNotifier<List<Movie>?>(null);
-
-  List<Movie> popularListAll = [];
+  final upcomingMoviesListNotifier = ValueNotifier<List<Movie>?>(null);
 
   final ValueNotifier<bool> centerMapOnUserPositionNotifier =
       ValueNotifier<bool>(true);
@@ -39,6 +38,7 @@ class HomeViewModel extends LoaderViewModel {
       _getTrendingMovieDataList(forceReload: forceReload),
       _getPopularMovieDataList(forceReload: forceReload),
       getMyMovieDataList(forceReload: forceReload),
+      _getUpcomingMovieDataList(forceReload: forceReload),
     ];
 
     try {
@@ -53,49 +53,35 @@ class HomeViewModel extends LoaderViewModel {
     updateMediaFiles();
   }
 
-  updateMediaFiles({bool trending = true, bool popular = true, bool myMovies = true}) {
+  updateMediaFiles({bool trending = true, bool popular = true, bool myMovies = true, bool upcoming = true}) {
     if (trending) {
-      for (Movie movie in trendingListNotifier.value ?? []) {
-        if (movie.posterPath != null && movie.posterPath!.trim() != '') {
-          String imageUrl = R.urls.image(movie.posterPath!);
-          movie.fPoster = movieRepository.getItemFile(
-              fileUrl: imageUrl, matchSizeWithOrigin: false);
-        }
-        if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
-          String imageUrl = R.urls.imageW500(movie.backdropPath!);
-          movie.fBackdrop = movieRepository.getItemFile(
-              fileUrl: imageUrl, matchSizeWithOrigin: false);
-        }
-      }
+      _updateMovieImages(trendingListNotifier.value);
     }
 
     if (popular) {
-      for (Movie movie in popularListNotifier.value ?? []) {
-        if (movie.posterPath != null && movie.posterPath!.trim() != '') {
-          String imageUrl = R.urls.image(movie.posterPath!);
-          movie.fPoster = movieRepository.getItemFile(
-              fileUrl: imageUrl, matchSizeWithOrigin: false);
-        }
-        if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
-          String imageUrl = R.urls.imageW500(movie.backdropPath!);
-          movie.fBackdrop = movieRepository.getItemFile(
-              fileUrl: imageUrl, matchSizeWithOrigin: false);
-        }
-      }
+      _updateMovieImages(popularListNotifier.value);
     }
 
     if (myMovies) {
-      for (Movie movie in myMoviesListNotifier.value ?? []) {
-        if (movie.posterPath != null && movie.posterPath!.trim() != '') {
-          String imageUrl = R.urls.image(movie.posterPath!);
-          movie.fPoster = movieRepository.getItemFile(
-              fileUrl: imageUrl, matchSizeWithOrigin: false);
-        }
-        if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
-          String imageUrl = R.urls.imageW500(movie.backdropPath!);
-          movie.fBackdrop = movieRepository.getItemFile(
-              fileUrl: imageUrl, matchSizeWithOrigin: false);
-        }
+      _updateMovieImages(myMoviesListNotifier.value);
+    }
+
+    if (upcoming) {
+      _updateMovieImages(upcomingMoviesListNotifier.value);
+    }
+  }
+
+  _updateMovieImages(List? list) {
+    for (Movie movie in list ?? []) {
+      if (movie.posterPath != null && movie.posterPath!.trim() != '') {
+        String imageUrl = R.urls.image(movie.posterPath!);
+        movie.fPoster = movieRepository.getItemFile(
+            fileUrl: imageUrl, matchSizeWithOrigin: false);
+      }
+      if (movie.backdropPath != null && movie.backdropPath!.trim() != '') {
+        String imageUrl = R.urls.imageW500(movie.backdropPath!);
+        movie.fBackdrop = movieRepository.getItemFile(
+            fileUrl: imageUrl, matchSizeWithOrigin: false);
       }
     }
   }
@@ -104,15 +90,19 @@ class HomeViewModel extends LoaderViewModel {
     List<Movie> tList = await movieRepository.getTrendingMoviesData(
         source: forceReload ? SourceType.REMOTE : null);
 
-    trendingListNotifier.value = List.from(tList.take(10));
+    // trendingListNotifier.value = List.from(tList.take(10));
+    tList = List.from(tList.take(10));
+    List<Movie> tList2 = await movieRepository.getMyMoviesData(
+      myMoviesToWatch: tList.map((e) => e.id).toList(),
+      source: forceReload ? SourceType.REMOTE : null,
+    );
+    trendingListNotifier.value = List.from(tList2);
   }
 
   Future _getPopularMovieDataList({bool forceReload = false}) async {
     // print('_getPopularMovieDataList()');
     List<Movie> tList = await movieRepository.getPopularMoviesData(
         source: forceReload ? SourceType.REMOTE : null);
-
-    popularListAll = List.from(tList);
 
     tList = List.from(tList.take(10));
     List<Movie> tList2 = await movieRepository.getMyMoviesData(
@@ -134,15 +124,36 @@ class HomeViewModel extends LoaderViewModel {
     myMoviesListNotifier.value = List.from(tList);
   }
 
+  Future _getUpcomingMovieDataList({bool forceReload = false}) async {
+    List<Movie> tList = await movieRepository.getUpcomingMoviesData(
+      source: forceReload ? SourceType.REMOTE : null,
+    );
+    List<Movie> tList2 = await movieRepository.getMyMoviesData(
+      myMoviesToWatch: tList.map((e) => e.id).toList(),
+      source: forceReload ? SourceType.REMOTE : null,
+    );
+
+    upcomingMoviesListNotifier.value = List.from(tList2);
+  }
+
   navigateToDetails(Movie movie) {
     navigator.toRoute(routeMovieDetails, arguments: movie);
   }
 
-  navigateToViewAll() {
+  navigateToPopularViewAll() {
     String popularMoviesStr = translate('POPULAR_MOVIES_TEXT');
     Map argMap = {
       'title': popularMoviesStr,
       'futureFn': movieRepository.getPopularMoviesData,
+    };
+    navigator.toRoute(routeMoviesPage, arguments: argMap);
+  }
+
+  navigateToUpcomingViewAll() {
+    String titleStr = translate('UPCOMING_MOVIES_TEXT');
+    Map argMap = {
+      'title': titleStr,
+      'futureFn': movieRepository.getUpcomingMoviesData,
     };
     navigator.toRoute(routeMoviesPage, arguments: argMap);
   }

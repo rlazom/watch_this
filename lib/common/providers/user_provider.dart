@@ -127,4 +127,19 @@ class UserProvider with ChangeNotifier {
     _sharedPreferencesService.setUserToWatch(json.encode(toWatch));
     notifyListeners();
   }
+
+  updateUserLists({String? ratedStr, String? favoritesStr, String? watchedStr, String? toWatchStr}) {
+    if(ratedStr != null) {
+      _sharedPreferencesService.setUserRates(ratedStr);
+    }
+    if(favoritesStr != null) {
+      _sharedPreferencesService.setUserFavorites(favoritesStr);
+    }
+    if(watchedStr != null) {
+      _sharedPreferencesService.setUserWatched(watchedStr);
+    }
+    if(toWatchStr != null) {
+      _sharedPreferencesService.setUserToWatch(toWatchStr);
+    }
+  }
 }

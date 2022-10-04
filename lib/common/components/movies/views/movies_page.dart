@@ -142,7 +142,7 @@ class MoviesPage extends StatelessWidget {
                                     child: CircularProgressIndicator());
                               }
                             },
-                            itemCount: viewModel.isFullList
+                            itemCount: (viewModel.isFullList || viewModel.isLastPage)
                                 ? movieList.length
                                 : movieList.length + 1,
                           );

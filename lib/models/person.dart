@@ -1,36 +1,54 @@
 import 'dart:io' show File;
 import 'cast.dart';
 import 'crew.dart';
+import 'media.dart';
 
-class Person {
-  final bool adult;
+class Person extends Media {
+  // final bool adult;
   final int gender;
-  final int id;
+  // final int id;
   final String knownForDepartment;
   final String name;
-  final String originalName;
+  final String? originalName;
   final double popularity;
   final String? profilePath;
-  final String creditId;
+  final String? creditId;
   Future<File?>? fProfile;
 
   Person({
-    this.adult = false,
+    adult = false,
+    mediaType = 'person',
     required this.gender,
-    required this.id,
+    required id,
     this.knownForDepartment = '',
     required this.name,
-    required this.originalName,
+    this.originalName,
     this.popularity = 0.0,
     this.profilePath,
-    required this.creditId,
-  });
+    this.creditId,
+  }) : super(id: id, mediaType: mediaType, title: name, adult: adult);
 
-  String get job {
+  String? get job {
     return this is Crew ? (this as Crew).job : (this as Cast).character;
   }
-  set job(String newJob) {
-    this is Crew ? ((this as Crew).job += ' / $newJob') : ((this as Cast).character += ' / $newJob');
+  set job(String? newJob) {
+    // this is Crew ? ((this as Crew).job += ' / $newJob') : ((this as Cast).character += ' / $newJob');
+    if(this is Crew) {
+      // (this as Crew).job += ' / $newJob';
+      Crew crew = this as Crew;
+      if(crew.job != null) {
+        crew.job = '${crew.job} / $newJob';
+      } else {
+        crew.job = ' / $newJob';
+      }
+    } else {
+      Cast cast = this as Cast;
+      if(cast.character != null) {
+        cast.character = '${cast.character} / $newJob';
+      } else {
+        cast.character = ' / $newJob';
+      }
+    }
   }
 
   @override

@@ -8,23 +8,24 @@ import 'package:watch_this/models/company.dart';
 import 'package:watch_this/models/watch_provider.dart';
 import 'package:watch_this/services/navigation_service.dart';
 
+import 'media.dart';
 import 'production_country.dart';
 import 'movie_genre.dart';
 
 final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 
-class Movie extends ChangeNotifier implements Comparable<Movie> {
-  final int id;
+class Movie extends Media implements Comparable<Movie> {
+  // final int id;
   final String? imdbId;
   final double? imdbRate;
-  final bool adult;
+  // final bool adult;
   final Map? belongsToCollection;
   final double? budget;
   final double? revenue;
   final List<MovieGenre>? genres;
   final String? homepage;
   final String originalLanguage;
-  final String title;
+  // final String title;
   final String originalTitle;
   final String overview;
   final String? tagline;
@@ -50,17 +51,18 @@ class Movie extends ChangeNotifier implements Comparable<Movie> {
   Future<File?>? fBackdrop;
 
   Movie({
-    required this.id,
+    required id,
+    mediaType = 'movie',
     this.imdbId,
     this.imdbRate,
-    this.adult = false,
+    adult = false,
     this.belongsToCollection,
     this.budget,
     this.revenue,
     this.genres,
     this.homepage,
     required this.originalLanguage,
-    required this.title,
+    required title,
     required this.originalTitle,
     required this.overview,
     this.tagline,
@@ -82,7 +84,7 @@ class Movie extends ChangeNotifier implements Comparable<Movie> {
     this.certifications,
     this.similar,
     this.similarMovies,
-  });
+  }) : super(id: id, mediaType: mediaType, title: title, adult: adult);
 
   String _getProviderName(TopProvider topProvider) {
     switch (topProvider) {
@@ -295,6 +297,7 @@ class Movie extends ChangeNotifier implements Comparable<Movie> {
       certifications: certificationsUnique?.toList(),
       similar: jsonMap['similar'],
       similarMovies: tSimilarMovies,
+      mediaType: jsonMap['media_type'] ?? 'movie',
     );
   }
 

@@ -11,11 +11,11 @@ import '../../../services/shared_preferences_service.dart';
 class MainViewModel extends LoaderViewModel {
   final SharedPreferencesService sharedPreferencesService;
   late UserProvider userProvider;
+
   // int _servicesToReload = 0;
   // int _servicesToReloaded = 0;
 
-  MainViewModel()
-      : sharedPreferencesService = SharedPreferencesService();
+  MainViewModel() : sharedPreferencesService = SharedPreferencesService();
 
   @override
   loadData({BuildContext? context}) async {
@@ -23,6 +23,15 @@ class MainViewModel extends LoaderViewModel {
     // sharedPreferencesService.sudoKill();
 
     userProvider = Provider.of<UserProvider>(context!, listen: false);
+
+    /// LOAD MOCK DATA
+    // userProvider.updateUserLists(
+    //   ratedStr: mock.rated,
+    //   favoritesStr: mock.favorites,
+    //   watchedStr: mock.watched,
+    //   toWatchStr: mock.toWatch,
+    // );
+
     userProvider.loadUserLists();
     await userProvider.getGenres();
     _forceRefreshOnAllRemoteData();
@@ -37,7 +46,7 @@ class MainViewModel extends LoaderViewModel {
     //   navigator.toRoute(OnBoardingPage.route, pushAndReplace: true);
     // } else {
     //   navigator.toRoute(HomePage.route, pushAndReplace: true);
-      navigator.toRoute(HomePage.route, pushAndReplace: true);
+    navigator.toRoute(HomePage.route, pushAndReplace: true);
     // }
   }
 

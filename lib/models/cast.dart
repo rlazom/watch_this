@@ -1,9 +1,9 @@
 import 'person.dart';
 
 class Cast extends Person {
-  final int castId;
-  String character;
-  final int order;
+  final int? castId;
+  String? character;
+  final int? order;
 
   Cast({
     required this.castId,
@@ -46,7 +46,7 @@ class Cast extends Person {
       knownForDepartment: jsonMap['known_for_department'],
       name: jsonMap['name'],
       originalName: jsonMap['original_name'],
-      popularity: jsonMap['popularity'],
+      popularity: double.parse(jsonMap['popularity'].toString()),
       profilePath: jsonMap['profile_path'],
       creditId: jsonMap['credit_id'],
     );

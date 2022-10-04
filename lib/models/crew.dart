@@ -3,7 +3,7 @@ import 'person.dart';
 class Crew extends Person {
   final String department;
   @override
-  String job;
+  String? job;
 
   Crew({
     required this.department,
