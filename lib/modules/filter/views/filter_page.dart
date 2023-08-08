@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:watch_this/common/components/movie/views/movie_tile.dart';
 import 'package:watch_this/common/components/person/views/person_tile.dart';
 import 'package:watch_this/common/constants.dart';
+import 'package:watch_this/common/enums.dart';
 import 'package:watch_this/common/providers/user_provider.dart';
 import 'package:watch_this/common/widgets/bottom_navigator_bar.dart';
 import 'package:watch_this/models/cast.dart';
@@ -41,7 +42,7 @@ class FilterPage extends StatelessWidget {
     });
 
     // Color backgroundColor = Colors.black;
-    Color backgroundColor = Theme.of(context).backgroundColor;
+    Color backgroundColor = Theme.of(context).colorScheme.background;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -121,7 +122,8 @@ class FilterPage extends StatelessWidget {
             List<Widget> stackList = [];
 
             Function translate = viewModel.translate;
-            String myMoviesToWatchStr = translate('MY_MOVIES_TO_WATCH_TEXT');
+            String filterHintText = translate('FILTER_HINT_TEXT');
+            String filtersText = translate('FILTERS_TEXT');
 
             stackList.add(
               SafeArea(
@@ -135,17 +137,12 @@ class FilterPage extends StatelessWidget {
                         onSubmitted: (_) => viewModel.getMultiSearchData(),
                         textInputAction: TextInputAction.search,
                         decoration: InputDecoration(
-                          hintText: "SEARCH MOVIES, ACTORS, ETC",
+                          hintText: filterHintText,
                           suffixIcon: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
                                 onPressed: viewModel.clearMultiSearch,
-                                // onPressed: (){
-                                //   viewModel.textEditingController.clear();
-                                  // FocusScope.of(context).unfocus();
-                                  // FocusScope.of(context).requestFocus(FocusNode());
-                                // },
                                 icon: const Icon(Icons.clear),
                               ),
                               IconButton(
@@ -158,13 +155,13 @@ class FilterPage extends StatelessWidget {
                       ),
                     ),
 
-                    /// MY MOVIES TO WATCH LIST
+                    /// SEARCH MEDIA(MOVIE,PERSON) LIST
                     Consumer<UserProvider>(
                         builder: (context, userProvider, _) {
                       return ValueListenableBuilder<List<Media>?>(
                           valueListenable: viewModel.searchListNotifier,
-                          builder: (context, myMoviesToWatch, _) {
-                            if (myMoviesToWatch == null) {
+                          builder: (context, searchList, _) {
+                            if (searchList == null) {
                               return Stack(
                                 alignment: Alignment.center,
                                 children: [
@@ -182,12 +179,12 @@ class FilterPage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  Text('$myMoviesToWatchStr...'),
+                                  Text('$filtersText...'),
                                 ],
                               );
                             }
 
-                            if (myMoviesToWatch.isEmpty) {
+                            if (searchList.isEmpty) {
                               return Container();
                             }
 
@@ -197,9 +194,9 @@ class FilterPage extends StatelessWidget {
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 3, childAspectRatio: 0.45),
                                 itemBuilder: (_, index) {
-                                  Media media = myMoviesToWatch.elementAt(index);
+                                  Media media = searchList.elementAt(index);
 
-                                  if(media.mediaType == 'movie') {
+                                  if(media.mediaType == MediaType.movie) {
                                     Movie movie = media as Movie;
                                     // print('index: $index/${movieList.length} - movie: [${movie.id}] "${movie.title}"');
 
@@ -208,7 +205,7 @@ class FilterPage extends StatelessWidget {
                                       child: MovieTile(showMediaTypeIcon: true),
                                     );
                                   }
-                                  if(media.mediaType == 'person') {
+                                  if(media.mediaType == MediaType.person) {
                                     Cast person = media as Cast;
                                     // print('index: $index/${movieList.length} - movie: [${movie.id}] "${movie.title}"');
 
@@ -223,7 +220,7 @@ class FilterPage extends StatelessWidget {
                                     child: Text(media.title),
                                   );
                                 },
-                                itemCount: myMoviesToWatch.length,
+                                itemCount: searchList.length,
                                 // itemCount: (viewModel.isFullList || viewModel.isLastPage)
                                 //     ? movieList.length
                                 //     : movieList.length + 1,

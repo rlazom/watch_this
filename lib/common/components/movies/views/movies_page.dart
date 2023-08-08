@@ -13,11 +13,142 @@ import '../view_model/movies_view_model.dart';
 class MoviesPage extends StatelessWidget {
   static const String route = '/movies';
   final MoviesViewModel viewModel;
+  final bool includeScaffold;
 
-  const MoviesPage({Key? key, required this.viewModel}) : super(key: key);
+  const MoviesPage({Key? key, required this.viewModel, this.includeScaffold = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final Widget contentWdt = SafeArea(
+      child: ChangeNotifierProvider.value(
+        value: viewModel,
+        child:
+        Consumer<MoviesViewModel>(builder: (context, viewModel, child) {
+          if (viewModel.normal) {
+            viewModel.scheduleLoadService(context: context);
+            return const LoadingBlurWdt();
+          }
+
+          Function translate = viewModel.translate;
+          String loadingStr = translate('LOADING');
+
+          double blur = 3.0;
+          Size size = MediaQuery.of(context).size;
+
+          return Scrollbar(
+            child: Stack(
+              children: [
+                Stack(
+                  fit: StackFit.expand,
+                  alignment: Alignment.topCenter,
+                  children: [
+                    RFutureImage(
+                      fImage: null,
+                      // defaultImgRoute: R.assets.images.defaultBackdropJpeg,
+                      defaultImgWdt: Image.asset(
+                        R.assets.images.defaultBackdropJpeg,
+                        height: size.height,
+                        width: size.width,
+                      ),
+                      // imgSize: const Size(0, 300),
+                      imgSize: const Size(0, 500),
+                      boxFit: BoxFit.cover,
+                      imgAlignment: Alignment.topCenter,
+                    ),
+                    BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                      child: const SizedBox(),
+                    ),
+                    Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black45,
+                            Colors.black,
+                          ],
+                          stops: [
+                            0.02,
+                            0.4,
+                            0.7,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 16.0,
+                  ),
+                  child: ValueListenableBuilder<List<Movie>?>(
+                      valueListenable: viewModel.moviesNotifier,
+                      builder: (context, movieList, _) {
+                        if (movieList == null) {
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              SizedBox(
+                                width: 100.0,
+                                height: 100.0,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    key: key ??
+                                        const Key('MOVIES circular_loading'),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.blue.withOpacity(0.6),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text('$loadingStr...'),
+                            ],
+                          );
+                        }
+
+                        if (movieList.isEmpty) {
+                          return Container();
+                        }
+
+                        return GridView.builder(
+                          gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, childAspectRatio: 0.45),
+                          itemBuilder: (_, index) {
+                            if (index < movieList.length) {
+                              Movie movie = movieList.elementAt(index);
+                              // print('index: $index/${movieList.length} - movie: [${movie.id}] "${movie.title}"');
+
+                              return ChangeNotifierProvider<Movie>.value(
+                                value: movie,
+                                child: MovieTile(),
+                              );
+                            } else {
+                              viewModel.getMoreData();
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                          },
+                          itemCount: (viewModel.isFullList || viewModel.isLastPage)
+                              ? movieList.length
+                              : movieList.length + 1,
+                        );
+                      }),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+
+    if(!includeScaffold) {
+      return contentWdt;
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -29,131 +160,7 @@ class MoviesPage extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: ChangeNotifierProvider.value(
-          value: viewModel,
-          child:
-              Consumer<MoviesViewModel>(builder: (context, viewModel, child) {
-            if (viewModel.normal) {
-              viewModel.scheduleLoadService(context: context);
-              return const LoadingBlurWdt();
-            }
-
-            Function translate = viewModel.translate;
-            String loadingStr = translate('LOADING');
-
-            double blur = 3.0;
-            Size size = MediaQuery.of(context).size;
-
-            return Scrollbar(
-              child: Stack(
-                children: [
-                  Stack(
-                    fit: StackFit.expand,
-                    alignment: Alignment.topCenter,
-                    children: [
-                      RFutureImage(
-                        fImage: null,
-                        // defaultImgRoute: R.assets.images.defaultBackdropJpeg,
-                        defaultImgWdt: Image.asset(
-                          R.assets.images.defaultBackdropJpeg,
-                          height: size.height,
-                          width: size.width,
-                        ),
-                        // imgSize: const Size(0, 300),
-                        imgSize: const Size(0, 500),
-                        boxFit: BoxFit.cover,
-                        imgAlignment: Alignment.topCenter,
-                      ),
-                      BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                        child: const SizedBox(),
-                      ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black45,
-                              Colors.black,
-                            ],
-                            stops: [
-                              0.02,
-                              0.4,
-                              0.7,
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 16.0,
-                    ),
-                    child: ValueListenableBuilder<List<Movie>?>(
-                        valueListenable: viewModel.moviesNotifier,
-                        builder: (context, movieList, _) {
-                          if (movieList == null) {
-                            return Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 100.0,
-                                  height: 100.0,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      key: key ??
-                                          const Key('MOVIES circular_loading'),
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.blue.withOpacity(0.6),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Text('$loadingStr...'),
-                              ],
-                            );
-                          }
-
-                          if (movieList.isEmpty) {
-                            return Container();
-                          }
-
-                          return GridView.builder(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3, childAspectRatio: 0.45),
-                            itemBuilder: (_, index) {
-                              if (index < movieList.length) {
-                                Movie movie = movieList.elementAt(index);
-                                // print('index: $index/${movieList.length} - movie: [${movie.id}] "${movie.title}"');
-
-                                return ChangeNotifierProvider<Movie>.value(
-                                  value: movie,
-                                  child: MovieTile(),
-                                );
-                              } else {
-                                viewModel.getMoreData();
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                            },
-                            itemCount: (viewModel.isFullList || viewModel.isLastPage)
-                                ? movieList.length
-                                : movieList.length + 1,
-                          );
-                        }),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ),
-      ),
+      body: contentWdt,
     );
   }
 }

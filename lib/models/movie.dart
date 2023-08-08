@@ -5,6 +5,7 @@ import 'package:collection/collection.dart' show IterableExtension;
 import 'package:watch_this/common/enums.dart';
 import 'package:watch_this/common/routes.dart';
 import 'package:watch_this/models/company.dart';
+import 'package:watch_this/models/imdb_rating.dart';
 import 'package:watch_this/models/watch_provider.dart';
 import 'package:watch_this/services/navigation_service.dart';
 
@@ -15,17 +16,15 @@ import 'movie_genre.dart';
 final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 
 class Movie extends Media implements Comparable<Movie> {
-  // final int id;
   final String? imdbId;
-  final double? imdbRate;
-  // final bool adult;
+  // final double? imdbRate;
+  ImdbRating? imdbRating;
   final Map? belongsToCollection;
   final double? budget;
   final double? revenue;
   final List<MovieGenre>? genres;
   final String? homepage;
   final String originalLanguage;
-  // final String title;
   final String originalTitle;
   final String overview;
   final String? tagline;
@@ -52,9 +51,10 @@ class Movie extends Media implements Comparable<Movie> {
 
   Movie({
     required id,
-    mediaType = 'movie',
+    mediaType = MediaType.movie,
     this.imdbId,
-    this.imdbRate,
+    // this.imdbRate,
+    this.imdbRating,
     adult = false,
     this.belongsToCollection,
     this.budget,
@@ -137,7 +137,8 @@ class Movie extends Media implements Comparable<Movie> {
   Map<String, dynamic> toJson() => {
         'id': id,
         'imdb_id': imdbId,
-        'imdb_rate': imdbRate,
+        // 'imdb_rate': imdbRate,
+        'imdb_rating': imdbRating,
         'adult': adult,
         'belongs_to_collection': belongsToCollection,
         'budget': budget,
@@ -263,19 +264,25 @@ class Movie extends Media implements Comparable<Movie> {
         ? 0.0
         : double.parse(jsonMap['vote_average'].toString());
 
+    Media media = Media.fromJson(jsonMap);
+
     // print('RETURN - factory Movie.fromJson');
     return Movie(
-      id: jsonMap['id'],
+      // id: jsonMap['id'],
+      id: media.id,
       imdbId: jsonMap['imdb_id'],
-      imdbRate: jsonMap['imdb_rate'],
-      adult: jsonMap['adult'],
+      // imdbRate: jsonMap['imdb_rate'],
+      imdbRating: jsonMap['imdb_rating'],
+      // adult: jsonMap['adult'],
+      adult: media.adult,
       belongsToCollection: jsonMap['belongs_to_collection'],
       budget: tBudget,
       revenue: tRevenue,
       genres: tGenres,
       homepage: jsonMap['homepage'],
       originalLanguage: jsonMap['original_language'],
-      title: jsonMap['title'],
+      // title: jsonMap['title'],
+      title: media.title,
       originalTitle: jsonMap['original_title'],
       overview: jsonMap['overview'],
       tagline: jsonMap['tagline'],
@@ -297,7 +304,8 @@ class Movie extends Media implements Comparable<Movie> {
       certifications: certificationsUnique?.toList(),
       similar: jsonMap['similar'],
       similarMovies: tSimilarMovies,
-      mediaType: jsonMap['media_type'] ?? 'movie',
+      // mediaType: jsonMap['media_type'] ?? 'movie',
+      mediaType: media.mediaType,
     );
   }
 

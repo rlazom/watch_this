@@ -1,11 +1,13 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:watch_this/common/components/movie/views/movie_tile.dart';
 import 'package:watch_this/common/components/movie/views/stars_rating.dart';
 import 'package:watch_this/common/constants.dart';
+import 'package:watch_this/common/extensions.dart';
 import 'package:watch_this/common/providers/user_provider.dart';
 import 'package:watch_this/common/widgets/bottom_navigator_bar.dart';
 import 'package:watch_this/common/widgets/r_future_image.dart';
@@ -38,7 +40,7 @@ class HomePage extends StatelessWidget {
     });
 
     // Color backgroundColor = Colors.black;
-    Color backgroundColor = Theme.of(context).backgroundColor;
+    Color backgroundColor = Theme.of(context).colorScheme.background;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -109,7 +111,7 @@ class HomePage extends StatelessWidget {
               );
             }
 
-            TextStyle textStyle = Theme.of(context).textTheme.headline2!;
+            TextStyle textStyle = Theme.of(context).textTheme.displayMedium!;
             List<Widget> stackList = [];
 
             Function translate = viewModel.translate;
@@ -119,6 +121,26 @@ class HomePage extends StatelessWidget {
             String popularMoviesStr = translate('POPULAR_MOVIES_TEXT');
             String upcomingMoviesStr = translate('UPCOMING_MOVIES_TEXT');
             String viewAllStr = translate('VIEW_ALL_TEXT');
+            String fromStr = translate('FROM_TEXT');
+            String toStr = translate('TO_TEXT');
+
+            String? upcomingMoviesDateStr = viewModel.sharedPreferencesService.getUpcomingMoviesDataDate();
+            String? upcomingMoviesDateHintStr;
+            String? dateMinimumStr;
+            DateTime? dateMinimumDt;
+            if(upcomingMoviesDateStr != null) {
+              upcomingMoviesDateHintStr = upcomingMoviesDateStr.replaceAll('|', ' $toStr ');
+              upcomingMoviesDateHintStr = '$fromStr $upcomingMoviesDateHintStr';
+
+              String locale = Localizations.localeOf(context).toString();
+              locale = locale.split('_').first;
+              final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+              final DateFormat dateFormatMonthYear = DateFormat('MMMM y',locale);
+
+              dateMinimumDt = dateFormat.parse(upcomingMoviesDateStr.split('|').first);
+              dateMinimumStr = dateFormatMonthYear.format(dateMinimumDt).capitalize();
+              dateMinimumStr = '($dateMinimumStr)';
+            }
 
             stackList.add(
               SafeArea(
@@ -567,7 +589,7 @@ class HomePage extends StatelessWidget {
                                                                       style: Theme.of(
                                                                               context)
                                                                           .textTheme
-                                                                          .headline1
+                                                                          .displayLarge
                                                                           ?.copyWith(
                                                                               fontSize: 20.0),
                                                                     ),
@@ -719,7 +741,7 @@ class HomePage extends StatelessWidget {
                                       child: Text(myMoviesToWatchStr,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .headline1),
+                                              .displayLarge),
                                     ),
                                     Material(
                                       color: Colors.transparent,
@@ -792,7 +814,7 @@ class HomePage extends StatelessWidget {
                                         Text(popularMoviesStr,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .headline1),
+                                                .displayLarge),
                                         Container(
                                           decoration: const BoxDecoration(
                                             color: Colors.white12,
@@ -812,7 +834,7 @@ class HomePage extends StatelessWidget {
                                               child: Text(viewAllStr,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .headline6),
+                                                      .titleLarge),
                                             ),
                                           ),
                                         ),
@@ -887,7 +909,24 @@ class HomePage extends StatelessWidget {
                                         Text(upcomingMoviesStr,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .headline1),
+                                                .displayLarge),
+                                        if(upcomingMoviesDateStr != null)
+                                        Expanded(
+                                          child: FittedBox(
+                                            alignment: Alignment.centerLeft,
+                                            fit: BoxFit.scaleDown,
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                              child: Tooltip(
+                                                message: upcomingMoviesDateHintStr,
+                                                child: Text(dateMinimumStr!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                         Container(
                                           decoration: const BoxDecoration(
                                             color: Colors.white12,
@@ -907,7 +946,7 @@ class HomePage extends StatelessWidget {
                                               child: Text(viewAllStr,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .headline6),
+                                                      .titleLarge),
                                             ),
                                           ),
                                         ),

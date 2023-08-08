@@ -40,6 +40,8 @@ class RMasterRepository {
         rethrow;
       }
 
+      // print('response == null: "${response == null}"');
+      // print('response: "$response"');
       if (response != null) {
         if (singleResult) {
           return response;

@@ -21,6 +21,7 @@ class KUrl {
   final String popularity = '$domain''/3/movie/popular';
   final String trending = '$domain''/3/trending/movie/week';
   final String genres = '$domain''/3/genre/movie/list';
+  String imdb({required String imdbId}) => 'https://imdb-api.tprojects.workers.dev/title/$imdbId';
   String company(String companyId) => '$domain''/3/company/$companyId';
   String collection(int collectionId) => '$domain''/3/collection/$collectionId';
   KUrlMovie get movieModule => const KUrlMovie._();
@@ -56,6 +57,7 @@ class RkColors {
 
   Color get primary => '#03A062'.hexToColor();
   Color get background => '#0B0F0F'.hexToColor();
+  Color get imdbColor => '#f5c518'.hexToColor();
   // Color get mapDarkBackgroundColor => '#242424'.hexToColor();
   // Color get mapLightBackgroundColor => '#9ec5ef'.hexToColor();
 }

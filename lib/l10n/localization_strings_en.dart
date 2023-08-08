@@ -11,6 +11,7 @@ final en = {
   "MY_MOVIES_TO_WATCH_TEXT": "My Movies to Watch",
   "POPULAR_MOVIES_TEXT": "Popular Movies",
   "UPCOMING_MOVIES_TEXT": "Upcoming Movies",
+  "FILTER_HINT_TEXT": "Search movies or actors",
 
   "CLOSE_TEXT": "Close",
   "CONFIRM_TEXT": "Confirm",
@@ -23,6 +24,8 @@ final en = {
   "APPLY": "Apply",
   "OK_TEXT": "Ok",
   "YES_TEXT": "Yes",
+  "FROM_TEXT": "From",
+  "TO_TEXT": "To",
   "CANCEL_TEXT": "Cancel",
   "NO_TEXT": "No",
   "LOAD_MORE": "Load More",

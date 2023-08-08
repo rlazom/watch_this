@@ -1,3 +1,4 @@
+import 'package:watch_this/models/imdb_rating.dart';
 import 'package:watch_this/models/media.dart';
 import 'package:watch_this/models/movie_genre.dart';
 import 'package:watch_this/repository/movies/data_sources/movie_data_source_local.dart';
@@ -148,5 +149,22 @@ class MovieRepository extends RMasterRepository {
 
     List result = await getAllItemsData(allSources: allSources, source: source, param: queryMap);
     return List<Media>.from(result);
+  }
+
+  Future<ImdbRating?> getImdbMovieRating(
+      {required String imdbId, SourceType? source}) async {
+    // print('MovieRepository - getImdbMovieRating(imdbId: "imdbId", source: "$source")');
+
+    Map<SourceType, Function> allSources = {
+      SourceType.LOCAL: local.getImdbMovieRating,
+      SourceType.REMOTE: remote.getImdbMovieRating,
+    };
+
+    return await getAllItemsData(
+        allSources: allSources,
+        source: source,
+        param: imdbId,
+        allowNull: true,
+        singleResult: true);
   }
 }

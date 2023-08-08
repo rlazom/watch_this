@@ -103,12 +103,12 @@ class MovieDetailsPage extends StatelessWidget {
         }
 
         print('MovieDetailsPage - movie: ${viewModel.movie!.id} - ${viewModel.movie!.title}');
-        _onSelect(fn) => fn();
+        onSelect(fn) => fn();
 
         return Scaffold(
           appBar: AppBar(
             // backgroundColor: Colors.transparent,
-            backgroundColor: Theme.of(context).backgroundColor,
+            backgroundColor: Theme.of(context).colorScheme.background,
             // title: const Text('DETAILS'),
             actions: [
               Consumer<UserProvider>(builder: (context, provider, _) {
@@ -153,7 +153,7 @@ class MovieDetailsPage extends StatelessWidget {
                               movieIsFavorite ? R.colors.accents.rose1 : null),
                     ),
                     PopupMenuButton(
-                      onSelected: viewModel.loading ? null : _onSelect,
+                      onSelected: viewModel.loading ? null : onSelect,
                       child: viewModel.loading
                           ? Container()
                           : const Icon(Icons.menu),
@@ -211,7 +211,7 @@ class MovieDetailsPage extends StatelessWidget {
               }),
             ],
           ),
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Theme.of(context).colorScheme.background,
           bottomNavigationBar: BottomNavigatorBar(),
           body: SafeArea(
             child: RefreshIndicator(
@@ -273,6 +273,7 @@ class MovieDetailsPage extends StatelessWidget {
                               RFutureImage(
                                 fn: viewModel.expandImage,
                                 fImage: viewModel.movie!.fPoster,
+                                // fImage: null,
                                 defaultImgWdt: const Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Icon(
@@ -295,7 +296,7 @@ class MovieDetailsPage extends StatelessWidget {
                                         viewModel.movie!.title,
                                         // viewModel.movie!.title + ' ' + viewModel.movie!.title + ' ',
                                         style:
-                                            Theme.of(context).textTheme.headline1,
+                                            Theme.of(context).textTheme.displayLarge,
                                       ),
                                     ),
                                     if (viewModel.movie!.originalTitle !=
@@ -304,7 +305,7 @@ class MovieDetailsPage extends StatelessWidget {
                                         viewModel.movie!.originalTitle,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .headline1
+                                            .displayLarge
                                             ?.copyWith(
                                               fontStyle: FontStyle.italic,
                                               fontSize: 12.0,
@@ -326,11 +327,11 @@ class MovieDetailsPage extends StatelessWidget {
                                               Icon(movieStatus,
                                                   size: Theme.of(context)
                                                       .textTheme
-                                                      .headline2
+                                                      .displayMedium
                                                       ?.fontSize,
                                                   color: Theme.of(context)
                                                       .textTheme
-                                                      .headline2
+                                                      .displayMedium
                                                       ?.color),
                                               const SizedBox(
                                                 width: 8,
@@ -355,33 +356,82 @@ class MovieDetailsPage extends StatelessWidget {
                                       ),
                                     const SizedBox(height: 8.0),
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        if (viewModel.movie!.releaseDate != null)
-                                          Tooltip(
-                                            message: releaseDateTooltipStr,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.black12,
-                                                border: Border.all(width: 1.0, color: Theme.of(context).textTheme.bodyText2?.color ?? R.colors.primary),
-                                                borderRadius: BorderRadius.circular(8.0),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Row(
+                                            children: [
+                                              Visibility(
+                                              visible: viewModel.movie!.releaseDate != null,
+                                              replacement: const SizedBox.shrink(),
+                                              child: Tooltip(
+                                                message: releaseDateTooltipStr,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black12,
+                                                    border: Border.all(width: 1.0, color: Theme.of(context).textTheme.bodyMedium?.color ?? R.colors.primary),
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                  ),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
+                                                  child: Text(
+                                                    releaseDateStr,
+                                                    // '${viewModel.movie!.releaseDate!.year}',
+                                                  ),
+                                                ),
                                               ),
-                                              padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
-                                              child: Text(
-                                                releaseDateStr,
-                                                // '${viewModel.movie!.releaseDate!.year}',
+                                            ),
+
+                                              Visibility(
+                                                visible: viewModel.movie!.releaseDate != null && viewModel.movie!.productionCountries != null && viewModel.movie!.productionCountries!.isNotEmpty,
+                                                replacement: const SizedBox.shrink(),
+                                                child: const SizedBox(width: 4.0),
+                                              ),
+
+                                              Visibility(
+                                                visible: productionCountries != null,
+                                                replacement: const SizedBox.shrink(),
+                                                child: SimpleShadow(offset: const Offset(0,0), child: Text(productionCountries!),),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        Visibility(
+                                          visible: viewModel.movie!.imdbRating != null,
+                                          replacement: const SizedBox.shrink(),
+                                          child: Expanded(
+                                            child: FittedBox(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: R.colors.imdbColor,
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 2.0,
+                                                          horizontal: 8.0),
+                                                      child: FittedBox(
+                                                        fit: BoxFit.scaleDown,
+                                                        child: Text(
+                                                          'IMDb: ${viewModel.movie!.imdbRating?.imdbRate}',
+                                                          style: TextStyle(color: R.colors.background),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
-                                        if (viewModel.movie!.releaseDate !=
-                                                null &&
-                                            viewModel
-                                                    .movie!.productionCountries !=
-                                                null &&
-                                            viewModel.movie!.productionCountries!
-                                                .isNotEmpty)
-                                          const SizedBox(width: 4.0),
-                                        if (productionCountries != null)
-                                          SimpleShadow(offset: const Offset(0,0), child: Text(productionCountries),),
+                                        ),
                                       ],
                                     ),
                                     if (viewModel.movie!.voteCount > 0)
@@ -398,46 +448,47 @@ class MovieDetailsPage extends StatelessWidget {
                                           const SizedBox(
                                             width: 16.0,
                                           ),
-                                          // const Expanded(child: SizedBox()),
-                                          (viewModel.movie!.certifications ==
-                                                      null ||
-                                                  viewModel.movie!.certifications!
-                                                      .isEmpty)
-                                              ? const Expanded(child: SizedBox())
-                                              : Expanded(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Container(
-                                                        decoration: BoxDecoration(
-                                                          color: R.colors.primary,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8.0),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal: 8.0,
-                                                                  vertical: 2.0),
-                                                          child: Text(
-                                                            viewModel.movie!
-                                                                .certifications!
-                                                                .join(' | '),
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: R.colors
-                                                                    .background),
-                                                          ),
+
+                                          Visibility(
+                                            visible: viewModel.movie!.certifications != null && viewModel.movie!.certifications!.isNotEmpty,
+                                            replacement: const Expanded(child: SizedBox.shrink()),
+                                            child: Expanded(
+                                              child: FittedBox(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                                  children: [
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                        color: R.colors.primary,
+                                                        borderRadius:
+                                                        BorderRadius
+                                                            .circular(8.0),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8.0,
+                                                            vertical: 2.0,),
+                                                        child: Text(
+                                                          viewModel.movie!
+                                                              .certifications!
+                                                              .join(' | '),
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              color: R.colors
+                                                                  .background),
                                                         ),
                                                       ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                  ],
                                                 ),
+                                              ),
+                                            ),
+                                          ),
                                           // Expanded(
                                           //   flex: 1,
                                           //   child: viewModel.movie!.voteAverage ==
@@ -553,7 +604,7 @@ class MovieDetailsPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('STORYLINE',
-                                    style: Theme.of(context).textTheme.headline1),
+                                    style: Theme.of(context).textTheme.displayLarge),
                                 const SizedBox(height: 8.0),
                                 Text(viewModel.movie!.overview),
                                 const SizedBox(height: 16.0),
@@ -598,7 +649,7 @@ class MovieDetailsPage extends StatelessWidget {
                                     Text('CREDITS',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .headline1),
+                                            .displayLarge),
                                     Material(
                                       color: Colors.transparent,
                                       child: SingleChildScrollView(
@@ -668,7 +719,7 @@ class MovieDetailsPage extends StatelessWidget {
                                     Text('COLLECTION',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .headline1),
+                                            .displayLarge),
                                     Material(
                                       color: Colors.transparent,
                                       child: SingleChildScrollView(
@@ -743,7 +794,7 @@ class MovieDetailsPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text('SIMILAR MOVIES',
-                                    style: Theme.of(context).textTheme.headline1),
+                                    style: Theme.of(context).textTheme.displayLarge),
                                 Material(
                                   color: Colors.transparent,
                                   child: SingleChildScrollView(

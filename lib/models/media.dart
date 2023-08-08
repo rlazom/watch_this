@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../common/enums.dart';
+
 final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 
 class Media extends ChangeNotifier {
   final int id;
-  final String? mediaType;
+  final MediaType mediaType;
   final bool? adult;
   final String title;
 
@@ -27,11 +29,13 @@ class Media extends ChangeNotifier {
     // print('factory Media.fromJson(id: ${jsonMap['id']} - title: ${jsonMap['title']})');
     // print('factory Media.fromJson(jsonMap: $jsonMap');
 
+    String mediaTypeStr  = jsonMap['media_type'] ?? 'movie';
+    MediaType tMediaType = mediaTypeStr == 'movie' ? MediaType.movie : mediaTypeStr == 'person' ? MediaType.person : MediaType.tv;
 
     // print('RETURN - factory Media.fromJson');
     return Media(
       id: jsonMap['id'],
-      mediaType: jsonMap['media_type'],
+      mediaType: tMediaType,
       adult: jsonMap['adult'],
       title: jsonMap['title'] ?? jsonMap['name'],
     );

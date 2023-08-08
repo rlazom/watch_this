@@ -12,6 +12,7 @@ enum SharePrefsAttribute {
   userToWatch,
   checkedMediaData,
   extendedMovie,
+  extendedMovieImdb,
   extendedMovieCast,
   extendedMovieCrew,
   collectionMovies,
@@ -127,6 +128,15 @@ class SharedPreferencesService {
     _prefs.setString('${SharePrefsAttribute.extendedMovie.toShortString()}_$movieId', value);
   }
 
+  /// EXTENDED MOVIE - IMDb
+  String? getMovieImdbData(String imdbId) {
+    return _prefs.getString('${SharePrefsAttribute.extendedMovieImdb.toShortString()}_$imdbId');
+  }
+
+  void setMovieImdbData(String value, String imdbId) {
+    _prefs.setString('${SharePrefsAttribute.extendedMovieImdb.toShortString()}_$imdbId', value);
+  }
+
   /// EXTENDED MOVIE - CREDITS
   String? getExtendedMovieCastData(int movieId) {
     return _prefs.getString('${SharePrefsAttribute.extendedMovieCast.toShortString()}_$movieId');
@@ -197,9 +207,10 @@ class SharedPreferencesService {
     return _prefs.getString(SharePrefsAttribute.upcomingMovies.toShortString());
   }
 
-  void setUpcomingMoviesData(String value) {
+  void setUpcomingMoviesData(String value, String minMaxDates) {
     _prefs.setString(SharePrefsAttribute.upcomingMovies.toShortString(), value);
-    _prefs.setString(SharePrefsAttribute.upcomingMoviesDate.toShortString(), DateTime.now().toTimeStamp.toString());
+    // _prefs.setString(SharePrefsAttribute.upcomingMoviesDate.toShortString(), DateTime.now().toTimeStamp.toString());
+    _prefs.setString(SharePrefsAttribute.upcomingMoviesDate.toShortString(), minMaxDates);
   }
 
   /// GENRES

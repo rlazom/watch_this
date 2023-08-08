@@ -70,8 +70,9 @@ class BottomNavigatorBar extends StatelessWidget {
       AppLocalizations.of(navigator.context)!.translate(key);
 
   _getIndex(String? route) {
-    int idx = 1;
-    // final List tabPages = kTabPages.map((e) => e['route']).toList();
+    int idx = -1;
+    // print('BottomNavigatorBar - _getIndex(route: "$route")');
+    // print('BottomNavigatorBar - _getIndex() - kTabPages: "$kTabPages"');
 
     for (var page in kTabPages) {
       if (route!.contains(page) && route.indexOf(page) == 0) {
@@ -97,9 +98,9 @@ class BottomNavigatorBar extends StatelessWidget {
 
     final bottomNavBar = BottomNavigationBar(
       items: kBottomNavBarItems,
-      // selectedItemColor: currentIndex == 1 ? unselectedItemColor : null,
+      selectedItemColor: currentIndex == -1 ? unselectedItemColor : null,
       unselectedItemColor: unselectedItemColor,
-      currentIndex: currentIndex,
+      currentIndex: currentIndex == -1 ? 0 : currentIndex,
       type: BottomNavigationBarType.fixed,
       onTap: _navigateTo,
       showUnselectedLabels: false,

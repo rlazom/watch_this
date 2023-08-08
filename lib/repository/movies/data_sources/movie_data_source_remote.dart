@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
+import 'package:watch_this/common/enums.dart';
 import 'package:watch_this/models/cast.dart';
 import 'package:watch_this/models/crew.dart';
+import 'package:watch_this/models/imdb_rating.dart';
 import 'package:watch_this/models/media.dart';
 import 'package:watch_this/models/movie_genre.dart';
 
@@ -194,15 +196,17 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
       rethrow;
     }
 
-    DateTime dateMinimum = dateFormat.parse(data['dates']['minimum']);
-    DateTime dateMaximum = dateFormat.parse(data['dates']['maximum']);
+    String dateMinimumStr = data['dates']['minimum'];
+    String dateMaximumStr = data['dates']['maximum'];
+    DateTime dateMinimum = dateFormat.parse(dateMinimumStr);
+    DateTime dateMaximum = dateFormat.parse(dateMaximumStr);
     List list = data['results'] as List;
     List<Movie> movieList = list.map((e) => Movie.fromJson(e)).toList();
     movieList.removeWhere((element) => element.releaseDate?.isBefore(dateMinimum) ?? false);
     movieList.removeWhere((element) => element.releaseDate?.isAfter(dateMaximum) ?? false);
 
     if(page == 1) {
-      shared.setUpcomingMoviesData(json.encode(movieList));
+      shared.setUpcomingMoviesData(json.encode(movieList), '$dateMinimumStr|$dateMaximumStr');
     }
 
     // print('MovieDataSourceRemote - getUpcomingMoviesData($page) - RETURN first: ${movieList.first.title}');
@@ -257,9 +261,9 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
     List<Media> mediaList = list.map((e) {
       Media media = Media.fromJson(e);
 
-      if(media.mediaType == 'movie') {
+      if(media.mediaType == MediaType.movie) {
         return Movie.fromJson(e);
-      } else if (media.mediaType == 'person') {
+      } else if (media.mediaType == MediaType.person) {
         // return Person.fromJson(e);
         return Cast.fromJson(e);
       } else {
@@ -276,6 +280,31 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
     // print('MovieDataSourceRemote - getUpcomingMoviesData($page) - RETURN first: ${movieList.first.title}');
     // print('MovieDataSourceRemote - getUpcomingMoviesData($page) - RETURN ${movieList.length}');
     return mediaList;
+  }
+
+  Future<ImdbRating?> getImdbMovieRating(String imdbId) async {
+    // print('MovieDataSourceRemote - getImdbMovieRating($imdbId)');
+    String url = R.urls.imdb(imdbId: imdbId);
+
+    dynamic data;
+    try {
+      // print('TRY BEFORE fetchData(url: "$url")');
+      data = await fetchData(url: url);
+      // print('AFTER fetchData()');
+    } catch (error) {
+      // print('MovieDataSourceRemote.getImdbMovieRating() - catch ($error)');
+      if(error.toString().contains('Cannot read properties of undefined')) {
+        return null;
+      }
+      print('MovieDataSourceRemote.getImdbMovieRating() - ["$error"]');
+      rethrow;
+    }
+
+    ImdbRating result = ImdbRating.fromJson(data);
+    shared.setMovieImdbData(json.encode(result), imdbId);
+
+    // print('RETURN MovieDataSourceRemote - getImdbMovieRating()');
+    return result;
   }
 
   /// rangeInBytes='0-100'

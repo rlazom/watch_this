@@ -5,6 +5,7 @@ import 'package:watch_this/common/widgets/flat_image.dart';
 import 'package:watch_this/models/cast.dart';
 import 'package:watch_this/models/company.dart';
 import 'package:watch_this/models/crew.dart';
+import 'package:watch_this/models/imdb_rating.dart';
 import 'package:watch_this/models/movie.dart';
 import 'package:watch_this/models/person.dart';
 import 'package:watch_this/models/watch_provider.dart';
@@ -76,6 +77,16 @@ class MovieDetailsViewModel extends LoaderViewModel {
 
     tMovie.similarMovies?.removeWhere((element) => element == movie);
     movie = tMovie;
+
+    ImdbRating? rating = await _getImdbData(movie!.imdbId, forceReload: forceReload);
+    if(movie!.imdbRating == null && rating != null) {
+      movie!.imdbRating = rating;
+    }
+
+    // print('movie!.imdbRating');
+    // print('movie id: "${movie!.id}/${movie!.imdbId}", title: "${movie!.title}"');
+    // print('movie rating: "${movie!.imdbRating?.imdbRate}/${movie!.imdbRating?.imdbVotes}"');
+
     // print('RETURN MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId")');
   }
 
@@ -128,8 +139,20 @@ class MovieDetailsViewModel extends LoaderViewModel {
     }
   }
 
-  // TODO
-  _getImdbData() {}
+  Future<ImdbRating?> _getImdbData(String? movieImdbId, {bool forceReload = false}) async {
+    print('MovieDetailsViewModel - _getImdbData(movieImdbId: "$movieImdbId", forceReload: "$forceReload")');
+    if(movieImdbId == null) {
+      return null;
+    }
+
+    // return null;
+    ImdbRating? imdbRating = await movieRepository.getImdbMovieRating(
+      imdbId: movieImdbId,
+      source: forceReload ? SourceType.REMOTE : null,
+    );
+
+    return imdbRating;
+  }
 
   _getCollectionMoviesData(int collectionId, {bool forceReload = false}) async {
     // print('MovieDetailsViewModel - _getCollectionMoviesData(collectionId: "collectionId")');
@@ -154,7 +177,8 @@ class MovieDetailsViewModel extends LoaderViewModel {
     }
 
     // print('RETURN MovieDetailsViewModel - _getCollectionMoviesData(collectionId: "$collectionId", length: "${tCollectionMovies.length}")');
-    tCollectionMovies.sort((a, b) => a.releaseDate.compareTo(b.releaseDate));
+    // tCollectionMovies.sort((a, b) => a.releaseDate.compareTo(b.releaseDate));
+    tCollectionMovies.sort((a, b) => (a.releaseDate ?? DateTime(1900)).compareTo((b.releaseDate ?? DateTime(1900))));
     // tCollectionMovies.sort((Movie a, Movie b) => (a.releaseDate ?? DateTime(1900)).compareTo(b.releaseDate ?? DateTime(1900)));
     collectionMoviesNotifier.value = List.from(tCollectionMovies);
     // _updateMoviesMediaFiles();

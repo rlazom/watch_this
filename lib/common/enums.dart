@@ -59,3 +59,9 @@ enum TopProvider {
   apple,
   disney,
 }
+
+enum MediaType {
+  movie,
+  person,
+  tv,
+}

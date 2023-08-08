@@ -16,6 +16,10 @@ class FilterViewModel extends LoaderViewModel {
   final MovieRepository movieRepository;
   late UserProvider userProvider;
 
+  int currentPage = 1;
+  bool isFullList = false;
+  bool isLastPage = false;
+
   // final myMoviesListNotifier = ValueNotifier<List<Movie>?>(null);
   final ValueNotifier<List<Media>?> searchListNotifier = ValueNotifier<List<Media>?>(null);
   // final searchListNotifier = ValueNotifier<List<dynamic>?>(null);
@@ -86,7 +90,7 @@ class FilterViewModel extends LoaderViewModel {
     List<Movie> tList = await movieRepository.getPopularMoviesData(
         source: forceReload ? SourceType.REMOTE : null);
 
-    tList = List.from(tList.take(10));
+    tList = List.from(tList.take(18));
     List<Movie> tList2 = await movieRepository.getMyMoviesData(
       myMoviesToWatch: tList.map((e) => e.id).toList(),
       source: forceReload ? SourceType.REMOTE : null,
@@ -103,19 +107,19 @@ class FilterViewModel extends LoaderViewModel {
     }
   }
 
-  Future getMyMovieDataList({bool forceReload = false, List<int>? movieIdList}) async {
-    List<Movie> tList = await movieRepository.getMyMoviesData(
-      myMoviesToWatch: movieIdList ?? userProvider.toWatch,
-      source: forceReload ? SourceType.REMOTE : null,
-    );
-
-    // myMoviesListNotifier.value = List.from(tList);
-    if(searchListNotifier.value == null) {
-      searchListNotifier.value = List.from(tList);
-    } else {
-      searchListNotifier.value = List.from(searchListNotifier.value!)..addAll(tList);
-    }
-  }
+  // Future getMyMovieDataList({bool forceReload = false, List<int>? movieIdList}) async {
+  //   List<Movie> tList = await movieRepository.getMyMoviesData(
+  //     myMoviesToWatch: movieIdList ?? userProvider.toWatch,
+  //     source: forceReload ? SourceType.REMOTE : null,
+  //   );
+  //
+  //   // myMoviesListNotifier.value = List.from(tList);
+  //   if(searchListNotifier.value == null) {
+  //     searchListNotifier.value = List.from(tList);
+  //   } else {
+  //     searchListNotifier.value = List.from(searchListNotifier.value!)..addAll(tList);
+  //   }
+  // }
 
   void clearMultiSearch() {
     textEditingController.clear();

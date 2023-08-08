@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:watch_this/common/extensions.dart';
 import 'package:watch_this/models/cast.dart';
 import 'package:watch_this/models/crew.dart';
+import 'package:watch_this/models/imdb_rating.dart';
 import 'package:watch_this/models/movie.dart';
 import 'package:watch_this/models/movie_genre.dart';
 
@@ -135,12 +136,22 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
     // print('MovieDataSourceLocal - getUpcomingMoviesData()');
     List<Movie>? result;
     var response = _shared.getUpcomingMoviesData();
+    // response = null;
 
     if (response != null) {
-      String upcomingMoviesDateStr = _shared.getUpcomingMoviesDataDate()!;
-      DateTime upcomingMoviesDate = upcomingMoviesDateStr.fromTimeStamp;
+      // String upcomingMoviesDateStr = _shared.getUpcomingMoviesDataDate()!;
+      // DateTime upcomingMoviesDate = upcomingMoviesDateStr.fromTimeStamp;
+      // DateTime upcomingMoviesDate = upcomingMoviesDateStr.fromTimeStamp;
 
-      if(upcomingMoviesDate.difference(DateTime.now()).inDays.abs() < 7) {
+      String upcomingMoviesMinMaxDateStr = _shared.getUpcomingMoviesDataDate()!;
+      List<String> upcomingMoviesMinMaxDateArr = upcomingMoviesMinMaxDateStr.split('|');
+      String dateMinimumStr = upcomingMoviesMinMaxDateArr.first;
+      // String dateMaximumStr = upcomingMoviesMinMaxDateArr.last;
+
+      DateTime dateMinimum = dateFormat.parse(dateMinimumStr);
+      // DateTime dateMaximum = dateFormat.parse(dateMaximumStr);
+
+      if(dateMinimum.difference(DateTime.now()).inDays.abs() < 7) {
         List list = json.decode(response) as List;
         result = List.from(list.map((e) => Movie.fromJson(e)).toList());
       }
@@ -159,6 +170,19 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
       result = List.from(list.map((e) => MovieGenre.fromJson(e)).toList());
     }
     // print('MovieDataSourceLocal - getGenresData() - RETURN IS NULL ${result == null} ');
+    return result;
+  }
+
+
+  Future<ImdbRating?> getImdbMovieRating(String imdbId) async {
+    // print('MovieDataSourceLocal - getImdbMovieRating()');
+    ImdbRating? result;
+    var response = _shared.getMovieImdbData(imdbId);
+
+    if (response != null) {
+      result = ImdbRating.fromJson(json.decode(response));
+    }
+    // print('RETURN MovieDataSourceLocal - getImdbMovieRating() - response == null [${response == null}]');
     return result;
   }
 

@@ -1,12 +1,12 @@
 import 'dart:io' show File;
+import 'package:watch_this/common/enums.dart';
+
 import 'cast.dart';
 import 'crew.dart';
 import 'media.dart';
 
 class Person extends Media {
-  // final bool adult;
   final int gender;
-  // final int id;
   final String knownForDepartment;
   final String name;
   final String? originalName;
@@ -17,7 +17,7 @@ class Person extends Media {
 
   Person({
     adult = false,
-    mediaType = 'person',
+    mediaType = MediaType.person,
     required this.gender,
     required id,
     this.knownForDepartment = '',
