@@ -115,9 +115,9 @@ jobs:
         run: |
           echo "APK_PATH=build/app/outputs/flutter-apk/" >> $GITHUB_ENV
           if [[ ${{ env.APP_ENV }} == "PROD" ]]; then
-            echo "GENERATED_APK_NAME=app-prod-release.apk" >> $GITHUB_ENV
+            echo "GENERATED_APK_NAME=app-release.apk" >> $GITHUB_ENV
           else
-            echo "GENERATED_APK_NAME=app-dev-release.apk" >> $GITHUB_ENV
+            echo "GENERATED_APK_NAME=app-release.apk" >> $GITHUB_ENV
           fi
           echo "BUNDLE_PATH=build/app/outputs/bundle/release/" >> $GITHUB_ENV
           echo "FILE_NAME=watch_this_${{ env.APP_ENV }}_v${{ env.APP_VERSION }}" >> $GITHUB_ENV
