@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -81,15 +83,19 @@ class MovieTile extends StatelessWidget {
         locale = locale.split('_').first;
         final DateFormat dateFormatShort = DateFormat.yMd(locale);
         DateTime? releaseDateDt = movie.releaseDate;
+        bool isReleased = false;
         String releaseFullDateStr = '';
         if(releaseDateDt != null) {
           if(releaseDateDt.isAfter(DateTime.now())) {
             releaseFullDateStr = dateFormatShort.format(releaseDateDt);
+          } else {
+            isReleased = true;
           }
         }
         final Color backgroundColor = Theme.of(context).colorScheme.surface;
 
-        if(movie.voteAverage > 0) {
+        // log('movie: "${movie.title}", voteAverage: "${movie.voteAverage}", ${movie.voteAverage.toStringAsFixed(1)}, status: "${movie.status}", movieStatus: "$movieStatus", releaseFullDateStr: "$releaseFullDateStr"');
+        if(movie.voteAverage > 0 || movie.status == 'Released' || isReleased) {
           ratingOrStatus = Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -118,15 +124,17 @@ class MovieTile extends StatelessWidget {
                       children: [
                         Icon(movieStatus, size: iconSize, color: backgroundColor),
                         const SizedBox(width: 4.0),
-                        Expanded(
-                          child: FittedBox(
-                            child: Text(
-                              releaseFullDateStr,
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic, color: backgroundColor),
+                        if (releaseFullDateStr.isNotEmpty)
+                          Expanded(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                releaseFullDateStr,
+                                style: TextStyle(
+                                    fontStyle: FontStyle.italic, color: backgroundColor),
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -282,8 +290,9 @@ class MovieTile extends StatelessWidget {
           );
         }
 
+        // return Container(width: 20,height: 20, color: Colors.blue,);
+
         return GridItemWdt(
-          // fn: fn,
           fn: movie.navigateToMovieDetails,
           fImage: movie.fPoster,
           title: title,

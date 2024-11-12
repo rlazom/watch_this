@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
     });
 
     // Color backgroundColor = Colors.black;
-    Color backgroundColor = Theme.of(context).colorScheme.background;
+    Color backgroundColor = Theme.of(context).colorScheme.surface;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -82,7 +82,8 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16.0),
                     InkWell(
-                      onTap: () => viewModel.loadData(context: context, forceReload: true),
+                      onTap: () => viewModel.loadData(
+                          context: context, forceReload: true),
                       child: Container(
                         decoration: BoxDecoration(
                           color: R.colors.accents.rose2,
@@ -95,8 +96,11 @@ class HomePage extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.refresh, size: 16.0, color: Colors.black),
-                              const SizedBox(width: 4.0,),
+                              const Icon(Icons.refresh,
+                                  size: 16.0, color: Colors.black),
+                              const SizedBox(
+                                width: 4.0,
+                              ),
                               Text(
                                 tryAgainStr,
                                 style: const TextStyle(color: Colors.black),
@@ -124,21 +128,26 @@ class HomePage extends StatelessWidget {
             String fromStr = translate('FROM_TEXT');
             String toStr = translate('TO_TEXT');
 
-            String? upcomingMoviesDateStr = viewModel.sharedPreferencesService.getUpcomingMoviesDataDate();
+            String? upcomingMoviesDateStr =
+                viewModel.sharedPreferencesService.getUpcomingMoviesDataDate();
             String? upcomingMoviesDateHintStr;
             String? dateMinimumStr;
             DateTime? dateMinimumDt;
-            if(upcomingMoviesDateStr != null) {
-              upcomingMoviesDateHintStr = upcomingMoviesDateStr.replaceAll('|', ' $toStr ');
+            if (upcomingMoviesDateStr != null) {
+              upcomingMoviesDateHintStr =
+                  upcomingMoviesDateStr.replaceAll('|', ' $toStr ');
               upcomingMoviesDateHintStr = '$fromStr $upcomingMoviesDateHintStr';
 
               String locale = Localizations.localeOf(context).toString();
               locale = locale.split('_').first;
               final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-              final DateFormat dateFormatMonthYear = DateFormat('MMMM y',locale);
+              final DateFormat dateFormatMonthYear =
+                  DateFormat('MMMM y', locale);
 
-              dateMinimumDt = dateFormat.parse(upcomingMoviesDateStr.split('|').first);
-              dateMinimumStr = dateFormatMonthYear.format(dateMinimumDt).capitalize();
+              dateMinimumDt =
+                  dateFormat.parse(upcomingMoviesDateStr.split('|').first);
+              dateMinimumStr =
+                  dateFormatMonthYear.format(dateMinimumDt).capitalize();
               dateMinimumStr = '($dateMinimumStr)';
             }
 
@@ -329,7 +338,7 @@ class HomePage extends StatelessWidget {
                                                                 .circular(8.0),
                                                       ),
                                                       padding: const EdgeInsets
-                                                              .symmetric(
+                                                          .symmetric(
                                                           horizontal: 8.0,
                                                           vertical: 2.0),
                                                       child: e == null
@@ -822,7 +831,8 @@ class HomePage extends StatelessWidget {
                                                 Radius.circular(10)),
                                           ),
                                           child: InkWell(
-                                            onTap: viewModel.navigateToPopularViewAll,
+                                            onTap: viewModel
+                                                .navigateToPopularViewAll,
                                             borderRadius:
                                                 const BorderRadius.all(
                                                     Radius.circular(10.0)),
@@ -831,10 +841,11 @@ class HomePage extends StatelessWidget {
                                                   const EdgeInsets.symmetric(
                                                       vertical: 4.0,
                                                       horizontal: 8.0),
-                                              child: Text(viewAllStr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .displayMedium,
+                                              child: Text(
+                                                viewAllStr,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .displayMedium,
                                               ),
                                             ),
                                           ),
@@ -849,13 +860,13 @@ class HomePage extends StatelessWidget {
                                       child: Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: popularList
-                                            .map((e) => ChangeNotifierProvider<
-                                                    Movie>.value(
-                                                  value: e,
-                                                  child: MovieTile(),
-                                                ))
-                                            .toList(),
+                                        children: popularList.map((e) {
+                                          return ChangeNotifierProvider<
+                                              Movie>.value(
+                                            value: e,
+                                            child: MovieTile(),
+                                          );
+                                        }).toList(),
                                       ),
                                     ),
                                   ),
@@ -911,23 +922,26 @@ class HomePage extends StatelessWidget {
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .displayLarge),
-                                        if(upcomingMoviesDateStr != null)
-                                        Expanded(
-                                          child: FittedBox(
-                                            alignment: Alignment.centerLeft,
-                                            fit: BoxFit.scaleDown,
-                                            child: Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                              child: Tooltip(
-                                                message: upcomingMoviesDateHintStr,
-                                                child: Text(dateMinimumStr!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium),
+                                        if (upcomingMoviesDateStr != null)
+                                          Expanded(
+                                            child: FittedBox(
+                                              alignment: Alignment.centerLeft,
+                                              fit: BoxFit.scaleDown,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: Tooltip(
+                                                  message:
+                                                      upcomingMoviesDateHintStr,
+                                                  child: Text(dateMinimumStr!,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
                                         Container(
                                           decoration: const BoxDecoration(
                                             color: Colors.white12,
@@ -935,7 +949,8 @@ class HomePage extends StatelessWidget {
                                                 Radius.circular(10)),
                                           ),
                                           child: InkWell(
-                                            onTap: viewModel.navigateToUpcomingViewAll,
+                                            onTap: viewModel
+                                                .navigateToUpcomingViewAll,
                                             borderRadius:
                                                 const BorderRadius.all(
                                                     Radius.circular(10.0)),
