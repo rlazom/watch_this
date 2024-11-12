@@ -1,3 +1,4 @@
+import 'dart:developer' show log;
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class RFutureImage extends StatelessWidget {
   final Future<File?>? fImage;
   final Size? imgSize;
   final Alignment imgAlignment;
-  final BoxFit? boxFit;
+  final BoxFit boxFit;
   final bool showLoading;
   final Function? fn;
   final VoidCallback? voidCallback;
@@ -24,7 +25,7 @@ class RFutureImage extends StatelessWidget {
     required this.fImage,
     this.imgSize,
     this.imgAlignment = Alignment.center,
-    this.boxFit,
+    this.boxFit = BoxFit.contain,
     this.showLoading = true,
     this.fn,
     this.voidCallback,
@@ -35,26 +36,27 @@ class RFutureImage extends StatelessWidget {
     if ((defaultImgRoute == null ||
             (defaultImgRoute != null && defaultImgRoute!.trim() == '')) &&
         defaultImgWdt == null) {
-      return Container();
+      return const SizedBox.shrink();
     }
 
 
     Widget defaultWdt = defaultImgWdt ??
         Image(
           image: AssetImage(defaultImgRoute!),
-          height: imgSize?.height == 0 ? double.infinity : imgSize?.height ?? double.infinity,
-          width: imgSize?.width == 0 ? double.infinity : imgSize?.width ?? double.infinity,
+          height: (imgSize?.height ?? 0) == 0 ? double.infinity : imgSize!.height,
+          width: (imgSize?.width ?? 0) == 0 ? double.infinity : imgSize!.width,
           alignment: imgAlignment,
           fit: boxFit,
         );
+
+
     defaultWdt = Container(
       alignment: imgAlignment,
-      child: SizedBox(
-        // width: imgSize.width == 0 ? double.infinity : imgSize.width,
-        // height: imgSize.height == 0 ? double.infinity : imgSize.height,
-        child: FittedBox(
-          child: defaultWdt,
-        ),
+      height: (imgSize?.height ?? 0) == 0 ? double.infinity : imgSize!.height,
+      width: (imgSize?.width ?? 0) == 0 ? double.infinity : imgSize!.width,
+      child: FittedBox(
+        fit: boxFit,
+        child: defaultWdt,
       ),
     );
 
@@ -73,16 +75,23 @@ class RFutureImage extends StatelessWidget {
 
             return InkWell(
               onTap: voidCallback ?? (fn == null ? null : () => fn!(tFile.path)),
-              child: Hero(
-                tag: '$tag''$tagName',
-                child: RImage(
-                  // tag: tag,
-                  imageFile: tFile,
-                  imgSize: imgSize,
-                  boxFit: isSvg ? BoxFit.contain : boxFit,
-                  imgAlignment: imgAlignment,
-                ),
+              child: RImage(
+                // tag: tag,
+                imageFile: tFile,
+                imgSize: imgSize,
+                boxFit: isSvg ? BoxFit.contain : boxFit,
+                imgAlignment: imgAlignment,
               ),
+              // child: Hero(
+              //   tag: '$tag''$tagName',
+              //   child: RImage(
+              //     // tag: tag,
+              //     imageFile: tFile,
+              //     imgSize: imgSize,
+              //     boxFit: isSvg ? BoxFit.contain : boxFit,
+              //     imgAlignment: imgAlignment,
+              //   ),
+              // ),
             );
           } else {
             return defaultWdt;

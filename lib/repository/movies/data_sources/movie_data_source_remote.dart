@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' show log;
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
@@ -283,27 +284,28 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
   }
 
   Future<ImdbRating?> getImdbMovieRating(String imdbId) async {
-    // print('MovieDataSourceRemote - getImdbMovieRating($imdbId)');
+    log('MovieDataSourceRemote - getImdbMovieRating($imdbId)');
     String url = R.urls.imdb(imdbId: imdbId);
 
     dynamic data;
     try {
-      // print('TRY BEFORE fetchData(url: "$url")');
+      log('TRY BEFORE fetchData(url: "$url")');
       data = await fetchData(url: url);
-      // print('AFTER fetchData()');
+      log('AFTER fetchData()');
     } catch (error) {
-      // print('MovieDataSourceRemote.getImdbMovieRating() - catch ($error)');
+      log('MovieDataSourceRemote.getImdbMovieRating() - catch ($error)');
       if(error.toString().contains('Cannot read properties of undefined')) {
         return null;
       }
-      print('MovieDataSourceRemote.getImdbMovieRating() - ["$error"]');
+      log('MovieDataSourceRemote.getImdbMovieRating() - ["$error"]');
       rethrow;
     }
 
+    log('before ImdbRating.fromJson() - data: "$data"');
     ImdbRating result = ImdbRating.fromJson(data);
     shared.setMovieImdbData(json.encode(result), imdbId);
 
-    // print('RETURN MovieDataSourceRemote - getImdbMovieRating()');
+    log('RETURN MovieDataSourceRemote - getImdbMovieRating()');
     return result;
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' show log;
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:watch_this/common/extensions.dart';
@@ -175,14 +176,14 @@ class MovieDataSourceLocal extends RMasterDataSourceLocal {
 
 
   Future<ImdbRating?> getImdbMovieRating(String imdbId) async {
-    // print('MovieDataSourceLocal - getImdbMovieRating()');
+    log('MovieDataSourceLocal - getImdbMovieRating()');
     ImdbRating? result;
     var response = _shared.getMovieImdbData(imdbId);
 
     if (response != null) {
       result = ImdbRating.fromJson(json.decode(response));
     }
-    // print('RETURN MovieDataSourceLocal - getImdbMovieRating() - response == null [${response == null}]');
+    log('RETURN MovieDataSourceLocal - getImdbMovieRating() - response == null [${response == null}]');
     return result;
   }
 

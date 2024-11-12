@@ -97,7 +97,7 @@ abstract class LoaderViewModel extends ChangeNotifier {
         key: const Key('scaffoldKeySnackBar'),
         content: Text(
           msg.trim(),
-          style: TextStyle(color: Theme.of(context).textTheme.headline4!.color),
+          style: TextStyle(color: Theme.of(context).textTheme.headlineMedium!.color),
         ),
         duration: const Duration(milliseconds: 3000),
         backgroundColor: backgroundColor ?? Theme.of(context).primaryColor,

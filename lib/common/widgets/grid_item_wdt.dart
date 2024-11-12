@@ -137,7 +137,7 @@ class GridItemWdt extends StatelessWidget {
                                     Text(
                                       subTitle!.replaceAll(' / ', '\n'),
                                       style:
-                                          Theme.of(context).textTheme.bodyText2,
+                                          Theme.of(context).textTheme.bodyMedium,
                                     ),
                               ),
                             ),

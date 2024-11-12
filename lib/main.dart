@@ -2,6 +2,7 @@ import 'package:easy_dynamic_theme/easy_dynamic_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'common/constants.dart';
 import 'common/providers.dart';
 import 'common/providers/language_provider.dart';
 import 'common/routes.dart';
@@ -27,7 +28,7 @@ class WatchThisApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    const appName = 'Watch This';
+    final appName = R.appName;
 
     return MultiProvider(
       providers: providers,
@@ -47,17 +48,22 @@ class WatchThisApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            localeResolutionCallback: (locale, supportedLocales) {
-              if (locale == null) {
-                return supportedLocales.first;
-              }
-              for (var supportedLocale in supportedLocales) {
-                if (supportedLocale.languageCode == locale.languageCode) {
-                  return locale;
-                }
-              }
-              return supportedLocales.first;
-            },
+            localeResolutionCallback: (locale, supportedLocales) =>
+                AppLocalizations.localeResolutionCallback(
+                  locale,
+                  supportedLocales,
+                ),
+            // localeResolutionCallback: (locale, supportedLocales) {
+            //   if (locale == null) {
+            //     return supportedLocales.first;
+            //   }
+            //   for (var supportedLocale in supportedLocales) {
+            //     if (supportedLocale.languageCode == locale.languageCode) {
+            //       return locale;
+            //     }
+            //   }
+            //   return supportedLocales.first;
+            // },
             routes: routes,
             initialRoute: MainPage.route,
             navigatorKey: NavigationService().navigatorKey,

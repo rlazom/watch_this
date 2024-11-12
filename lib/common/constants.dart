@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' show Color;
 /// URL ------------------------------------------------------------------------
 class R {
   R._();
+  static String get appName => 'Watch This';
   static KUrl get urls => const KUrl._();
   static RkColors get colors => const RkColors._();
   static RkAssets get assets => const RkAssets._();

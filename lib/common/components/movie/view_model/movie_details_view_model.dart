@@ -1,3 +1,5 @@
+import 'dart:developer' show log;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:watch_this/common/routes.dart';
@@ -31,12 +33,12 @@ class MovieDetailsViewModel extends LoaderViewModel {
 
   @override
   Future loadData({BuildContext? context, forceReload = false}) async {
-    // print('MovieDetailsViewModel - loadData(forceReload = "$forceReload")');
+    // log('MovieDetailsViewModel - loadData(forceReload = "$forceReload")');
     if (success) {
       markAsLoading();
     }
 
-    // print('..loadData() - context != null => "${context != null}", movie == null => "${movie == null}"');
+    // log('..loadData() - context != null => "${context != null}", movie == null => "${movie == null}"');
     if (context != null && movie == null) {
       movie = ModalRoute.of(context)!.settings.arguments as Movie;
     }
@@ -49,8 +51,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
     try {
       await Future.wait(futureList);
     } catch (e) {
-      print(
-          'MovieDetailsViewModel - loadData(forceReload: "$forceReload") - CATCH e: "$e"');
+      log('MovieDetailsViewModel - loadData(forceReload: "$forceReload") - CATCH e: "$e"');
       markAsFailed(error: Exception(e));
       return;
     }
@@ -68,7 +69,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
   }
 
   Future _getMovieExtendedData(int movieId, {bool forceReload = false}) async {
-    // print('MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId", forceReload: "$forceReload")');
+    log('MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId", forceReload: "$forceReload")');
 
     Movie tMovie = await movieRepository.getExtendedMovieData(
       movieId: movieId,
@@ -78,16 +79,16 @@ class MovieDetailsViewModel extends LoaderViewModel {
     tMovie.similarMovies?.removeWhere((element) => element == movie);
     movie = tMovie;
 
-    ImdbRating? rating = await _getImdbData(movie!.imdbId, forceReload: forceReload);
-    if(movie!.imdbRating == null && rating != null) {
-      movie!.imdbRating = rating;
-    }
+    // ImdbRating? rating = await _getImdbData(movie!.imdbId, forceReload: forceReload);
+    // if(movie!.imdbRating == null && rating != null) {
+    //   movie!.imdbRating = rating;
+    // }
 
-    // print('movie!.imdbRating');
-    // print('movie id: "${movie!.id}/${movie!.imdbId}", title: "${movie!.title}"');
-    // print('movie rating: "${movie!.imdbRating?.imdbRate}/${movie!.imdbRating?.imdbVotes}"');
+    // log('movie!.imdbRating');
+    // log('movie id: "${movie!.id}/${movie!.imdbId}", title: "${movie!.title}"');
+    // log('movie rating: "${movie!.imdbRating?.imdbRate}/${movie!.imdbRating?.imdbVotes}"');
 
-    // print('RETURN MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId")');
+    // log('RETURN MovieDetailsViewModel - _getMovieExtendedData(movieId: "$movieId")');
   }
 
   _updateMediaFiles() {
@@ -140,7 +141,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
   }
 
   Future<ImdbRating?> _getImdbData(String? movieImdbId, {bool forceReload = false}) async {
-    print('MovieDetailsViewModel - _getImdbData(movieImdbId: "$movieImdbId", forceReload: "$forceReload")');
+    log('MovieDetailsViewModel - _getImdbData(movieImdbId: "$movieImdbId", forceReload: "$forceReload")');
     if(movieImdbId == null) {
       return null;
     }
@@ -151,11 +152,12 @@ class MovieDetailsViewModel extends LoaderViewModel {
       source: forceReload ? SourceType.REMOTE : null,
     );
 
+    log('MovieDetailsViewModel - _getImdbData() - imdbRating: "${imdbRating?.toJson()}"');
     return imdbRating;
   }
 
   _getCollectionMoviesData(int collectionId, {bool forceReload = false}) async {
-    // print('MovieDetailsViewModel - _getCollectionMoviesData(collectionId: "collectionId")');
+    // log('MovieDetailsViewModel - _getCollectionMoviesData(collectionId: "collectionId")');
 
     List tCollectionMovies = await movieRepository.getCollectionMoviesData(
       collectionId: collectionId,
@@ -176,7 +178,7 @@ class MovieDetailsViewModel extends LoaderViewModel {
       }
     }
 
-    // print('RETURN MovieDetailsViewModel - _getCollectionMoviesData(collectionId: "$collectionId", length: "${tCollectionMovies.length}")');
+    // log('RETURN MovieDetailsViewModel - _getCollectionMoviesData(collectionId: "$collectionId", length: "${tCollectionMovies.length}")');
     // tCollectionMovies.sort((a, b) => a.releaseDate.compareTo(b.releaseDate));
     tCollectionMovies.sort((a, b) => (a.releaseDate ?? DateTime(1900)).compareTo((b.releaseDate ?? DateTime(1900))));
     // tCollectionMovies.sort((Movie a, Movie b) => (a.releaseDate ?? DateTime(1900)).compareTo(b.releaseDate ?? DateTime(1900)));

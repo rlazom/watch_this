@@ -834,7 +834,8 @@ class HomePage extends StatelessWidget {
                                               child: Text(viewAllStr,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .titleLarge),
+                                                      .displayMedium,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -946,7 +947,7 @@ class HomePage extends StatelessWidget {
                                               child: Text(viewAllStr,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .titleLarge),
+                                                      .displayMedium),
                                             ),
                                           ),
                                         ),

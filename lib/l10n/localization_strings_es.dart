@@ -1,4 +1,4 @@
-final es = {
+final Map<String, String> localizedStringsEs = {
   "APP_NAME": "Mira Esto",
   "DESCRIPTION": "Descripción",
   "HOME_TEXT": "Principal",

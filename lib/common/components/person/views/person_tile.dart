@@ -8,7 +8,12 @@ class PersonTile extends StatelessWidget {
   final VoidCallback? fn;
   final Person person;
 
-  const PersonTile({Key? key, this.showMediaTypeIcon = false, this.fn, required this.person,}) : super(key: key);
+  const PersonTile({
+    Key? key,
+    this.showMediaTypeIcon = false,
+    this.fn,
+    required this.person,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,8 @@ class PersonTile extends StatelessWidget {
     Widget titleWdt = SizedBox(
       width: double.infinity,
       child: Align(
-        alignment: subTitle.isNotEmpty ? Alignment.centerLeft : Alignment.center,
+        alignment:
+            subTitle.isNotEmpty ? Alignment.centerLeft : Alignment.center,
         child: Wrap(
           children: splitName
               .map((e) => Text('$e ',
@@ -30,24 +36,25 @@ class PersonTile extends StatelessWidget {
     );
 
     Widget? subTitleWdt;
-    if(subTitle.isNotEmpty) {
+    if (subTitle.isNotEmpty) {
       subTitleWdt = SizedBox(
         width: double.infinity,
         child: Wrap(
           children: subTitle
               .split(' / ')
-              .map((e) =>
-              Text('$e ', style: Theme
-                  .of(context)
-                  .textTheme
-                  .headline6))
+              .map(
+                (e) => Text(
+                  '$e ',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              )
               .toList(),
         ),
       );
     }
 
     Widget topMediaTypeWdt = const SizedBox.shrink();
-    if(showMediaTypeIcon) {
+    if (showMediaTypeIcon) {
       topMediaTypeWdt = SimpleShadow(
         child: Align(
           alignment: Alignment.topLeft,
@@ -65,11 +72,8 @@ class PersonTile extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 4.0, left: 2.0),
                 child: Icon(
                   Icons.person_outline,
-                  color: Theme
-                      .of(context)
-                      .primaryTextTheme
-                      .headline2
-                      ?.color,
+                  color:
+                      Theme.of(context).primaryTextTheme.displayMedium?.color,
                 ),
               ),
             ),
@@ -82,7 +86,7 @@ class PersonTile extends StatelessWidget {
     int textFlex = 4;
     int titleFlex = 1;
     int subTitleFlex = 3;
-    if(subTitle.isEmpty) {
+    if (subTitle.isEmpty) {
       imageFlex = 7;
       textFlex = 2;
     }

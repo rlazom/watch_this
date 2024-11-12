@@ -54,7 +54,8 @@ class MovieTile extends StatelessWidget {
           subTitle += genreStr.isEmpty ? releaseDateStr : ' | $releaseDateStr';
         }
 
-        final TextStyle textStyle = Theme.of(context).textTheme.headline6!;
+        // final TextStyle textStyle = Theme.of(context).textTheme.displayLarge!;
+        final TextStyle textStyle = Theme.of(context).textTheme.titleSmall!;
         final Color iconColor = textStyle.color!;
         final double iconSize = textStyle.fontSize!;
 
@@ -86,7 +87,7 @@ class MovieTile extends StatelessWidget {
             releaseFullDateStr = dateFormatShort.format(releaseDateDt);
           }
         }
-        final Color backgroundColor = Theme.of(context).backgroundColor;
+        final Color backgroundColor = Theme.of(context).colorScheme.surface;
 
         if(movie.voteAverage > 0) {
           ratingOrStatus = Row(
@@ -271,7 +272,7 @@ class MovieTile extends StatelessWidget {
                       color: Theme
                           .of(context)
                           .primaryTextTheme
-                          .headline2
+                          .displayMedium
                           ?.color,
                     ),
                   ),

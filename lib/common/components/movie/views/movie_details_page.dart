@@ -1,3 +1,4 @@
+import 'dart:developer' show log;
 import 'dart:ui';
 import 'package:duration/duration.dart';
 import 'package:duration/locale.dart';
@@ -36,6 +37,7 @@ class MovieDetailsPage extends StatelessWidget {
 
         String locale = Localizations.localeOf(context).toString();
         locale = locale.split('_').first;
+        log('MovieDetailsPage - build() - locale: "$locale"');
 
         double blur = 3.0;
 
@@ -62,8 +64,12 @@ class MovieDetailsPage extends StatelessWidget {
           }
         }
 
-        String movieDurationStr = printDuration(
-          viewModel.movie?.runtime ?? const Duration(seconds: 0),
+        // String movieDurationStr = printDuration(
+        //   viewModel.movie?.runtime ?? const Duration(seconds: 0),
+        //   abbreviated: true,
+        //   locale: DurationLocale.fromLanguageCode(locale)!,
+        // );
+        String movieDurationStr = (viewModel.movie?.runtime ?? const Duration(seconds: 0)).pretty(
           abbreviated: true,
           locale: DurationLocale.fromLanguageCode(locale)!,
         );
@@ -217,10 +223,12 @@ class MovieDetailsPage extends StatelessWidget {
             child: RefreshIndicator(
               onRefresh: () => viewModel.loadData(context: context, forceReload: true),
               child: Stack(
+                // fit: StackFit.expand,
                 children: [
                   /// BACKDROP IMAGE AND GRADIENT
                   Stack(
                     alignment: Alignment.topCenter,
+                    // fit: StackFit.expand,
                     children: [
                       RFutureImage(
                         showLoading: false,
@@ -787,40 +795,40 @@ class MovieDetailsPage extends StatelessWidget {
                           //   ),
 
                           /// SIMILAR MOVIES
-                          if (viewModel.movie!.similarMovies != null &&
-                              viewModel.movie!.similarMovies!.isNotEmpty)
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('SIMILAR MOVIES',
-                                    style: Theme.of(context).textTheme.displayLarge),
-                                Material(
-                                  color: Colors.transparent,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: viewModel.movie!.similarMovies!
-                                          .map((e) => Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Tooltip(
-                                                  message: e.title,
-                                                  child: ChangeNotifierProvider<Movie>.value(
-                                                    value: e,
-                                                    child: MovieTile(),
-                                                  ),
-                                                ),
-                                              ))
-                                          .toList(),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16.0),
-                              ],
-                            ),
+                          // if (viewModel.movie!.similarMovies != null &&
+                          //     viewModel.movie!.similarMovies!.isNotEmpty)
+                          //   Column(
+                          //     mainAxisSize: MainAxisSize.min,
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       Text('SIMILAR MOVIES',
+                          //           style: Theme.of(context).textTheme.displayLarge),
+                          //       Material(
+                          //         color: Colors.transparent,
+                          //         child: SingleChildScrollView(
+                          //           scrollDirection: Axis.horizontal,
+                          //           child: Row(
+                          //             crossAxisAlignment:
+                          //                 CrossAxisAlignment.start,
+                          //             children: viewModel.movie!.similarMovies!
+                          //                 .map((e) => Padding(
+                          //                       padding:
+                          //                           const EdgeInsets.all(8.0),
+                          //                       child: Tooltip(
+                          //                         message: e.title,
+                          //                         child: ChangeNotifierProvider<Movie>.value(
+                          //                           value: e,
+                          //                           child: MovieTile(),
+                          //                         ),
+                          //                       ),
+                          //                     ))
+                          //                 .toList(),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       const SizedBox(height: 16.0),
+                          //     ],
+                          //   ),
                         ],
                       ),
                     ),
