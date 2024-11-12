@@ -1,0 +1,184 @@
+name: Flutter CI-CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master","dev" ]
+
+jobs:
+  build:
+    if: "(contains(github.event.head_commit.message, 'merge') || contains(github.event.head_commit.message, 'Merge') || contains(github.event.head_commit.message, 'MERGE') || startsWith(github.event.head_commit.message, 'Merge')) == false"
+    runs-on: ubuntu-latest
+
+    outputs:
+      appVersion: ${{ steps.get-app-version.outputs.appVersion }}
+      appEnv: ${{ steps.get-app-env.outputs.appEnv }}
+      bundlePath: ${{ steps.build-bundle.outputs.path }}
+      apkPath: ${{ steps.build-apk.outputs.path }}
+
+    steps:
+      - name: 📦 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            ~/flutter/.pub-cache
+            ~/android/.gradle/caches
+            ~/android/.gradle/wrapper
+#          key: ${{ runner.os }}-pub-gradle-${{ hashFiles('**/*.yaml') }}
+#          key: ${{ runner.os }}-pub-gradle-${{ hashFiles('**/pubspec.lock', '**/android/build.gradle') }}
+          key: ${{ runner.os }}-pub-gradle-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/pubspec.lock', '**/android/build.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-gradle-${{ env.FLUTTER_VERSION }}-
+            ${{ runner.os }}-pub-gradle-
+            ${{ runner.os }}-pub-
+            ${{ runner.os }}-
+
+      - name: 🛠️ Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "temurin"
+
+      - name: 🛠️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          channel: "stable"
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+          pub-cache-key: "flutter-pub:os:-:channel:-:version:-:arch:-:hash:"
+          pub-cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
+
+      - name: 📦 Install dependencies
+        run: dart pub get
+
+      # Uncomment this step to verify the use of 'dart format' on each commit.
+      # - name: Verify formatting
+      #   run: dart format --output=none --set-exit-if-changed .
+
+      # Consider passing '--fatal-infos' for slightly stricter analysis.
+      # - name: Analyze project source
+      #   run: dart analyze
+
+      # Your project will need to have tests in test/ and a dependency on
+      # package:test for this step to succeed. Note that Flutter projects will
+      # want to change this to 'flutter test'.
+      # - name: Run tests
+      #   run: dart test
+
+      - name: 📋 Generate Key file
+        id: get-app-env
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        run: |
+          echo "const tmdbApiKey = '$TMDB_API_KEY';" >> lib/common/keys.dart
+
+#      - name: 🧪 Run Flutter Tests
+#        run: flutter test --coverage
+#
+#      - name: 🛠️ Setup LCOV
+#        uses: hrishikesh-kadam/setup-lcov@v1
+#
+#      - name: 📋 Report Code Coverage
+#        uses: zgosalvez/github-actions-report-lcov@v3
+#        with:
+#          coverage-files: coverage/lcov.info
+#          minimum-coverage: 40
+#          artifact-name: code-coverage-report
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔗 Get app version
+        id: get-app-version
+        run: |
+          APP_VERSION=$(grep -oP 'version: \K(.+)' pubspec.yaml)
+          echo "App Version: $APP_VERSION"
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
+          echo "appVersion=$APP_VERSION" >> $GITHUB_OUTPUT
+
+      - name: 🔗 Define Path variables
+        id: define-variables
+        run: |
+          echo "APK_PATH=build/app/outputs/flutter-apk/" >> $GITHUB_ENV
+          if [[ ${{ env.APP_ENV }} == "PROD" ]]; then
+            echo "GENERATED_APK_NAME=app-prod-release.apk" >> $GITHUB_ENV
+          else
+            echo "GENERATED_APK_NAME=app-dev-release.apk" >> $GITHUB_ENV
+          fi
+          echo "BUNDLE_PATH=build/app/outputs/bundle/release/" >> $GITHUB_ENV
+          echo "FILE_NAME=watch_this_${{ env.APP_ENV }}_v${{ env.APP_VERSION }}" >> $GITHUB_ENV
+
+      - name: 🤖 Build APK
+        id: build-apk
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          echo "APP BUILD NUMBER: $BUILD_NUMBER"
+          echo "APK_PATH: ${{ env.APK_PATH }}"
+          echo "path=${{ env.APK_PATH }}" >> $GITHUB_OUTPUT
+          if [[ ${{ env.APP_ENV }} == "PROD" ]]; then
+            echo MAIN BRANCH - BUILD = PROD
+            flutter build apk --release --build-number=$BUILD_NUMBER
+          else
+            echo DEV BRANCH - BUILD = DEV
+            flutter build apk --release --build-number=$BUILD_NUMBER
+          fi
+
+      - name: 📦 Rename APK
+        run: mv ${{ env.APK_PATH }}${{ env.GENERATED_APK_NAME }} ${{ env.APK_PATH }}${{ env.FILE_NAME }}.apk
+
+      - name: 🚀 Upload APK to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: ${{ env.APK_PATH }}${{ env.FILE_NAME }}.apk
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 Checkout repository again
+        uses: actions/checkout@v4
+
+      - name: 🔗 Define Environment variables
+        id: define-env-variables
+        run: |
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo "trackName=production" >> $GITHUB_ENV
+          else
+            echo "trackName=internal" >> $GITHUB_ENV
+          fi
+          echo "appVersion=${{ needs.build.outputs.appVersion }}" >> $GITHUB_ENV
+          echo "appEnv=${{ needs.build.outputs.appEnv }}" >> $GITHUB_ENV
+          echo "apkPath=${{ needs.build.outputs.apkPath }}" >> $GITHUB_ENV
+          echo "bundlePath=${{ needs.build.outputs.bundlePath }}" >> $GITHUB_ENV
+
+      - name: 🔗 Define File Path variables
+        id: define-file-path
+        run: |
+          echo "fileName=watch_this_${{ env.appEnv }}_v${{ env.appVersion }}" >> $GITHUB_ENV
+
+      - name: 📦 Download APK from artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release
+          path: ${{ env.apkPath }}
+
+      - name: ☁️ Create Release and Upload APK to Release
+        id: create_and_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_REPOSITORY: my_gh_org/my_gh_repo
+        with:
+          files: ${{ env.apkPath }}${{ env.fileName }}.apk
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release - v${{ env.appVersion }}
+          tag_name: v${{ env.appVersion }}
+          draft: false
+          prerelease: false
