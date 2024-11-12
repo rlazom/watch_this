@@ -77,6 +77,15 @@ jobs:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
         run: |
           echo "const tmdbApiKey = '$TMDB_API_KEY';" >> lib/common/keys.dart
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo MAIN BRANCH
+            echo "APP_ENV=PROD" >> $GITHUB_ENV
+            echo "appEnv=PROD" >> $GITHUB_OUTPUT
+          else
+            echo DEV BRANCH
+            echo "APP_ENV=DEV" >> $GITHUB_ENV
+            echo "appEnv=DEV" >> $GITHUB_OUTPUT
+          fi
 
 #      - name: 🧪 Run Flutter Tests
 #        run: flutter test --coverage
