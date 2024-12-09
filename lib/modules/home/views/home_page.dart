@@ -55,36 +55,18 @@ class HomePage extends StatelessWidget {
               return const LoadingBlurWdt();
             }
             if (viewModel.failed) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 128,
-                      color: R.colors.accents.rose2,
-                    ),
-                    const SizedBox(height: 16.0),
-                    Container(
-                      decoration: BoxDecoration(
+              if(viewModel.trendingListNotifier.value?.isEmpty ?? true) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 128,
                         color: R.colors.accents.rose2,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8.0),
-                        ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          viewModel.error?.toString() ?? 'ERROR',
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    InkWell(
-                      onTap: () => viewModel.loadData(
-                          context: context, forceReload: true),
-                      child: Container(
+                      const SizedBox(height: 16.0),
+                      Container(
                         decoration: BoxDecoration(
                           color: R.colors.accents.rose2,
                           borderRadius: const BorderRadius.all(
@@ -93,26 +75,47 @@ class HomePage extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.refresh,
-                                  size: 16.0, color: Colors.black),
-                              const SizedBox(
-                                width: 4.0,
-                              ),
-                              Text(
-                                tryAgainStr,
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ],
+                          child: Text(
+                            viewModel.error?.toString() ?? 'ERROR',
+                            style: const TextStyle(color: Colors.black),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
+                      const SizedBox(height: 16.0),
+                      InkWell(
+                        onTap: () => viewModel.loadData(context: context, forceReload: true),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: R.colors.accents.rose2,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8.0),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.refresh,
+                                    size: 16.0, color: Colors.black),
+                                const SizedBox(
+                                  width: 4.0,
+                                ),
+                                Text(
+                                  tryAgainStr,
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                viewModel.showSnackBarMsg(context: context, msg: viewModel.error?.toString() ?? 'ERROR');
+              }
             }
 
             TextStyle textStyle = Theme.of(context).textTheme.displayMedium!;

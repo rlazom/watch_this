@@ -52,7 +52,7 @@ class MovieDataSourceRemote extends RMasterDataSourceRemote {
     dynamic data;
     try {
       // print('TRY BEFORE fetchData(url: "$url")');
-      data = await fetchData(url: url);
+      data = await fetchData(url: url, timeout: const Duration(seconds: 30));
       // print('AFTER fetchData()');
     } catch (error) {
       print('MovieDataSourceRemote.getMovieCreditsData() - ["$error"');

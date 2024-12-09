@@ -158,57 +158,82 @@ class MovieDetailsPage extends StatelessWidget {
                           color:
                               movieIsFavorite ? R.colors.accents.rose1 : null),
                     ),
-                    PopupMenuButton(
-                      onSelected: viewModel.loading ? null : onSelect,
-                      child: viewModel.loading
-                          ? Container()
-                          : const Icon(Icons.menu),
-                      itemBuilder: (BuildContext context) {
-                        return [
-                          PopupMenuItem(
-                            height: 0.0,
-                            value: () =>
-                                provider.toggleToWatch(viewModel.movie!.id),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Icon(movieIsToWatch
-                                  //     ? Icons.playlist_add_circle
-                                  //     : Icons.playlist_add_circle_outlined),
-                                  Icon(movieIsToWatch
-                                      ? Icons.remove_red_eye
-                                      : Icons.remove_red_eye_outlined),
-                                  const SizedBox(width: 8.0),
-                                  const Text('TO WATCH'),
-                                ],
-                              ),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            height: 0.0,
-                            value: () =>
-                                provider.toggleWatched(viewModel.movie!.id),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(movieIsWatched
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_outline),
-                                  const SizedBox(width: 8.0),
-                                  const Text('WATCHED'),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ];
-                      },
+                    IconButton(
+                      tooltip: movieIsToWatch
+                          ? 'REMOVE FROM "TO WATCH"'
+                          : 'ADD TO "TO WATCH"',
+                      onPressed: () =>
+                          provider.toggleToWatch(viewModel.movie!.id),
+                      icon: Icon(
+                        movieIsToWatch
+                              ? Icons.playlist_remove
+                              : Icons.playlist_add,
+                      ),
                     ),
+                    IconButton(
+                      tooltip: movieIsWatched
+                          ? 'REMOVE FROM "WATCHED"'
+                          : 'ADD TO "WATCHED"',
+                      onPressed: () =>
+                          provider.toggleWatched(viewModel.movie!.id),
+                      icon: Icon(
+                        movieIsWatched
+                            ? Icons.check_circle
+                            : Icons.check_circle_outline,
+                      ),
+                    ),
+
+                    // PopupMenuButton(
+                    //   onSelected: viewModel.loading ? null : onSelect,
+                    //   child: viewModel.loading
+                    //       ? Container()
+                    //       : const Icon(Icons.menu),
+                    //   itemBuilder: (BuildContext context) {
+                    //     return [
+                    //       PopupMenuItem(
+                    //         height: 0.0,
+                    //         value: () =>
+                    //             provider.toggleToWatch(viewModel.movie!.id),
+                    //         child: Padding(
+                    //           padding:
+                    //               const EdgeInsets.symmetric(vertical: 8.0),
+                    //           child: Row(
+                    //             mainAxisSize: MainAxisSize.min,
+                    //             children: [
+                    //               // Icon(movieIsToWatch
+                    //               //     ? Icons.playlist_add_circle
+                    //               //     : Icons.playlist_add_circle_outlined),
+                    //               Icon(movieIsToWatch
+                    //                   ? Icons.remove_red_eye
+                    //                   : Icons.remove_red_eye_outlined),
+                    //               const SizedBox(width: 8.0),
+                    //               const Text('TO WATCH'),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       PopupMenuItem(
+                    //         height: 0.0,
+                    //         value: () =>
+                    //             provider.toggleWatched(viewModel.movie!.id),
+                    //         child: Padding(
+                    //           padding:
+                    //               const EdgeInsets.symmetric(vertical: 8.0),
+                    //           child: Row(
+                    //             mainAxisSize: MainAxisSize.min,
+                    //             children: [
+                    //               Icon(movieIsWatched
+                    //                   ? Icons.bookmark
+                    //                   : Icons.bookmark_outline),
+                    //               const SizedBox(width: 8.0),
+                    //               const Text('WATCHED'),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ];
+                    //   },
+                    // ),
                     const SizedBox(
                       width: 8.0,
                     ),
@@ -582,7 +607,8 @@ class MovieDetailsPage extends StatelessWidget {
                                                 padding: const EdgeInsets.only(
                                                     top: 8.0, right: 16.0),
                                                 child: Tooltip(
-                                                  message: e.providerName,
+                                                  // message: e.providerName,
+                                                  message: '${e.providerName} (${e.locale})',
                                                   child: GridItemWdt(
                                                     tag: e.providerName,
                                                     fImage: e.fLogo,

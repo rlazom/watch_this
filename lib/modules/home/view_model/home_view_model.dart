@@ -29,7 +29,7 @@ class HomeViewModel extends LoaderViewModel {
 
   @override
   Future loadData({BuildContext? context, forceReload = false}) async {
-    if (success) {
+    if (!normal) {
       markAsLoading();
     }
     userProvider = Provider.of<UserProvider>(navigator.context, listen: false);
